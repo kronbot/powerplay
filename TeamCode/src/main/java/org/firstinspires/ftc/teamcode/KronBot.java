@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-public class Kronbot {
+public class KronBot {
     HardwareMap hardwareMap;
 
     DcMotor flMotor;

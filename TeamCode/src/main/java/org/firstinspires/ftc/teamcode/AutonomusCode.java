@@ -8,12 +8,12 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 @Autonomous(name = "Autonomus Code")
 public class AutonomusCode extends LinearOpMode {
-    Kronbot Robot = new Kronbot();
+    KronBot robot = new KronBot();
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Robot.initHardwareMap();
-        SampleMecanumDrive drive = new SampleMecanumDrive(Robot.hardwareMap);
+        robot.initHardwareMap();
+        SampleMecanumDrive drive = new SampleMecanumDrive(robot.hardwareMap);
 
         Pose2d startPose = new Pose2d(-35, -60, Math.toRadians(90));
 

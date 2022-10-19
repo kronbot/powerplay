@@ -15,7 +15,7 @@ public class KronBot {
     /**
      * Initialization of hardware map
      */
-    void initHardwareMap() {
+    public void initHardwareMap() {
         frontLeftDc = hardwareMap.dcMotor.get("frontLeft");
         frontRightDc = hardwareMap.dcMotor.get("frontRight");
         backLeftDc = hardwareMap.dcMotor.get("backLeft");
@@ -34,7 +34,7 @@ public class KronBot {
      * @param backRight  direction of the back right wheel -1 or 1
      * @param power      the power to give to all four wheels [0,1]
      */
-    void drive(double frontLeft, double frontRight, double backLeft, double backRight, double power) {
+    public void drive(double frontLeft, double frontRight, double backLeft, double backRight, double power) {
         frontLeftDc.setPower(frontLeft * power);
         frontRightDc.setPower(frontRight * power);
         backLeftDc.setPower(backLeft * power);
@@ -49,7 +49,7 @@ public class KronBot {
      * @param powerBackLeft   the power to give to back left wheel [0,1]
      * @param powerBackRight  the power to give to back right wheel [0,1]
      */
-    void driveWithSpeeds(double powerFrontLeft, double powerFrontRight, double powerBackLeft, double powerBackRight){
+    public void driveWithSpeeds(double powerFrontLeft, double powerFrontRight, double powerBackLeft, double powerBackRight){
         frontLeftDc.setPower(powerFrontLeft);
         frontRightDc.setPower(powerFrontRight);
         backLeftDc.setPower(powerBackLeft);
@@ -59,25 +59,11 @@ public class KronBot {
     /**
      * Stops the motors from wheels
      */
-    void stopMotors() {
+    public void stopMotors() {
         frontLeftDc.setPower(0);
         frontRightDc.setPower(0);
         backLeftDc.setPower(0);
         backRightDc.setPower(0);
     }
 
-    /**
-     * Mapping function used to return the value inside an interval applied
-     * to another interval
-     *
-     * @param x          the value the function will convert
-     * @param inputMin   min or left margin for the first interval
-     * @param inputMax   max or right margin for the first interval
-     * @param outputMin  min or left margin for the second interval
-     * @param outputMax  max or right margin for the second interval
-     * @return           the value converted
-     */
-    double map(double x, double inputMin, double inputMax, double outputMin, double outputMax) {
-        return (x - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
-    }
 }

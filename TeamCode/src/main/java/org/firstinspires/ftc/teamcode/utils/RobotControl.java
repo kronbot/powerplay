@@ -1,10 +1,13 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 import org.firstinspires.ftc.teamcode.KronBot;
+import com.qualcomm.robotcore.util.Util;
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 // manages the movement of the robot
 public class RobotControl {
     private final KronBot robot;
+    private final Telemetry telemetry;
 
     // the acceleration power of the robot
     // used for a smooth rotation
@@ -16,17 +19,25 @@ public class RobotControl {
     private double currentRotatePower = 0;
     private double currentDrivePower = 0;
 
-    public RobotControl(KronBot robot) {
+    public RobotControl(KronBot robot, Telemetry telemetry) {
         this.robot = robot;
+        this.telemetry = telemetry;
     }
 
     /**
      * Handles driving based on a given input.
-     * The input should be betweeen [0, 1].
+     * The input should be betweeen [-1, 1].
      * @param xInput the input on the x axis
      * @param yInput the input on the y axis
+     * @returns true if the robot moves, false if not
      */
-    public void drive(double xInput, double yInput) {
+    public boolean drive(double xInput, double yInput) {
+        if (
+                (-Utils.EPS < xInput && xInput < Utils.EPS) &&
+                        (-Utils.EPS < yInput && yInput < Utils.EPS)
+        )
+            return false;
+
         currentRotatePower = 0;
         double angle = Math.atan2(yInput, xInput);
         double power = Math.sqrt(xInput * xInput + yInput * yInput);
@@ -38,8 +49,9 @@ public class RobotControl {
         else // slowing down
             currentDrivePower = power;
 
+        // both or only Y-axis
         if (Utils.EPS < yInput) {
-            if (angle < Math.PI / 2) { // moving to the right
+            if (angle > 0 && angle < Math.PI / 2) { // moving to the right
                 double wheelsDirection = Utils.map(angle, 0, 90, -1, 1);
                 if (wheelsDirection < Utils.EPS)
                     wheelsDirection = 0;
@@ -50,8 +62,9 @@ public class RobotControl {
                     wheelsDirection = 0;
                 robot.drive(wheelsDirection, 1, 1, wheelsDirection, currentDrivePower);
             }
+            return true;
         } else if (yInput < -Utils.EPS) { // backwards
-            if (angle < -90) { // moving to the left
+            if (angle > -(Math.PI / 2) && angle < 0) { // moving to the left
                 double wheelsDirection = Utils.map(angle, -180, -90, 1, -1);
                 if (wheelsDirection > -Utils.EPS)
                     wheelsDirection = 0;
@@ -62,42 +75,47 @@ public class RobotControl {
                     wheelsDirection = 0;
                 robot.drive(wheelsDirection, -1, -1, wheelsDirection, currentDrivePower);
             }
-        } else { // translate only (only moving on the x axis)
-            if (-Utils.EPS < xInput && xInput < Utils.EPS) // no input
-                robot.stopMotors();
-            else if (xInput > Utils.EPS) // moving to the right
-                robot.drive(1, -1, -1, 1, currentDrivePower);
-            else // moving to the left
-                robot.drive(-1, 1, 1, -1, currentDrivePower);
+            return true;
         }
+
+        // translate only on the X axis (only moving on the x axis)
+        if (xInput > Utils.EPS) // moving to the right
+            robot.drive(1, -1, -1, 1, currentDrivePower);
+        else // moving to the left
+            robot.drive(-1, 1, 1, -1, currentDrivePower);
+        return true;
     }
 
     /**
      * Rotates the robot using the given input.
      * The input should be betweeen [-1, 1].
      * @param direction if negative, rotating left, if positive, rotating right
+     * @returns true if the robot rotates, false if the direction is 0
      */
-    public void rotate(double direction) {
-        if (direction < Utils.EPS)
-            return;
-
-        currentRotatePower = 0;
-        double power = 0;
+    public boolean rotate(double direction) {
+        if (-Utils.EPS < direction && direction < Utils.EPS)
+            return false;
+        telemetry.addData("Direction", direction);
+        currentDrivePower = 0;
 
         // starting the rotation smoothly
+        telemetry.addData("currentRotatePower", currentRotatePower);
+        telemetry.addData("eps", Utils.EPS);
+        double power = Math.abs(direction);
+        // smooth start
         if (currentRotatePower < Utils.EPS)
-            currentRotatePower = 0.1;
-        else // slow down
-            currentRotatePower = Math.min(
-                    currentRotatePower + accelerationPower,
-                    Math.abs(direction)
-            );
+            currentRotatePower = Utils.EPS;
+        else if (power > currentRotatePower)
+            currentRotatePower = Math.min(currentRotatePower + accelerationPower, power);
+        else // slowing down
+            currentRotatePower = power;
 
         // switching directions
         if (direction > 0)
             robot.drive(1, -1, 1, -1, currentRotatePower);
         else
             robot.drive(-1, 1, -1, 1, currentRotatePower);
+        return true;
     }
 
     /**
@@ -105,22 +123,28 @@ public class RobotControl {
      * The input should be between [0, 1].
      * @param left the left direction value
      * @param right the right direction value
+     * @returns true if the robot translates, false if not
      */
-    public void translate(double left, double right) {
-        if (left < Utils.EPS || right < Utils.EPS)
-            return;
-
-        currentRotatePower = 0;
+    public boolean translate(double left, double right) {
         double direction = right - left;
-
-        // checking if direction too close to 0
-        if (-Utils.EPS > direction && direction < Utils.EPS)
-            return;
-
+        if (-Utils.EPS < direction && direction < Utils.EPS)
+            return false;
+        currentRotatePower = 0;
         // moving to the right
         if (direction > Utils.EPS)
             robot.drive(1, -1, -1, 1, direction);
         else // left
-            robot.drive(-1, 1, 1, -1, Math.abs(direction));
+            robot.drive(-1, 1, 1, -1, Math.abs(direction));;
+
+        return true;
+    }
+
+    public void slide(boolean up, boolean down) {
+        if (up)
+            robot.controlArm(1);
+        else if (down)
+            robot.controlArm(-1);
+        else
+            robot.controlArm(0);
     }
 }

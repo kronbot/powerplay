@@ -12,19 +12,24 @@ public class ManualControl extends OpMode {
 
     public ManualControl() {
         robot = new KronBot();
-        control = new RobotControl(robot);
+        control = new RobotControl(robot, telemetry);
     }
 
     @Override
     public void init() {
-        robot.initHardwareMap();
+        robot.initHardwareMap(hardwareMap);
     }
 
 
     @Override
     public void loop() {
-        control.rotate(gamepad1.right_stick_y);
-        control.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-        control.translate(gamepad1.left_trigger, gamepad1.right_trigger);
+        boolean move = false;
+        move |= control.rotate(gamepad1.right_stick_x);
+        move |= control.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+        move |= control.translate(gamepad1.left_trigger, gamepad1.right_trigger);
+        control.slide(gamepad1.dpad_down, gamepad1.dpad_up);
+
+        if (!move)
+            robot.stopMotors();
     }
 }

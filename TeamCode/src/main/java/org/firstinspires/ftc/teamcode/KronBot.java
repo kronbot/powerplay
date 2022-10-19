@@ -5,17 +5,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class KronBot {
-    HardwareMap hardwareMap;
-
     DcMotor frontLeftDc;
     DcMotor frontRightDc;
     DcMotor backLeftDc;
     DcMotor backRightDc;
 
+    DcMotor armDc;
+
     /**
      * Initialization of hardware map
      */
-    public void initHardwareMap() {
+    public void initHardwareMap(HardwareMap hardwareMap) {
         frontLeftDc = hardwareMap.dcMotor.get("frontLeft");
         frontRightDc = hardwareMap.dcMotor.get("frontRight");
         backLeftDc = hardwareMap.dcMotor.get("backLeft");
@@ -23,6 +23,8 @@ public class KronBot {
 
         frontLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        armDc = hardwareMap.dcMotor.get("arm");
     }
 
     /**
@@ -66,4 +68,7 @@ public class KronBot {
         backRightDc.setPower(0);
     }
 
+    public void controlArm(double power) {
+        armDc.setPower(power);
+    }
 }

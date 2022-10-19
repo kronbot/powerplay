@@ -29,6 +29,8 @@ import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigu
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceRunner;
+import org.firstinspires.ftc.teamcode.util.AxisDirection;
+import org.firstinspires.ftc.teamcode.util.BNO055IMUUtil;
 import org.firstinspires.ftc.teamcode.util.LynxModuleUtil;
 
 import java.util.Arrays;
@@ -111,6 +113,8 @@ public class SampleTankDrive extends TankDrive {
         //
         // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
+
+        BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_X);
 
         // add/remove motors depending on your robot (e.g., 6WD)
         DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");

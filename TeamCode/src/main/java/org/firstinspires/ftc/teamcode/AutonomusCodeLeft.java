@@ -24,18 +24,22 @@ public class AutonomusCodeLeft extends LinearOpMode {
         Pose2d placePose = new Pose2d(5, 55, Math.toRadians(45));
         double liftEndHeading = 180;
         double placeEndHeading = 45;
+
         waitForStart();
 
         if (isStopRequested()) return;
-        //TODO: Set start pose and add code for doing it for all start positions
         TrajectorySequenceBuilder tsb = drive.trajectorySequenceBuilder(startPose)
-                .splineToSplineHeading(new Pose2d(0, 35, Math.toRadians(90)), Math.toRadians(90))
-                .splineToSplineHeading(placePose, Math.toRadians(placeEndHeading));
+                /* TODO: Add getting ready for placing cone */
+                .splineToSplineHeading(new Pose2d(0, 35, Math.toRadians(90)), Math.toRadians(90)) /* middle position used for making the rotations without hitting a junction*/
+                .splineToSplineHeading(placePose, Math.toRadians(placeEndHeading)); /* go to place position for the initial lifted cone*/
+        /* TODO: Place the cone*/
 
         tsb = autonomusUtil.AutonomusCone(tsb, 4, liftPose, placePose, liftEndHeading, placeEndHeading);
+        /* TODO: Add getting ready for lifting the cone */
+        tsb.splineToSplineHeading(liftPose, Math.toRadians(180)) /* go to liftPose so we can have the last cone picked-up for manual control */
+                .setReversed(false);
 
-        tsb.splineToSplineHeading(liftPose, Math.toRadians(180));
-        //TODO: Add parkking using autonomousUtil.AutonomusPark
+        //TODO: Add parking using autonomusUtil.AutonomusPark
         TrajectorySequence ts = tsb.build();
 
         drive.followTrajectorySequence(ts);

@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
 import com.noahbres.meepmeep.roadrunner.entity.RoadRunnerBotEntity;
+import com.noahbres.meepmeep.roadrunner.trajectorysequence.TrajectorySequenceBuilder;
 
 public class MeepMeepTesting {
     public static void main(String[] args) {
@@ -15,41 +16,12 @@ public class MeepMeepTesting {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(52.48180821614297, 52.48180821614297, Math.toRadians(184.02607784577722), Math.toRadians(184.02607784577722), 16.34)
                 .followTrajectorySequence(drive ->
-                        drive.trajectorySequenceBuilder(new Pose2d(-35, -60, Math.toRadians(90)))
-                                // cod pentru mers la cel mai apropiat stalp inalt
-                                .splineToSplineHeading(new Pose2d(-35, -25, Math.toRadians(90)), Math.toRadians(90))
-                                .splineToSplineHeading(new Pose2d(-30, -5, Math.toRadians(45)), Math.toRadians(45))
-                                .waitSeconds(waitTime)
-                                //optimizare pt mers si luat de 4 ori si pus + luat final si mers la cea mai departe locatie de parcare(test pt timp)
-                                .setReversed(true)
-                                .splineToSplineHeading(new Pose2d(-60, -12, Math.toRadians(0)), Math.toRadians(180))
-                                .setReversed(false)
-                                .waitSeconds(waitTime)
-                                .splineToSplineHeading(new Pose2d(-30, -5, Math.toRadians(45)), Math.toRadians(45))
-                                .waitSeconds(waitTime)
-                                .setReversed(true)
-                                .splineToSplineHeading(new Pose2d(-60, -12, Math.toRadians(0)), Math.toRadians(180))
-                                .setReversed(false)
-                                .waitSeconds(waitTime)
-                                .splineToSplineHeading(new Pose2d(-30, -5, Math.toRadians(45)), Math.toRadians(45))
-                                .waitSeconds(waitTime)
-                                .setReversed(true)
-                                .splineToSplineHeading(new Pose2d(-60, -12, Math.toRadians(0)), Math.toRadians(180))
-                                .setReversed(false)
-                                .waitSeconds(waitTime)
-                                .splineToSplineHeading(new Pose2d(-30, -5, Math.toRadians(45)), Math.toRadians(45))
-                                .waitSeconds(waitTime)
-                                .setReversed(true)
-                                .splineToSplineHeading(new Pose2d(-60, -12, Math.toRadians(0)), Math.toRadians(180))
-                                .setReversed(false)
-                                .waitSeconds(waitTime)
-                                .splineToSplineHeading(new Pose2d(-30, -5, Math.toRadians(45)), Math.toRadians(45))
-                                .waitSeconds(waitTime)
-                                .setReversed(true)
-                                .splineToSplineHeading(new Pose2d(-60, -12, Math.toRadians(0)), Math.toRadians(180))
-                                .waitSeconds(waitTime)
-                                .setReversed(false)
-                                .forward(47)
+
+
+                        drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(90)))
+                                .splineToSplineHeading(new Pose2d(0, 35, Math.toRadians(90)), Math.toRadians(90))
+                                .splineToSplineHeading(placePose, Math.toRadians(placeEndHeading));
+
                                 .build()
                 );
         meepMeep.setBackground(MeepMeep.Background.FIELD_POWERPLAY_OFFICIAL)

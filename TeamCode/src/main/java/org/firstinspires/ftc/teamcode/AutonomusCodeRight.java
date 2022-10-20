@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.util.AutonomusUtil;
 public class AutonomusCodeRight extends LinearOpMode {
     private final KronBot robot = new KronBot();
     private final AutonomusUtil autonomusUtil = new AutonomusUtil();
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot.initHardwareMap();
@@ -27,16 +28,19 @@ public class AutonomusCodeRight extends LinearOpMode {
         waitForStart();
 
         if (isStopRequested()) return;
-        //TODO: Set start pose and add code for doing it for all start positions
         TrajectorySequenceBuilder tsb = drive.trajectorySequenceBuilder(startPose)
-                .splineToSplineHeading(new Pose2d(0, 35, Math.toRadians(90)), Math.toRadians(90))
-                .splineToSplineHeading(placePose, Math.toRadians(135));
+                /* TODO: Add getting ready for placing cone */
+                .splineToSplineHeading(new Pose2d(0, 35, Math.toRadians(90)), Math.toRadians(90))/* middle position used for making the rotations without hitting a junction*/
+                .splineToSplineHeading(placePose, Math.toRadians(135)); /* go to place position for the initial lifted cone*/
+        /* TODO: Place the cone*/
 
         tsb = autonomusUtil.AutonomusCone(tsb, 4, liftPose, placePose, liftEndHeading, placeEndHeading);
+        /* TODO: Add getting ready for lifting the cone */
+        tsb.splineToSplineHeading(liftPose, Math.toRadians(0)) /* go to liftPose so we can have the last cone picked-up for manual control */
+                .setReversed(false);
 
-        tsb.splineToSplineHeading(liftPose, Math.toRadians(0));
-        //TODO: Add parkking using autonomousUtil.AutonomusPark
-        TrajectorySequence ts= tsb.build();
+        //TODO: Add parking using autonomusUtil.AutonomusPark
+        TrajectorySequence ts = tsb.build();
 
         drive.followTrajectorySequence(ts);
 

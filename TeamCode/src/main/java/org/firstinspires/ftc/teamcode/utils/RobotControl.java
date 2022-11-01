@@ -16,8 +16,8 @@ public class RobotControl {
     // either when rotating or driving, we save the last power
     // if the robot starts rotating, the drive power becomes 0
     // if the robot starts moving, the rotate power becomes 0
-    private double currentRotatePower = 0;
-    private double currentDrivePower = 0;
+    public double currentRotatePower = 0;
+    public double currentDrivePower = 0;
 
     public RobotControl(KronBot robot, Telemetry telemetry) {
         this.robot = robot;
@@ -52,12 +52,12 @@ public class RobotControl {
         // both or only Y-axis
         if (Utils.EPS < yInput) {
             if (angle > 0 && angle < Math.PI / 2) { // moving to the right
-                double wheelsDirection = Utils.map(angle, 0, 90, -1, 1);
+                double wheelsDirection = Utils.map(angle, 0, Math.PI / 2, -1, 1);
                 if (wheelsDirection < Utils.EPS)
                     wheelsDirection = 0;
                 robot.drive(1, wheelsDirection, wheelsDirection, 1, currentDrivePower);
             } else { // moving to the left
-                double wheelsDirection = Utils.map(angle, 90, 180, 1, -1);
+                double wheelsDirection = Utils.map(angle, Math.PI / 2, Math.PI, 1, -1);
                 if (wheelsDirection < Utils.EPS)
                     wheelsDirection = 0;
                 robot.drive(wheelsDirection, 1, 1, wheelsDirection, currentDrivePower);
@@ -65,12 +65,12 @@ public class RobotControl {
             return true;
         } else if (yInput < -Utils.EPS) { // backwards
             if (angle > -(Math.PI / 2) && angle < 0) { // moving to the left
-                double wheelsDirection = Utils.map(angle, -180, -90, 1, -1);
+                double wheelsDirection = Utils.map(angle, -Math.PI, -Math.PI / 2, 1, -1);
                 if (wheelsDirection > -Utils.EPS)
                     wheelsDirection = 0;
                 robot.drive(-1, wheelsDirection, wheelsDirection, -1, currentDrivePower);
             } else { // moving to the right
-                double wheelsDirection = Utils.map(angle, -90, 0, 0, 1);
+                double wheelsDirection = Utils.map(angle, -Math.PI / 2, 0, -1, 1);
                 if (wheelsDirection > -Utils.EPS)
                     wheelsDirection = 0;
                 robot.drive(wheelsDirection, -1, -1, wheelsDirection, currentDrivePower);
@@ -95,6 +95,7 @@ public class RobotControl {
     public boolean rotate(double direction) {
         if (-Utils.EPS < direction && direction < Utils.EPS)
             return false;
+        telemetry.addData("Direction", direction);
         currentDrivePower = 0;
 
         // starting the rotation smoothly
@@ -112,7 +113,7 @@ public class RobotControl {
             robot.drive(1, -1, 1, -1, currentRotatePower);
         else
             robot.drive(-1, 1, -1, 1, currentRotatePower);
-        return true;
+        return currentRotatePower != 0;
     }
 
     /**
@@ -134,5 +135,14 @@ public class RobotControl {
             robot.drive(-1, 1, 1, -1, Math.abs(direction));;
 
         return true;
+    }
+
+    /**
+     * Stop the robot's motors and sets it's speed to 0.
+     */
+    public void stop() {
+        currentDrivePower = 0;
+        currentRotatePower = 0;
+        robot.stopMotors();
     }
 }

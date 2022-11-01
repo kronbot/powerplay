@@ -5,11 +5,9 @@ import org.firstinspires.ftc.teamcode.KronBot;
 
 public class SlideControl {
     private final KronBot robot;
-    private final Telemetry telemetry;
 
     public SlideControl(KronBot robot, Telemetry telemetry) {
         this.robot = robot;
-        this.telemetry = telemetry;
     }
 
     public void slide(boolean up, boolean down) {

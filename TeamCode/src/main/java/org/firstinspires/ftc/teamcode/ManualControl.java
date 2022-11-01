@@ -26,15 +26,19 @@ public class ManualControl extends OpMode {
 
     @Override
     public void loop() {
-        boolean move = false;
-        move |= robotControl.rotate(gamepad1.right_stick_x);
-        move |= robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-        move |= robotControl.translate(gamepad1.left_trigger, gamepad1.right_trigger);
+        boolean move = robotControl.rotate(gamepad1.right_stick_x);
+        telemetry.addData("drive power", robotControl.currentDrivePower);
+        telemetry.addData("rotate power", robotControl.currentRotatePower);
+
+        if (!move) {
+            move |= robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            move |= robotControl.translate(gamepad1.left_trigger, gamepad1.right_trigger);
+        }
         slideControl.slide(gamepad1.dpad_down, gamepad1.dpad_up);
         slideControl.arm(gamepad1.a, gamepad1.y);
         slideControl.intake(gamepad1.x, gamepad1.b);
 
         if (!move)
-            robot.stopMotors();
+            robotControl.stop();
     }
 }

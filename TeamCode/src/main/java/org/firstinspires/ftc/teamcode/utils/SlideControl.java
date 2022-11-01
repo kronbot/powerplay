@@ -16,7 +16,7 @@ public class SlideControl {
         else if (down)
             robot.controlSlide(-1);
         else
-            robot.controlSlide(0);
+            robot.controlSlide(-0.05);
     }
 
     public void arm(boolean up, boolean down) {

@@ -32,6 +32,9 @@ public class KronBot {
 
         intakeServo = hardwareMap.servo.get("intake");
         armServo = hardwareMap.servo.get("arm");
+
+        slideDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
     }
 
     /**

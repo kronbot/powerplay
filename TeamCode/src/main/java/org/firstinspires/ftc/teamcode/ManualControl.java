@@ -4,15 +4,18 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utils.RobotControl;
+import org.firstinspires.ftc.teamcode.utils.SlideControl;
 
 @TeleOp(name = "Manual Control")
 public class ManualControl extends OpMode {
     private final KronBot robot;
-    private final RobotControl control;
+    private final RobotControl robotControl;
+    private final SlideControl slideControl;
 
     public ManualControl() {
         robot = new KronBot();
-        control = new RobotControl(robot, telemetry);
+        robotControl = new RobotControl(robot, telemetry);
+        slideControl = new SlideControl(robot, telemetry);
     }
 
     @Override
@@ -24,10 +27,12 @@ public class ManualControl extends OpMode {
     @Override
     public void loop() {
         boolean move = false;
-        move |= control.rotate(gamepad1.right_stick_x);
-        move |= control.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-        move |= control.translate(gamepad1.left_trigger, gamepad1.right_trigger);
-        control.slide(gamepad1.dpad_down, gamepad1.dpad_up);
+        move |= robotControl.rotate(gamepad1.right_stick_x);
+        move |= robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+        move |= robotControl.translate(gamepad1.left_trigger, gamepad1.right_trigger);
+        slideControl.slide(gamepad1.dpad_down, gamepad1.dpad_up);
+        slideControl.arm(gamepad1.a, gamepad1.y);
+        slideControl.intake(gamepad1.x, gamepad1.b);
 
         if (!move)
             robot.stopMotors();

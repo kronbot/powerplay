@@ -95,12 +95,9 @@ public class RobotControl {
     public boolean rotate(double direction) {
         if (-Utils.EPS < direction && direction < Utils.EPS)
             return false;
-        telemetry.addData("Direction", direction);
         currentDrivePower = 0;
 
         // starting the rotation smoothly
-        telemetry.addData("currentRotatePower", currentRotatePower);
-        telemetry.addData("eps", Utils.EPS);
         double power = Math.abs(direction);
         // smooth start
         if (currentRotatePower < Utils.EPS)
@@ -137,14 +134,5 @@ public class RobotControl {
             robot.drive(-1, 1, 1, -1, Math.abs(direction));;
 
         return true;
-    }
-
-    public void slide(boolean up, boolean down) {
-        if (up)
-            robot.controlArm(1);
-        else if (down)
-            robot.controlArm(-1);
-        else
-            robot.controlArm(0);
     }
 }

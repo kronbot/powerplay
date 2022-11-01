@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class KronBot {
     DcMotor frontLeftDc;
@@ -10,7 +11,10 @@ public class KronBot {
     DcMotor backLeftDc;
     DcMotor backRightDc;
 
-    DcMotor armDc;
+    DcMotor slideDc;
+
+    Servo intakeServo;
+    Servo armServo;
 
     /**
      * Initialization of hardware map
@@ -24,7 +28,10 @@ public class KronBot {
         frontLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        armDc = hardwareMap.dcMotor.get("arm");
+        slideDc = hardwareMap.dcMotor.get("slide");
+
+        intakeServo = hardwareMap.servo.get("intake");
+        armServo = hardwareMap.servo.get("arm");
     }
 
     /**
@@ -68,7 +75,15 @@ public class KronBot {
         backRightDc.setPower(0);
     }
 
+    public void controlSlide(double power) {
+        slideDc.setPower(power);
+    }
+
     public void controlArm(double power) {
-        armDc.setPower(power);
+        armServo.setPosition(power);
+    }
+
+    public void controlIntake(double power) {
+        intakeServo.setPosition(power);
     }
 }

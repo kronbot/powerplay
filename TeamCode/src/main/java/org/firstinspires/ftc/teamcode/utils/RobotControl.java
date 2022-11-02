@@ -64,12 +64,12 @@ public class RobotControl {
             }
             return true;
         } else if (yInput < -Utils.EPS) { // backwards
-            if (angle > -(Math.PI / 2) && angle < 0) { // moving to the left
+            if (angle < -Math.PI / 2) {
                 double wheelsDirection = Utils.map(angle, -Math.PI, -Math.PI / 2, 1, -1);
                 if (wheelsDirection > -Utils.EPS)
                     wheelsDirection = 0;
                 robot.drive(-1, wheelsDirection, wheelsDirection, -1, currentDrivePower);
-            } else { // moving to the right
+            } else {
                 double wheelsDirection = Utils.map(angle, -Math.PI / 2, 0, -1, 1);
                 if (wheelsDirection > -Utils.EPS)
                     wheelsDirection = 0;

@@ -11,7 +11,7 @@ public class KronBot {
     DcMotor backLeftDc;
     DcMotor backRightDc;
 
-    DcMotor slideDc;
+    public DcMotor slideDc;
 
     Servo intakeServo;
     Servo armServo;
@@ -20,18 +20,20 @@ public class KronBot {
      * Initialization of hardware map
      */
     public void initHardwareMap(HardwareMap hardwareMap) {
-        frontLeftDc = hardwareMap.dcMotor.get("frontLeft");
-        frontRightDc = hardwareMap.dcMotor.get("frontRight");
-        backLeftDc = hardwareMap.dcMotor.get("backLeft");
-        backRightDc = hardwareMap.dcMotor.get("backRight");
+        // frontLeftDc = hardwareMap.dcMotor.get("frontLeft");
+        // frontRightDc = hardwareMap.dcMotor.get("frontRight");
+        // backLeftDc = hardwareMap.dcMotor.get("backLeft");
+        // backRightDc = hardwareMap.dcMotor.get("backRight");
 
-        frontLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
+        // frontLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
+        // backLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
 
         slideDc = hardwareMap.dcMotor.get("slide");
+        slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        intakeServo = hardwareMap.servo.get("intake");
-        armServo = hardwareMap.servo.get("arm");
+
+        // intakeServo = hardwareMap.servo.get("intake");
+        // armServo = hardwareMap.servo.get("arm");
 
         slideDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -72,14 +74,21 @@ public class KronBot {
      * Stops the motors from wheels
      */
     public void stopMotors() {
-        frontLeftDc.setPower(0);
-        frontRightDc.setPower(0);
-        backLeftDc.setPower(0);
-        backRightDc.setPower(0);
+        // frontLeftDc.setPower(0);
+        // frontRightDc.setPower(0);
+        // backLeftDc.setPower(0);
+        // backRightDc.setPower(0);
     }
 
     public void controlSlide(double power) {
         slideDc.setPower(power);
+    }
+
+    public void controlSlideOnLevels(double power, int position) {
+        slideDc.setTargetPosition(position);
+        slideDc.setPower(power);
+
+        slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 
     public void controlArm(double power) {

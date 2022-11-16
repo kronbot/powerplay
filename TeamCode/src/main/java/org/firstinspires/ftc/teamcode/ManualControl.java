@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utils.RobotControl;
@@ -33,8 +34,14 @@ public class ManualControl extends OpMode {
             move |= robotControl.translate(gamepad1.left_trigger, gamepad1.right_trigger);
         }
         slideControl.slide(gamepad1.dpad_down, gamepad1.dpad_up);
-        slideControl.arm(gamepad1.x, gamepad1.b);
-        slideControl.intake(gamepad1.a, gamepad1.y);
+        // slideControl.arm(gamepad1.y, gamepad1.a);
+        // slideControl.intake(gamepad1.x, gamepad1.b);
+        slideControl.slideLevels(gamepad1.a, gamepad1.b, gamepad1.y, gamepad1.x);
+
+        // robot.slideDc.setTargetPosition(5000);
+        // robot.slideDc.setPower(1);
+
+        // robot.slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         if (!move)
             robotControl.stop();

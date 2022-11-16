@@ -32,6 +32,9 @@ public class RobotControl {
      * @returns true if the robot moves, false if not
      */
     public boolean drive(double xInput, double yInput) {
+        xInput = -xInput;
+        yInput = -yInput;
+
         if (
                 (-Utils.EPS < xInput && xInput < Utils.EPS) &&
                         (-Utils.EPS < yInput && yInput < Utils.EPS)
@@ -95,7 +98,6 @@ public class RobotControl {
     public boolean rotate(double direction) {
         if (-Utils.EPS < direction && direction < Utils.EPS)
             return false;
-        telemetry.addData("Direction", direction);
         currentDrivePower = 0;
 
         // starting the rotation smoothly
@@ -124,15 +126,16 @@ public class RobotControl {
      * @returns true if the robot translates, false if not
      */
     public boolean translate(double left, double right) {
-        double direction = right - left;
+        double direction = left - right;
         if (-Utils.EPS < direction && direction < Utils.EPS)
             return false;
+
         currentRotatePower = 0;
         // moving to the right
         if (direction > Utils.EPS)
             robot.drive(1, -1, -1, 1, direction);
         else // left
-            robot.drive(-1, 1, 1, -1, Math.abs(direction));;
+            robot.drive(-1, 1, 1, -1, Math.abs(direction));
 
         return true;
     }

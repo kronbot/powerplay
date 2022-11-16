@@ -36,16 +36,4 @@ public class SlideControl {
         else if (close)
             robot.controlIntake(0.4);
     }
-
-    public void slideLevels(boolean level1, boolean level2, boolean level3, boolean level0) {
-        telemetry.addData("Position", robot.slideDc.getCurrentPosition());
-        if (level1)
-            robot.controlSlideOnLevels(1, 1000);
-        else if (level2)
-            robot.controlSlideOnLevels(1, 2000);
-        else if (level3)
-            robot.controlSlideOnLevels(1, 3000);
-        else if (level0)
-            robot.controlSlideOnLevels(1, 0);
-    }
 }

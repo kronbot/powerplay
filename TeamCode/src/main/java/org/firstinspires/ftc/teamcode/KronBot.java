@@ -11,7 +11,7 @@ public class KronBot {
     DcMotor backLeftDc;
     DcMotor backRightDc;
 
-    public DcMotor slideDc;
+    DcMotor slideDc;
 
     Servo intakeServo;
     Servo armServo;
@@ -84,10 +84,15 @@ public class KronBot {
         slideDc.setPower(power);
     }
 
-    public void controlSlideOnLevels(double power, int position) {
+    public int getSlidePosition() {return slideDc.getCurrentPosition();}
+
+    public boolean isSlideMotorBusy() {return slideDc.isBusy();}
+
+    public void resetSlideEncoder() {slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);}
+
+    public void controlSlideWithEncoder(double power, int position) {
         slideDc.setTargetPosition(position);
         slideDc.setPower(power);
-
         slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
     }
 

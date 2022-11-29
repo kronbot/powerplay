@@ -1,25 +1,42 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 public class KronBot {
-    HardwareMap hardwareMap;
+    public HardwareMap hardwareMap;
 
-    DcMotor flMotor;
-    DcMotor frMotor;
-    DcMotor blMotor;
-    DcMotor brMotor;
+    public DcMotor frontLeftDc;
+    public DcMotor frontRightDc;
+    public DcMotor backLeftDc;
+    public DcMotor backRightDc;
 
-    void initHardwareMap() {
-        flMotor = hardwareMap.dcMotor.get("fl");
-        frMotor = hardwareMap.dcMotor.get("fr");
-        blMotor = hardwareMap.dcMotor.get("bl");
-        brMotor = hardwareMap.dcMotor.get("br");
+    public DcMotor slideDc;
 
-        flMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        blMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+    public Servo intakeServo;
+    public Servo armServo;
+
+    /**
+     * Initialization of hardware map
+     */
+    public void initHardwareMap() {
+        frontLeftDc = hardwareMap.dcMotor.get("frontLeft");
+        frontRightDc = hardwareMap.dcMotor.get("frontRight");
+        backLeftDc = hardwareMap.dcMotor.get("backLeft");
+        backRightDc = hardwareMap.dcMotor.get("backRight");
+
+        frontLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        slideDc = hardwareMap.dcMotor.get("slide");
+        slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        intakeServo = hardwareMap.servo.get("intake");
+        armServo = hardwareMap.servo.get("arm");
+
+        slideDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
     /**
@@ -31,31 +48,36 @@ public class KronBot {
      * @param backRight  direction of the back right wheel -1 or 1
      * @param power      the power to give to all four wheels [0,1]
      */
-    void drive(double frontLeft, double frontRight, double backLeft, double backRight, double power) {
-        flMotor.setPower(frontLeft * power);
-        frMotor.setPower(frontRight * power);
-        blMotor.setPower(backLeft * power);
-        brMotor.setPower(backRight * power);
-    }
-
-    void DriveWithSpeeds(double powerbl, double powerbr, double powerfl, double powerfr){
-        blMotor.setPower(powerbl);
-        brMotor.setPower(powerbr);
-        flMotor.setPower(powerfl);
-        frMotor.setPower(powerfr);
+    public void drive(double frontLeft, double frontRight, double backLeft, double backRight, double power) {
+        frontLeftDc.setPower(frontLeft * power);
+        frontRightDc.setPower(frontRight * power);
+        backLeftDc.setPower(backLeft * power);
+        backRightDc.setPower(backRight * power);
     }
 
     /**
      * Stops the motors from wheels
      */
-    void stopMotors() {
-        flMotor.setPower(0);
-        frMotor.setPower(0);
-        blMotor.setPower(0);
-        brMotor.setPower(0);
+    public void stopMotors() {
+        frontLeftDc.setPower(0);
+        frontRightDc.setPower(0);
+        backLeftDc.setPower(0);
+        backRightDc.setPower(0);
     }
 
-    double map(double x, double in_min, double in_max, double out_min, double out_max) {
-        return (x - in_min) / (in_max - in_min) * (out_max - out_min) + out_min;
+    public void controlSlide(double power) {
+        slideDc.setPower(power);
+    }
+
+    public void resetSlideEncoder() {
+        slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void controlArm(double power) {
+        armServo.setPosition(power);
+    }
+
+    public void controlIntake(double power) {
+        intakeServo.setPosition(power);
     }
 }

@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDriveTest;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
 import org.firstinspires.ftc.teamcode.util.AutonomusUtil;
@@ -17,7 +17,7 @@ public class AutonomusCodeLeft extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.initHardwareMap();
-        SampleMecanumDrive drive = new SampleMecanumDrive(robot.hardwareMap);
+        SampleMecanumDriveTest drive = new SampleMecanumDriveTest(robot.hardwareMap);
 
         Pose2d startPose = new Pose2d(0, 0, Math.toRadians(90));
         Pose2d liftPose = new Pose2d(-30, 48, Math.toRadians(0));

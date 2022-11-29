@@ -23,13 +23,4 @@ public class Utils {
     ) {
         return (x - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin;
     }
-
-    // stores the states with the coordinates
-    public enum State {
-        FIRST,
-        SECOND,
-        THIRD,
-        ZERO,
-        REST;
-    }
 }

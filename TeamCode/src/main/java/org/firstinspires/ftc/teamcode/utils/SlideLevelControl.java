@@ -1,64 +1,139 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.State;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
+import org.firstinspires.ftc.teamcode.SlideControlPrototype;
 
 public class SlideLevelControl {
-    // default motor power
-    private static double power = 1;
-    private static double restPower = 0.05;
+    // stores the states with the coordinates
+    public enum State {
+        FIRST,
+        SECOND,
+        THIRD,
+        GROUND,
+        REST
+    }
 
-    private Utils.State currentState = Utils.State.REST;
-    private Integer zeroCoordinate = 0;
-    private Integer firstCoordinate = 2100;
-    private Integer secondCoordinate = 3100;
-    private Integer thirdCoordinate = 4100;
+    private class StateManager {
+        private State currentState = State.REST;
+        private Integer firstCoordinate = 2100;
+        private Integer secondCoordinate = 3100;
+        private Integer thirdCoordinate = 4100;
 
-    private final KronBot robot;
+        public Integer getStateCoordinate(State state) {
+            if (state == null)
+                throw new IllegalArgumentException("State is null :(");
+            switch (state) {
+                case GROUND:
+                    return 0;
+                case FIRST:
+                    return firstCoordinate;
+                case SECOND:
+                    return secondCoordinate;
+                case THIRD:
+                    return thirdCoordinate;
+                default:
+                    throw new IllegalArgumentException("State is invalid :(");
+            }
+        }
 
-    public SlideLevelControl(KronBot robot) {
+        public State getCurrentState() {
+            return currentState;
+        }
+
+        public void setCurrentState(State currentState) {
+            if (this.currentState != State.REST)
+                robot.slideDc.setPower(restPower);
+            this.currentState = currentState;
+            if (currentState == State.REST)
+                return;
+            robot.slideDc.setTargetPosition(getStateCoordinate(currentState));
+            robot.slideDc.setPower(power);
+            if (robot.slideDc.getCurrentPosition() > getStateCoordinate(currentState))
+                robot.slideDc.setPower(-power);
+            robot.slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+    }
+
+    private KronBot robot;
+    private Telemetry telemetry;
+    private StateManager stateManager;
+
+    private static final double power = 0.5;
+    private static final double restPower = 0.05;
+
+    public SlideLevelControl(KronBot robot, Telemetry telemetry) {
         this.robot = robot;
+        this.telemetry = telemetry;
+        this.stateManager = new StateManager();
     }
 
-    public Utils.State getCurrentState() {
-        return currentState;
-    }
+    private void showDebugTelemetry() {
+        telemetry.addData("Slide busy", robot.slideDc.isBusy());
+        telemetry.addData("Slide coordinate", robot.slideDc.getCurrentPosition());
+        if (stateManager.getCurrentState() != State.REST)
+            telemetry.addData(
+                    "Slide target coordinate",
+                    stateManager.getStateCoordinate(stateManager.getCurrentState())
+            );
 
-    public void setCurrentState(Utils.State currentState) {
-        if (this.currentState != Utils.State.REST)
-            robot.controlSlide(restPower);
-        this.currentState = currentState;
-        if (currentState == Utils.State.REST) {
-            return;
-        }
-
-        robot.controlSlideWithEncoder(power, getStateCoordinate(currentState));
-    }
-
-    public Integer getStateCoordinate(Utils.State state) {
-        if (state == null)
-            throw new IllegalArgumentException("State is null :(");
-        switch (state) {
+        String stateName;
+        switch (stateManager.getCurrentState()) {
+            case GROUND:
+                stateName = "GROUND";
+                break;
             case FIRST:
-                return firstCoordinate;
+                stateName = "FIRST";
+                break;
             case SECOND:
-                return secondCoordinate;
+                stateName = "SECOND";
+                break;
             case THIRD:
-                return thirdCoordinate;
-            case ZERO:
-                return zeroCoordinate;
+                stateName = "THIRD";
+                break;
+            case REST:
+                stateName = "REST";
+                break;
             default:
-                throw new IllegalArgumentException("State is invalid :(");
+                stateName = "INVALID";
+                break;
         }
+        telemetry.addData("Slide state", stateName);
     }
 
-    public void updateState(boolean first, boolean second, boolean third, boolean zero) {
+    public void loop(
+            boolean first,
+            boolean second,
+            boolean third,
+            boolean ground,
+            boolean debug
+    ) {
+        if (debug)
+            showDebugTelemetry();
+        loop(first, second, third, ground);
+    }
+
+    public void loop(
+            boolean first,
+            boolean second,
+            boolean third,
+            boolean ground
+    ) {
+        // updating the state
         if (first)
-            setCurrentState(Utils.State.THIRD);
+            stateManager.setCurrentState(State.FIRST);
         if (second)
-            setCurrentState(Utils.State.SECOND);
+            stateManager.setCurrentState(State.SECOND);
         if (third)
-            setCurrentState(Utils.State.FIRST);
-        if (zero)
-            setCurrentState(Utils.State.ZERO);
+            stateManager.setCurrentState(State.THIRD);
+        if (ground)
+            stateManager.setCurrentState(State.GROUND);
+
+        // checking if the current state is finished
+        if (!robot.slideDc.isBusy() && stateManager.getCurrentState() != State.REST)
+            stateManager.setCurrentState(State.REST);
     }
 }

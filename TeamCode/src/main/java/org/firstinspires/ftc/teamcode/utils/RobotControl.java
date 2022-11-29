@@ -32,9 +32,6 @@ public class RobotControl {
      * @returns true if the robot moves, false if not
      */
     public boolean drive(double xInput, double yInput) {
-        xInput = -xInput;
-        yInput = -yInput;
-
         if (
                 (-Utils.EPS < xInput && xInput < Utils.EPS) &&
                         (-Utils.EPS < yInput && yInput < Utils.EPS)

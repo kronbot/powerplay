@@ -1,0 +1,346 @@
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/OdometryCalibration.java
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/OdometryCalibration.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/OdometryCalibration.java
+new file mode 100644
+--- /dev/null	
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/OdometryCalibration.java	
+@@ -0,0 +1,175 @@
++package org.firstinspires.ftc.teamcode;
++
++import com.qualcomm.hardware.bosch.BNO055IMU;
++import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
++import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
++import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
++import com.qualcomm.robotcore.hardware.DcMotor;
++import com.qualcomm.robotcore.hardware.DcMotorSimple;
++import com.qualcomm.robotcore.util.ElapsedTime;
++import com.qualcomm.robotcore.util.ReadWriteFile;
++
++import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
++
++import java.io.File;
++
++/**
++ * Created by Sarthak on 6/1/2019.
++ * Odometry system calibration. Run this OpMode to generate the necessary constants to calculate the robot's global position on the field.
++ * The Global Positioning Algorithm will not function and will throw an error if this program is not run first
++ */
++@TeleOp(name = "Odometry System Calibration")
++public class OdometryCalibration extends LinearOpMode {
++    //Drive motors
++    KronBot robot = new KronBot();
++    //DcMotor Robot.FrightMotor, right_back, left_front, left_back;
++    //Odometry Wheels
++    //DcMotor verticalLeft, verticalRight, horizontal;
++
++    //IMU Sensor
++    BNO055IMU imu;
++
++    //Hardware Map Names for drive motors and odometry wheels. THIS WILL CHANGE ON EACH ROBOT, YOU NEED TO UPDATE THESE VALUES ACCORDINGLY
++    String rfName = "fr", rbName = "br", lfName = "fl", lbName = "bl";
++    String verticalLeftEncoderName = "verticalL", verticalRightEncoderName = "verticalR", horizontalEncoderName = "horizontal";
++
++    final double PIVOT_SPEED = 0.4;
++
++    //The amount of encoder ticks for each inch the robot moves. THIS WILL CHANGE FOR EACH ROBOT AND NEEDS TO BE UPDATED HERE
++    final double COUNTS_PER_INCH = 685;
++
++    ElapsedTime timer = new ElapsedTime();
++
++    double horizontalTickOffset = 0;
++    DcMotor orizontal;
++
++    //Text files to write the values to. The files are stored in the robot controller under Internal Storage\FIRST\settings
++    File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
++    File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
++
++    @Override
++    public void runOpMode() throws InterruptedException {
++        //Initialize hardware map values. PLEASE UPDATE THESE VALUES TO MATCH YOUR CONFIGURATION
++        initHardwareMap(verticalLeftEncoderName, verticalRightEncoderName, horizontalEncoderName);
++
++        //Initialize IMU hardware map value. PLEASE UPDATE THIS VALUE TO MATCH YOUR CONFIGURATION
++        imu = hardwareMap.get(BNO055IMU.class, "imu");
++
++        //Initialize IMU parameters
++        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
++        parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
++        parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
++        parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample opmode
++        parameters.loggingEnabled      = true;
++        parameters.loggingTag          = "IMU";
++        parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
++        imu.initialize(parameters);
++        telemetry.addData("Odometry System Calibration Status", "IMU Init Complete");
++        telemetry.clear();
++
++        //Odometry System Calibration Init Complete
++        telemetry.addData("Odometry System Calibration Status", "Init Complete");
++        telemetry.update();
++
++        waitForStart();
++
++
++        //Begin calibration (if robot is unable to pivot at these speeds, please adjust the constant at the top of the code
++        while(getZAngle() < 90 && opModeIsActive()){
++            if(getZAngle() < 60) {
++                robot.drive(1, -1, 1, -1, PIVOT_SPEED);
++            }else{
++                robot.drive(1, -1, 1,  -1, PIVOT_SPEED*3/4);
++            }
++
++            telemetry.addData("IMU Angle", getZAngle());
++            telemetry.update();
++        }
++
++        //Stop the robot
++        robot.drive(0,0, 0, 0, 0);
++        timer.reset();
++        while(timer.milliseconds() < 1000 && opModeIsActive()){
++            telemetry.addData("IMU Angle", getZAngle());
++            telemetry.update();
++        }
++
++        //Record IMU and encoder values to calculate the constants for the global position algorithm
++        double angle = getZAngle();
++
++        /*
++        Encoder Difference is calculated by the formula (leftEncoder - rightEncoder)
++        Since the left encoder is also mapped to a drive motor, the encoder value needs to be reversed with the negative sign in front
++        THIS MAY NEED TO BE CHANGED FOR EACH ROBOT
++       */
++        double encoderDifference = Math.abs(robot.frontLeftDc.getCurrentPosition()) + (Math.abs(robot.frontRightDc.getCurrentPosition()));
++
++        double verticalEncoderTickOffsetPerDegree = encoderDifference/angle;
++
++        double wheelBaseSeparation = (2*90*verticalEncoderTickOffsetPerDegree)/(Math.PI*COUNTS_PER_INCH);
++
++        horizontalTickOffset = orizontal.getCurrentPosition()/Math.toRadians(getZAngle()); // cate tickuri face pe fiecare grad
++
++        //Write the constants to text files
++        ReadWriteFile.writeFile(wheelBaseSeparationFile, String.valueOf(wheelBaseSeparation));
++        ReadWriteFile.writeFile(horizontalTickOffsetFile, String.valueOf(horizontalTickOffset));
++
++        while(opModeIsActive()){
++            telemetry.addData("Odometry System Calibration Status", "Calibration Complete");
++            //Display calculated constants
++            telemetry.addData("Wheel Base Separation", wheelBaseSeparation);
++            telemetry.addData("Horizontal Encoder Offset", horizontalTickOffset);
++
++            //Display raw values
++            telemetry.addData("IMU Angle", getZAngle());
++            telemetry.addData("Vertical Left Position", robot.frontLeftDc.getCurrentPosition());
++            telemetry.addData("Vertical Right Position", -robot.frontRightDc.getCurrentPosition());
++            telemetry.addData("Horizontal Position", orizontal.getCurrentPosition());
++            telemetry.addData("Vertical Encoder Offset", verticalEncoderTickOffsetPerDegree);
++
++            //Update values
++            telemetry.update();
++        }
++    }
++
++    private void initHardwareMap(String vlEncoderName, String vrEncoderName, String hEncoderName){
++
++        robot.frontLeftDc = hardwareMap.dcMotor.get("frontLeft");
++        robot.frontRightDc = hardwareMap.dcMotor.get("frontRight");
++        robot.backLeftDc = hardwareMap.dcMotor.get("backLeft");
++        robot.backRightDc = hardwareMap.dcMotor.get("backRight");
++        robot.frontLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
++        robot.backLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
++
++        orizontal = hardwareMap.dcMotor.get("orizontal");
++        orizontal.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
++        orizontal.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
++
++        robot.frontLeftDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
++        robot.frontRightDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
++        robot.backLeftDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
++        robot.backRightDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
++
++        robot.frontLeftDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
++        robot.frontRightDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
++        robot.backLeftDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
++        robot.backRightDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
++
++        robot.frontLeftDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
++        robot.frontRightDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
++        robot.backLeftDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
++        robot.backRightDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
++
++        telemetry.addData("Status", "Hardware Map Init Complete");
++        telemetry.update();
++
++    }
++
++    /**
++     * Gets the orientation of the robot using the REV IMU
++     * @return the angle of the robot
++     */
++    private double getZAngle(){
++        return (-imu.getAngularOrientation().firstAngle);
++    }
++}
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/OdometryGlobalCoordinatePositionAdaptat.java
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/OdometryGlobalCoordinatePositionAdaptat.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/OdometryGlobalCoordinatePositionAdaptat.java
+new file mode 100644
+--- /dev/null	
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/utils/OdometryGlobalCoordinatePositionAdaptat.java	
+@@ -0,0 +1,157 @@
++package org.firstinspires.ftc.teamcode.utils;
++
++import com.qualcomm.robotcore.hardware.DcMotor;
++import com.qualcomm.robotcore.util.ReadWriteFile;
++
++import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
++
++import java.io.File;
++
++
++public class OdometryGlobalCoordinatePositionAdaptat implements Runnable {
++    //Odometry wheels
++    private DcMotor verticalEncoderLeft, verticalEncoderRight, horizontalEncoder;
++
++    //Thead run condition
++    private boolean isRunning = true;
++
++    //Position variables used for storage and calculations
++    double verticalRightEncoderWheelPosition = 0, verticalLeftEncoderWheelPosition = 0, normalEncoderWheelPosition = 0, changeInRobotOrientation = 0;
++    private double robotGlobalXCoordinatePosition = 0, robotGlobalYCoordinatePosition = 0, robotOrientationRadians = 0;
++    private double previousVerticalRightEncoderWheelPosition = 0, previousVerticalLeftEncoderWheelPosition = 0, prevNormalEncoderWheelPosition = 0;
++
++    //Algorithm constants
++    private double robotEncoderWheelDistance;
++    private double horizontalEncoderTickPerDegreeOffset;
++
++    //Sleep time interval (milliseconds) for the position update thread
++    private int sleepTime;
++
++    //Files to access the algorithm constants
++    private File wheelBaseSeparationFile = AppUtil.getInstance().getSettingsFile("wheelBaseSeparation.txt");
++    private File horizontalTickOffsetFile = AppUtil.getInstance().getSettingsFile("horizontalTickOffset.txt");
++
++    private int verticalLeftEncoderPositionMultiplier = 1;
++    private int verticalRightEncoderPositionMultiplier = 1;
++    private int normalEncoderPositionMultiplier = 1;
++
++    /**
++     * Constructor for GlobalCoordinatePosition Thread
++     *
++     * @param verticalEncoderLeft  left odometry encoder, facing the vertical direction
++     * @param verticalEncoderRight right odometry encoder, facing the vertical direction
++     * @param horizontalEncoder    horizontal odometry encoder, perpendicular to the other two odometry encoder wheels
++     * @param threadSleepDelay     delay in milliseconds for the GlobalPositionUpdate thread (50-75 milliseconds is suggested)
++     */
++    public OdometryGlobalCoordinatePositionAdaptat(DcMotor verticalEncoderLeft, DcMotor verticalEncoderRight, DcMotor horizontalEncoder, double COUNTS_PER_INCH, int threadSleepDelay) {
++        this.verticalEncoderLeft = verticalEncoderLeft;
++        this.verticalEncoderRight = verticalEncoderRight;
++        this.horizontalEncoder = horizontalEncoder;
++        sleepTime = threadSleepDelay;
++
++        robotEncoderWheelDistance = Double.parseDouble(ReadWriteFile.readFile(wheelBaseSeparationFile).trim()) * COUNTS_PER_INCH;
++        this.horizontalEncoderTickPerDegreeOffset = Double.parseDouble(ReadWriteFile.readFile(horizontalTickOffsetFile).trim());
++    }
++
++    /**
++     * Updates the global (x, y, theta) coordinate position of the robot using the odometry encoders
++     */
++    private void globalCoordinatePositionUpdate() {
++        //Get Current Positions
++        verticalLeftEncoderWheelPosition = (verticalEncoderLeft.getCurrentPosition() * verticalLeftEncoderPositionMultiplier);
++        verticalRightEncoderWheelPosition = (verticalEncoderRight.getCurrentPosition() * verticalRightEncoderPositionMultiplier);
++
++        double leftChange = verticalLeftEncoderWheelPosition - previousVerticalLeftEncoderWheelPosition;
++        double rightChange = verticalRightEncoderWheelPosition - previousVerticalRightEncoderWheelPosition;
++
++        //Calculate Angle
++        changeInRobotOrientation = (leftChange - rightChange) / (robotEncoderWheelDistance);
++        robotOrientationRadians = ((robotOrientationRadians + changeInRobotOrientation));
++
++        //Get the components of the motion
++        normalEncoderWheelPosition = (horizontalEncoder.getCurrentPosition() * normalEncoderPositionMultiplier);
++
++        robotGlobalYCoordinatePosition = robotGlobalYCoordinatePosition + ((rightChange + leftChange) / 2);
++
++        previousVerticalLeftEncoderWheelPosition = verticalLeftEncoderWheelPosition;
++        previousVerticalRightEncoderWheelPosition = verticalRightEncoderWheelPosition;
++        prevNormalEncoderWheelPosition = normalEncoderWheelPosition;
++    }
++
++    /**
++     * Returns the robot's global x coordinate
++     *
++     * @return global x coordinate
++     */
++    public double returnXCoordinate() {
++        return robotGlobalXCoordinatePosition;
++    }
++
++    /**
++     * Returns the robot's global y coordinate
++     *
++     * @return global y coordinate
++     */
++    public double returnYCoordinate() {
++        return robotGlobalYCoordinatePosition;
++    }
++
++    /**
++     * Returns the robot's global orientation
++     *
++     * @return global orientation, in degrees
++     */
++    public double returnOrientation() {
++        return Math.toDegrees(robotOrientationRadians) % 360;
++    }
++
++    /**
++     * Stops the position update thread
++     */
++    public void stop() {
++        isRunning = false;
++    }
++
++    public void reverseLeftEncoder() {
++        if (verticalLeftEncoderPositionMultiplier == 1) {
++            verticalLeftEncoderPositionMultiplier = -1;
++        } else {
++            verticalLeftEncoderPositionMultiplier = 1;
++        }
++    }
++
++    public void reverseRightEncoder() {
++        if (verticalRightEncoderPositionMultiplier == 1) {
++            verticalRightEncoderPositionMultiplier = -1;
++        } else {
++            verticalRightEncoderPositionMultiplier = 1;
++        }
++    }
++
++    public void reverseNormalEncoder() {
++        if (normalEncoderPositionMultiplier == 1) {
++            normalEncoderPositionMultiplier = -1;
++        } else {
++            normalEncoderPositionMultiplier = 1;
++        }
++    }
++
++    public void resetEncoders() {
++        robotGlobalYCoordinatePosition = 0;
++    }
++
++    /**
++     * Runs the thread
++     */
++    @Override
++    public void run() {
++        while (isRunning) {
++            globalCoordinatePositionUpdate();
++            try {
++                Thread.sleep(sleepTime);
++            } catch (InterruptedException e) {
++                e.printStackTrace();
++            }
++        }
++    }
++}

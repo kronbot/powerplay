@@ -53,6 +53,13 @@ public class KronBot {
         backRightDc.setPower(backRight * power);
     }
 
+    void driveWithSpeeds(double powerbl, double powerbr, double powerfl, double powerfr){
+        backLeftDc.setPower(powerbl);
+        backRightDc.setPower(powerbr);
+        frontLeftDc.setPower(powerfl);
+        frontRightDc.setPower(powerfr);
+    }
+
     /**
      * Stops the motors from wheels
      */

@@ -133,10 +133,10 @@ public class OdometryCalibration extends LinearOpMode {
 
     private void initHardwareMap(String vlEncoderName, String vrEncoderName, String hEncoderName){
 
-        robot.frontLeftDc = hardwareMap.dcMotor.get("fl");
-        robot.frontRightDc = hardwareMap.dcMotor.get("fr");
-        robot.backLeftDc = hardwareMap.dcMotor.get("bl");
-        robot.backRightDc = hardwareMap.dcMotor.get("br");
+        robot.frontLeftDc = hardwareMap.dcMotor.get("frontLeft");
+        robot.frontRightDc = hardwareMap.dcMotor.get("frontRight");
+        robot.backLeftDc = hardwareMap.dcMotor.get("backLeft");
+        robot.backRightDc = hardwareMap.dcMotor.get("backRight");
         robot.frontLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
         robot.backLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
 

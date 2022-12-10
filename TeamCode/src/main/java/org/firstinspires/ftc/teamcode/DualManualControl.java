@@ -7,14 +7,14 @@ import org.firstinspires.ftc.teamcode.utils.RobotControl;
 import org.firstinspires.ftc.teamcode.utils.SlideControl;
 import org.firstinspires.ftc.teamcode.utils.SlideLevelControl;
 
-@TeleOp(name = "Single Manual Control")
-public class ManualControl extends OpMode {
+@TeleOp(name = "Dual Manual Control")
+public class DualManualControl extends OpMode {
     private final KronBot robot;
     private final RobotControl robotControl;
     private final SlideControl slideControl;
     private final SlideLevelControl slideLevelControl;
 
-    public ManualControl() {
+    public DualManualControl() {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
         slideControl = new SlideControl(robot, telemetry);
@@ -36,26 +36,28 @@ public class ManualControl extends OpMode {
             move = robotControl.rotate(rotateDirection);
         }
 
-        if (!move)
+        if (!move) {
             move |= robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            move |= robotControl.translate(gamepad1.left_trigger, gamepad1.right_trigger);
+        }
 
         telemetry.addData("Move state", move);
         if (!move)
             robotControl.stop();
 
         slideLevelControl.loop(
-                gamepad1.x,
-                gamepad1.y,
-                gamepad1.b,
-                gamepad1.a,
-                false
+                gamepad2.x,
+                gamepad2.y,
+                gamepad2.b,
+                gamepad2.a,
+                true
         );
 
-        // slideControl.slide(
-        //     gamepad1.right_trigger > 0 ? true : false,
-        //     gamepad1.left_trigger > 0 ? true : false
-        // );
-        slideControl.arm(gamepad1.dpad_down, gamepad1.dpad_up);
-        slideControl.intake(gamepad1.dpad_right, gamepad1.dpad_left);
+        slideControl.slide(
+                gamepad2.right_trigger > 0 ? true : false,
+                gamepad2.left_trigger > 0 ? true : false
+        );
+        slideControl.arm(gamepad2.dpad_down, gamepad2.dpad_up);
+        slideControl.intake(gamepad2.dpad_right, gamepad2.dpad_left);
     }
 }

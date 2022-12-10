@@ -14,26 +14,26 @@ public class SlideControl {
     }
 
     public void slide(boolean up, boolean down) {
-        if (up)
-            robot.controlSlide(1);
-        else if (down)
-            robot.controlSlide(-1);
+        if (up) {
+            telemetry.addData("up", "yes");
+            robot.controlSlide(0.5);
+        } else if (down)
+            robot.controlSlide(-0.5);
         else
-            // robot.controlSlide(-0.05);
-            robot.controlSlide(0);
+            robot.controlSlide(0.05);
     }
 
     public void arm(boolean up, boolean down) {
         if (up)
-            robot.controlArm(0.5);
+            robot.controlArm(0.1);
         else if (down)
-            robot.controlArm(1);
+            robot.controlArm(0.95);
     }
 
     public void intake(boolean open, boolean close) {
         if (open)
             robot.controlIntake(0);
         else if (close)
-            robot.controlIntake(0.4);
+            robot.controlIntake(0.6);
     }
 }

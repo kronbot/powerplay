@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.utils.Utils;
 
 import java.util.Objects;
 
-@TeleOp(name = "ManualControlHasisi")
+//@TeleOp(name = "ManualControlHasisi")
 public class ManualControlVechi extends OpMode {
     KronBot robot = new KronBot();
     double EPS = 0.1;

@@ -5,7 +5,6 @@ import org.firstinspires.ftc.robotcore.external.State;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
-import org.firstinspires.ftc.teamcode.SlideControlPrototype;
 
 public class SlideLevelControl {
     // stores the states with the coordinates

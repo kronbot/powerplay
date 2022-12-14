@@ -25,15 +25,15 @@ public class SlideControl {
 
     public void arm(boolean up, boolean down) {
         if (up)
-            robot.controlArm(0.1);
+            robot.controlArm(0);
         else if (down)
-            robot.controlArm(0.95);
+            robot.controlArm(1);
     }
 
-    public void intake(boolean open, boolean close) {
+    public void intake(boolean open, boolean close){
         if (open)
             robot.controlIntake(0);
         else if (close)
-            robot.controlIntake(0.6);
+            robot.controlIntake(0.7);
     }
 }

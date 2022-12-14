@@ -11,7 +11,7 @@ public class RobotControl {
 
     // the acceleration power of the robot
     // used for a smooth rotation
-    private final double accelerationPower = 0.05;
+    private final double accelerationPower = 0.12;
 
     // either when rotating or driving, we save the last power
     // if the robot starts rotating, the drive power becomes 0

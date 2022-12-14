@@ -1,7 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import static java.lang.StrictMath.max;
+
+import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.utils.AprilTagDetectionPipeline;
@@ -12,8 +18,8 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@TeleOp(name = "Testare camera")
-public class TestareCamera extends LinearOpMode
+@Autonomous(name = "Autonomie camera")
+public class AutonomieCamera extends LinearOpMode
 {
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -36,9 +42,16 @@ public class TestareCamera extends LinearOpMode
 
     AprilTagDetection tagOfInterest = null;
 
+    KronBot Robot = new KronBot();
+    ElapsedTime timer = new ElapsedTime();
+    double acc = 0.55;
+    double speed = 0.60;
+
     @Override
     public void runOpMode()
     {
+        initHardwareMap();
+        Robot.intakeServo.setPosition(0);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -122,10 +135,27 @@ public class TestareCamera extends LinearOpMode
             telemetry.update();
         }
 
+        if(tagOfInterest.id == 1){
+            DriveAcc(-1, 1,1,-1,speed,1.95,acc,0.02);
 
+            while (timer.seconds() < 3 && opModeIsActive()) ;
+            if (!opModeIsActive())
+                return;
 
-        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
-        while (opModeIsActive()) {sleep(20);}
+            DriveAcc(1, 1, 1, 1, speed, 1.4, acc, 0.02);
+        }
+        else if(tagOfInterest.id == 2){
+            DriveAcc(1, 1, 1, 1, speed, 1.4, acc, 0.02);
+        }else{
+            DriveAcc(1, -1,-1,1,speed,1.8,acc,0.02);
+
+            timer.reset();
+            while (timer.seconds() < 3 && opModeIsActive()) ;
+            if (!opModeIsActive())
+                return;
+
+            DriveAcc(1, 1, 1, 1, speed, 1.4, acc, 0.02);
+        }
     }
 
     void tagToTelemetry(AprilTagDetection detection)
@@ -137,5 +167,32 @@ public class TestareCamera extends LinearOpMode
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));
+    }
+
+    void DriveAcc(double bl, double br, double fl, double fb, double power, double runTime, double acc, double add) {
+        timer.reset();
+
+        while (timer.seconds() < runTime - runTime / 4) {
+            acc = max(acc - add, 0);
+            Robot.drive(bl, br, fl, fb, power - acc);
+            if (!opModeIsActive())
+                return;
+        }
+        while (timer.seconds() < runTime) {
+            acc = Math.min(power - 0.2, acc + add);
+            Robot.drive(bl, br, fl, fb, power - acc);
+            if (!opModeIsActive())
+                return;
+        }
+
+        Robot.drive(bl, br, fl, fb, 0);
+    }
+
+    void initHardwareMap() {
+        Robot.initHardwareMap(hardwareMap);
+        Robot.resetSlideEncoder();
+
+        telemetry.addData("Status", "Hardware Map Init Complete");
+        telemetry.update();
     }
 }

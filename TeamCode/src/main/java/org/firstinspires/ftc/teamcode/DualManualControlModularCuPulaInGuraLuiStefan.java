@@ -7,25 +7,25 @@ import org.firstinspires.ftc.teamcode.utils.RobotControl;
 import org.firstinspires.ftc.teamcode.utils.SlideControl;
 import org.firstinspires.ftc.teamcode.utils.SlideLevelControl;
 
-@TeleOp(name = "Dual Manual Control")
-public class DualManualControl extends OpMode {
+//@TeleOp(name = "Dual Manual Control Modular Cu Pula In Gura Lui Stefan")
+public class DualManualControlModularCuPulaInGuraLuiStefan extends OpMode {
     private final KronBot robot;
     private final RobotControl robotControl;
     private final SlideControl slideControl;
-    private final SlideLevelControl slideLevelControl;
+    //private final SlideLevelControl slideLevelControl;
 
-    public DualManualControl() {
+    public DualManualControlModularCuPulaInGuraLuiStefan() {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
         slideControl = new SlideControl(robot, telemetry);
-        slideLevelControl = new SlideLevelControl(robot, telemetry);
+        //slideLevelControl = new SlideLevelControl(robot, telemetry);
     }
 
     @Override
     public void init() {
         robot.initHardwareMap(hardwareMap);
         robot.resetSlideEncoder();
-        robot.intakeServo.setPosition(0);
+        robot.intakeServo.setPosition(0.7);
         robot.armServo.setPosition(1);
     }
 
@@ -47,13 +47,19 @@ public class DualManualControl extends OpMode {
         if (!move)
             robotControl.stop();
 
-        slideLevelControl.loop(
+        /*slideLevelControl.loop(
                 gamepad2.x,
                 gamepad2.y,
                 gamepad2.b,
                 gamepad2.a,
                 true
-        );
+        */
+        if(gamepad2.right_trigger > 0.1)
+            robot.slideDc.setPower(gamepad2.right_trigger);
+        else if(gamepad2.left_trigger > 0.1)
+            robot.slideDc.setPower(-gamepad2.left_trigger);
+        else
+            robot.slideDc.setPower(0.1);
 
         /*if(gamepad2.right_trigger > 0.1 || gamepad2.left_trigger > 0.1)
         slideControl.slide(

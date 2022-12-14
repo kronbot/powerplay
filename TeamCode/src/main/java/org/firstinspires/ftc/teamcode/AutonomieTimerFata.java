@@ -11,14 +11,16 @@ public class AutonomieTimerFata extends LinearOpMode {
     KronBot Robot = new KronBot();
     ElapsedTime timer = new ElapsedTime();
     double acc = 0.55;
-    double speed = 0.80;
+    double speed = 0.60;
 
     @Override
     public void runOpMode() throws InterruptedException {
         initHardwareMap();
+        Robot.intakeServo.setPosition(0);
+        Robot.armServo.setPosition(1);
         waitForStart();
 
-        DriveAcc(1, 1, 1, 1, speed, 1.2, acc, 0.02);
+        DriveAcc(1, 1, 1, 1, speed, 1.32, acc, 0.02);
     }
 
     void DriveAcc(double bl, double br, double fl, double fb, double power, double runTime, double acc, double add) {

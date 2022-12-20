@@ -5,20 +5,17 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utils.RobotControl;
 import org.firstinspires.ftc.teamcode.utils.SlideControl;
-import org.firstinspires.ftc.teamcode.utils.SlideLevelControl;
 
 @TeleOp(name = "Manual Control")
 public class ManualControl extends OpMode {
     private final KronBot robot;
     private final RobotControl robotControl;
     private final SlideControl slideControl;
-    private final SlideLevelControl slideLevelControl;
 
     public ManualControl() {
         robot = new KronBot();
-        robotControl = new RobotControl(robot, telemetry);
+        robotControl = new RobotControl(robot, telemetry, hardwareMap);
         slideControl = new SlideControl(robot, telemetry);
-        slideLevelControl = new SlideLevelControl(robot, telemetry, slideControl);
     }
 
     @Override
@@ -36,6 +33,8 @@ public class ManualControl extends OpMode {
             robotControl.stop();
         robotControl.debug();
 
+        slideControl.slide(gamepad1.left_trigger > 0, gamepad1.right_trigger > 0);
+        slideControl.intake(gamepad1.dpad_right, gamepad1.dpad_left);
         // checking if the current state is finished
 //        slideLevelControl.loop(
 //                gamepad1.dpad_right,

@@ -1,8 +1,12 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 import org.firstinspires.ftc.teamcode.KronBot;
+
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.Util;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 // manages the movement of the robot
 public class RobotControl {
@@ -19,9 +23,12 @@ public class RobotControl {
     public double currentRotatePower = 0;
     public double currentDrivePower = 0;
 
-    public RobotControl(KronBot robot, Telemetry telemetry) {
+    private SampleMecanumDrive drive;
+
+    public RobotControl(KronBot robot, Telemetry telemetry, HardwareMap hardwareMap) {
         this.robot = robot;
         this.telemetry = telemetry;
+        this.drive = new SampleMecanumDrive(hardwareMap);
     }
 
     /**
@@ -35,8 +42,10 @@ public class RobotControl {
         if (
                 (-Utils.EPS < xInput && xInput < Utils.EPS) &&
                 (-Utils.EPS < yInput && yInput < Utils.EPS)
-        )
-            return false;
+        ) {
+            drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
+            drive.update();
+        }
 
         currentRotatePower = 0;
         double angle = Math.atan2(yInput, xInput);

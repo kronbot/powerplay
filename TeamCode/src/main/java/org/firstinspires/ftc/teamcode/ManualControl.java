@@ -27,31 +27,22 @@ public class ManualControl extends OpMode {
         robot.resetSlideEncoder();
     }
 
-
     @Override
     public void loop() {
-        boolean move = robotControl.rotate(gamepad1.right_stick_x);
-        if (!move) {
-            int rotateDirection = (gamepad1.right_bumper ? 1 : 0) - (gamepad1.left_bumper ? 1 : 0);
-            move = robotControl.rotate(rotateDirection);
-        }
-
-        if (!move) {
-            move |= robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
-            move |= robotControl.translate(gamepad1.left_trigger, gamepad1.right_trigger);
-        }
-
-        telemetry.addData("Move state", move);
+        boolean move = robotControl.rotate((gamepad1.right_bumper ? 1 : 0) - (gamepad1.left_bumper ? 1 : 0));
+        if (!move)
+            move = robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
         if (!move)
             robotControl.stop();
+        robotControl.debug();
 
         // checking if the current state is finished
-        slideLevelControl.loop(
-                gamepad1.dpad_right,
-                gamepad1.dpad_left,
-                gamepad1.dpad_up,
-                gamepad1.dpad_down,
-                true
-        );
+//        slideLevelControl.loop(
+//                gamepad1.dpad_right,
+//                gamepad1.dpad_left,
+//                gamepad1.dpad_up,
+//                gamepad1.dpad_down,
+//                true
+//        );
     }
 }

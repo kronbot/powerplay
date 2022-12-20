@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.utils;
 public class Utils {
     // very low constant
     // used for floating point comparations
-    public static double EPS = 0.1;
+    public static final double EPS = 0.1;
 
     /**
      * Mapping function used to return the value inside an interval applied

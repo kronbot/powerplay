@@ -34,7 +34,7 @@ public class RobotControl {
     public boolean drive(double xInput, double yInput) {
         if (
                 (-Utils.EPS < xInput && xInput < Utils.EPS) &&
-                        (-Utils.EPS < yInput && yInput < Utils.EPS)
+                (-Utils.EPS < yInput && yInput < Utils.EPS)
         )
             return false;
 
@@ -122,6 +122,7 @@ public class RobotControl {
      * @param right the right direction value
      * @returns true if the robot translates, false if not
      */
+    @Deprecated
     public boolean translate(double left, double right) {
         double direction = left - right;
         if (-Utils.EPS < direction && direction < Utils.EPS)
@@ -144,5 +145,10 @@ public class RobotControl {
         currentDrivePower = 0;
         currentRotatePower = 0;
         robot.stopMotors();
+    }
+
+    public void debug() {
+        telemetry.addData("Current drive power", currentDrivePower);
+        telemetry.addData("Current rotate power", currentRotatePower);
     }
 }

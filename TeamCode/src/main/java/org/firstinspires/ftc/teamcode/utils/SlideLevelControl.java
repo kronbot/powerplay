@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import org.firstinspires.ftc.robotcore.external.State;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
+import org.firstinspires.ftc.teamcode.utils.SlideControl;
+
 
 public class SlideLevelControl {
     // stores the states with the coordinates
-    public enum State {
+    private enum State {
         FIRST,
         SECOND,
         THIRD,
@@ -17,9 +20,9 @@ public class SlideLevelControl {
 
     private class StateManager {
         private State currentState = State.REST;
-        private Integer firstCoordinate = 2100;
-        private Integer secondCoordinate = 3100;
-        private Integer thirdCoordinate = 4100;
+        private Integer firstCoordinate = 1400;
+        private Integer secondCoordinate = 2100;
+        private Integer thirdCoordinate = 2900;
 
         public Integer getStateCoordinate(State state) {
             if (state == null)
@@ -60,10 +63,10 @@ public class SlideLevelControl {
     private Telemetry telemetry;
     private StateManager stateManager;
 
-    private static final double power = 0.5;
-    private static final double restPower = 0.05;
+    private static final double power = 1;
+    private static final double restPower = Utils.SLIDE_REST;
 
-    public SlideLevelControl(KronBot robot, Telemetry telemetry) {
+    public SlideLevelControl(KronBot robot, Telemetry telemetry, SlideControl slideControl) {
         this.robot = robot;
         this.telemetry = telemetry;
         this.stateManager = new StateManager();
@@ -102,7 +105,7 @@ public class SlideLevelControl {
         telemetry.addData("Slide state", stateName);
     }
 
-    public void loop(
+    public void control(
             boolean first,
             boolean second,
             boolean third,
@@ -120,6 +123,7 @@ public class SlideLevelControl {
             boolean third,
             boolean ground
     ) {
+        telemetry.addData("update", true);
         // updating the state
         if (first)
             stateManager.setCurrentState(State.FIRST);

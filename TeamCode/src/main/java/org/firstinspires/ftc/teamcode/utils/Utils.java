@@ -4,6 +4,7 @@ public class Utils {
     // very low constant
     // used for floating point comparations
     public static final double EPS = 0.1;
+    public static final double SLIDE_REST = 0.1;
 
     /**
      * Mapping function used to return the value inside an interval applied

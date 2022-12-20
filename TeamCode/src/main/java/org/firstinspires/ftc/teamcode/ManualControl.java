@@ -18,7 +18,7 @@ public class ManualControl extends OpMode {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
         slideControl = new SlideControl(robot, telemetry);
-        slideLevelControl = new SlideLevelControl(robot, telemetry);
+        slideLevelControl = new SlideLevelControl(robot, telemetry, slideControl);
     }
 
     @Override

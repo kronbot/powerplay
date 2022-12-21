@@ -23,12 +23,9 @@ public class RobotControl {
     public double currentRotatePower = 0;
     public double currentDrivePower = 0;
 
-    private SampleMecanumDrive drive;
-
-    public RobotControl(KronBot robot, Telemetry telemetry, HardwareMap hardwareMap) {
+    public RobotControl(KronBot robot, Telemetry telemetry) {
         this.robot = robot;
         this.telemetry = telemetry;
-        this.drive = new SampleMecanumDrive(hardwareMap);
     }
 
     /**
@@ -42,10 +39,8 @@ public class RobotControl {
         if (
                 (-Utils.EPS < xInput && xInput < Utils.EPS) &&
                 (-Utils.EPS < yInput && yInput < Utils.EPS)
-        ) {
-            drive.setWeightedDrivePower(new Pose2d(0, 0, 0));
-            drive.update();
-        }
+        )
+            return false;
 
         currentRotatePower = 0;
         double angle = Math.atan2(yInput, xInput);

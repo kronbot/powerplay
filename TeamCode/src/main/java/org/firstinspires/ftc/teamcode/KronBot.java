@@ -14,7 +14,6 @@ public class KronBot {
     public DcMotor slideDc;
 
     public Servo intakeServo;
-    public Servo armServo;
 
     /**
      * Initialization of hardware map
@@ -32,7 +31,6 @@ public class KronBot {
         slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intakeServo = hardwareMap.servo.get("intake");
-        armServo = hardwareMap.servo.get("arm");
 
         slideDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
@@ -64,6 +62,7 @@ public class KronBot {
     }
 
     public void controlSlide(double power) {
+        slideDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         slideDc.setPower(power);
     }
 
@@ -71,11 +70,9 @@ public class KronBot {
         slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void controlArm(double power) {
-        armServo.setPosition(power);
-    }
-
     public void controlIntake(double power) {
         intakeServo.setPosition(power);
     }
+
+    public double intakePosition() {return intakeServo.getPosition();}
 }

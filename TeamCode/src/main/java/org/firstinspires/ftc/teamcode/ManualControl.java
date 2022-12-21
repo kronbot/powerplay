@@ -14,7 +14,7 @@ public class ManualControl extends OpMode {
 
     public ManualControl() {
         robot = new KronBot();
-        robotControl = new RobotControl(robot, telemetry, hardwareMap);
+        robotControl = new RobotControl(robot, telemetry);
         slideControl = new SlideControl(robot, telemetry);
     }
 
@@ -22,26 +22,20 @@ public class ManualControl extends OpMode {
     public void init() {
         robot.initHardwareMap(hardwareMap);
         robot.resetSlideEncoder();
+
+        robot.controlIntake(1);
     }
 
     @Override
     public void loop() {
-        boolean move = robotControl.rotate((gamepad1.right_bumper ? 1 : 0) - (gamepad1.left_bumper ? 1 : 0));
+        boolean move = robotControl.rotate(gamepad1.right_stick_x);
         if (!move)
             move = robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
         if (!move)
             robotControl.stop();
         robotControl.debug();
 
-        slideControl.slide(gamepad1.left_trigger > 0, gamepad1.right_trigger > 0);
-        slideControl.intake(gamepad1.dpad_right, gamepad1.dpad_left);
-        // checking if the current state is finished
-//        slideLevelControl.loop(
-//                gamepad1.dpad_right,
-//                gamepad1.dpad_left,
-//                gamepad1.dpad_up,
-//                gamepad1.dpad_down,
-//                true
-//        );
+        slideControl.intake(gamepad1.dpad_up);
+        slideControl.control(gamepad1, true);
     }
 }

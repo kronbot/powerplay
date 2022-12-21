@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.utils;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
@@ -63,6 +64,8 @@ public class SlideControl {
     private static final double power = 1;
     private static final double restPower = Utils.SLIDE_REST;
 
+    private boolean intakePressed = true;
+
     public SlideControl(KronBot robot, Telemetry telemetry) {
         this.robot = robot;
         this.telemetry = telemetry;
@@ -102,34 +105,38 @@ public class SlideControl {
         telemetry.addData("Slide state", stateName);
     }
 
-    public void control(
-            boolean first,
-            boolean second,
-            boolean third,
-            boolean ground,
-            boolean debug
-    ) {
+    public void control(Gamepad gamepad, boolean debug) {
         if (debug)
             showDebugTelemetry();
-        loop(first, second, third, ground);
+        loop(gamepad);
     }
 
-    public void loop(
-            boolean first,
-            boolean second,
-            boolean third,
-            boolean ground
-    ) {
+    public void loop(Gamepad gamepad) {
         // updating the state
-        if (first)
+        if (gamepad.b)
             stateManager.setCurrentState(State.FIRST);
-        if (second)
+        if (gamepad.x)
             stateManager.setCurrentState(State.SECOND);
-        if (third)
+        if (gamepad.y)
             stateManager.setCurrentState(State.THIRD);
-        if (ground) {
-            intake(false, true);
+        if (gamepad.a) {
+            if (robot.intakePosition() == 0)
+                robot.controlIntake(1);
             stateManager.setCurrentState(State.GROUND);
+        }
+
+        if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS) {
+            robot.slideDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.controlSlide(gamepad.right_trigger);
+            return;
+        } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS) {
+            robot.slideDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.controlSlide(-gamepad.left_trigger);
+            return;
+        } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
+            robot.slideDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            stateManager.setCurrentState(State.REST);
+            robot.slideDc.setPower(restPower);
         }
 
         // checking if the current state is finished
@@ -142,14 +149,16 @@ public class SlideControl {
             robot.controlSlide(0.5);
         else if (down)
             robot.controlSlide(-0.5);
-        else
-            robot.controlSlide(0.05);
     }
 
-    public void intake(boolean open, boolean close) {
-        if (open)
-            robot.controlIntake(0);
-        else if (close)
-            robot.controlIntake(1);
+    public void intake(boolean action) {
+        if (action && intakePressed) {
+            if (Double.compare(robot.intakePosition(), 1.0) == 0)
+                robot.controlIntake(0);
+            else if (Double.compare(robot.intakePosition(), 0.0) == 0)
+                robot.controlIntake(1);
+            intakePressed = false;
+        } else
+            intakePressed = true;
     }
 }

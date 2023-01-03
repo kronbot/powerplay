@@ -33,9 +33,9 @@ public class ManualControl extends OpMode {
             move = robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
         if (!move)
             robotControl.stop();
-        robotControl.debug();
+//        robotControl.debug();
 
         slideControl.intake(gamepad1.dpad_up);
-        slideControl.control(gamepad1, true);
+        slideControl.control(gamepad1, false);
     }
 }

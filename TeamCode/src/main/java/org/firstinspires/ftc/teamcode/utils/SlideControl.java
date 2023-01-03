@@ -19,7 +19,7 @@ public class SlideControl {
     private class StateManager {
         private State currentState = State.REST;
         private Integer firstCoordinate = 1400;
-        private Integer secondCoordinate = 2100;
+        private Integer secondCoordinate = 2150;
         private Integer thirdCoordinate = 2900;
 
         public Integer getStateCoordinate(State state) {
@@ -63,6 +63,7 @@ public class SlideControl {
 
     private static final double power = 1;
     private static final double restPower = Utils.SLIDE_REST;
+    private static final double restPowerSliding = Utils.SLIDE_REST_SLIDING;
 
     private boolean intakePressed = true;
 
@@ -113,8 +114,12 @@ public class SlideControl {
 
     public void loop(Gamepad gamepad) {
         // updating the state
-        if (gamepad.b)
+        if (gamepad.b) {
+//            if (robot.intakePosition() == 1)
+//                robot.controlIntake(0);
             stateManager.setCurrentState(State.FIRST);
+
+        }
         if (gamepad.x)
             stateManager.setCurrentState(State.SECOND);
         if (gamepad.y)
@@ -136,19 +141,12 @@ public class SlideControl {
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
             robot.slideDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             stateManager.setCurrentState(State.REST);
-            robot.slideDc.setPower(restPower);
+            robot.slideDc.setPower(restPowerSliding);
         }
 
         // checking if the current state is finished
         if (!robot.slideDc.isBusy() && stateManager.getCurrentState() != State.REST)
             stateManager.setCurrentState(State.REST);
-    }
-
-    public void slide(boolean up, boolean down) {
-        if (up)
-            robot.controlSlide(0.5);
-        else if (down)
-            robot.controlSlide(-0.5);
     }
 
     public void intake(boolean action) {
@@ -158,7 +156,7 @@ public class SlideControl {
             else if (Double.compare(robot.intakePosition(), 0.0) == 0)
                 robot.controlIntake(1);
             intakePressed = false;
-        } else
+        } else if (!action)
             intakePressed = true;
     }
 }

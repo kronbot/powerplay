@@ -28,14 +28,14 @@ public class RocketLeagueManualControl extends OpMode {
 
     @Override
     public void loop() {
-        boolean move = robotControl.rotate(gamepad1.right_stick_x);
+        boolean move = robotControl.rotate(gamepad1.left_stick_x);
         if (!move)
             move = robotControl.translate(
                     gamepad1.right_stick_x < 0 ? gamepad1.right_stick_x : 0,
                     gamepad1.right_stick_x > 0 ? -gamepad1.right_stick_x : 0
             );
         if (!move)
-            move = robotControl.drive(gamepad1.left_stick_x, gamepad1.left_trigger - gamepad1.right_trigger);
+            move = robotControl.drive(gamepad1.left_stick_x, gamepad1.right_trigger - gamepad1.left_trigger);
         if (!move)
             robotControl.stop();
 //        robotControl.debug();

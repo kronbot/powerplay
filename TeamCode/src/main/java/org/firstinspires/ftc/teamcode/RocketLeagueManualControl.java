@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.utils.RobotControl;
-import org.firstinspires.ftc.teamcode.utils.SlideControl;
+import org.firstinspires.ftc.teamcode.lib.RobotControl;
+import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
 @TeleOp
 public class RocketLeagueManualControl extends OpMode {

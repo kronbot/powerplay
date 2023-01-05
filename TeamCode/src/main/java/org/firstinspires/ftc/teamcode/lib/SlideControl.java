@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.lib;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.KronBot;
 
 public class SlideControl {
     // stores the states with the coordinates
-    private enum State {
+    public enum State {
         FIRST,
         SECOND,
         THIRD,
@@ -73,7 +73,7 @@ public class SlideControl {
         this.stateManager = new StateManager();
     }
 
-    private void showDebugTelemetry() {
+    public void showDebugTelemetry() {
         telemetry.addData("Slide busy", robot.slideDc.isBusy());
         telemetry.addData("Slide coordinate", robot.slideDc.getCurrentPosition());
         if (stateManager.getCurrentState() != State.REST)
@@ -110,6 +110,23 @@ public class SlideControl {
         if (debug)
             showDebugTelemetry();
         loop(gamepad);
+    }
+
+    public State getState() {
+        return stateManager.getCurrentState();
+    }
+
+    public void setState(State state) {
+        if (state.equals(State.GROUND))
+            robot.controlIntake(1);
+        stateManager.setCurrentState(state);
+    }
+
+    // for autonomous
+    public void loop() {
+        // checking if the current state is finished
+        if (!robot.slideDc.isBusy() && stateManager.getCurrentState() != State.REST)
+            stateManager.setCurrentState(State.REST);
     }
 
     public void loop(Gamepad gamepad) {

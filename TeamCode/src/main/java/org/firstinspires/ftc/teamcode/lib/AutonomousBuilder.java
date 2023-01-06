@@ -59,38 +59,69 @@ public class AutonomousBuilder {
     public void forward(double seconds) {
         if (seconds < configuration.getErrorUntil()) {
             robot.drive(1.0, 1.0 - configuration.getError(), 1.0, 1.0 - configuration.getError(), configuration.getSpeed());
-            delay(configuration.getErrorUntil(), "Going forward");
+            delay(seconds, "Going forward");
+            robot.stopMotors();
             return;
         }
         robot.drive(1.0, 1.0 - configuration.getError(), 1.0, 1.0 - configuration.getError(), configuration.getSpeed());
         delay(configuration.getErrorUntil(), "Going forward:");
         robot.drive(1.0, 1.0, 1.0, 1.0, configuration.getSpeed());
         delay(seconds - configuration.getErrorUntil(), "Going forward:");
+        robot.stopMotors();
     }
 
     public void backward(double seconds) {
+        if (seconds < configuration.getErrorUntil()) {
+            robot.drive(1.0, 1.0 - configuration.getErrorUntil(), 1.0, 1.0 - configuration.getError(), -configuration.getSpeed());
+            delay(seconds, "Going backward:");
+            robot.stopMotors();
+            return;
+        }
+        robot.drive(1.0, 1.0 - configuration.getErrorUntil(), 1.0, 1.0 - configuration.getError(), -configuration.getSpeed());
+        delay(configuration.getErrorUntil(), "Going backward:");
         robot.drive(1.0, 1.0, 1.0, 1.0, -configuration.getSpeed());
-        delay(seconds, "Going backward:");
-    }
-
-    public void translateLeft(double seconds) {
-        robot.drive(1.0, -1.0, -1.0, 1.0, configuration.getSpeed());
-        delay(seconds, "Going forward:");
+        delay(seconds - configuration.getErrorUntil(), "Going backward:");
+        robot.stopMotors();
     }
 
     public void translateRight(double seconds) {
-        robot.drive(-1.0, 1.0, 1.0, -1.0, configuration.getSpeed());
-        delay(seconds, "Going forward:");
+        if (seconds < configuration.getErrorUntil()) {
+            robot.drive(1.0 - configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), -1.0, configuration.getSpeed());
+            delay(seconds, "Translate right:");
+            robot.stopMotors();
+            return;
+        }
+        robot.drive(1.0 - configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), -1.0, configuration.getSpeed());
+        delay(configuration.getErrorUntil(), "Translate right:");
+        robot.drive(1.0, -1.0, 1.0, -1.0, configuration.getSpeed());
+        delay(seconds - configuration.getErrorUntil(), "Translate right:");
+        robot.stopMotors();
+    }
+
+    public void translateLeft(double seconds) {
+        if (seconds < configuration.getErrorUntil()) {
+            robot.drive(1.0 - configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), -1.0, -configuration.getSpeed());
+            delay(seconds, "Translate left:");
+            robot.stopMotors();
+            return;
+        }
+        robot.drive(1.0 - configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), -1.0, -configuration.getSpeed());
+        delay(configuration.getErrorUntil(), "Translate left:");
+        robot.drive(1.0, -1.0, 1.0, -1.0, -configuration.getSpeed());
+        delay(seconds - configuration.getErrorUntil(), "Translate left:");
+        robot.stopMotors();
     }
 
     public void rotateClockwise(double seconds) {
         robot.drive(1.0, -1.0, 1.0, -1.0, configuration.getSpeed());
         delay(seconds, "Rotate clockwise:");
+        robot.stopMotors();
     }
 
     public void rotateCounterClockwise(double seconds) {
         robot.drive(-1.0, 1.0, -1.0, 1.0, configuration.getSpeed());
         delay(seconds, "Rotate counter clockwise:");
+        robot.stopMotors();
     }
 
     public void setSlideState(SlideControl.State state) {

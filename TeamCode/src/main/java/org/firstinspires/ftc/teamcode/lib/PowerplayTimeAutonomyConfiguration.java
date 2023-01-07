@@ -6,7 +6,7 @@ public class PowerplayTimeAutonomyConfiguration implements TimeAutonomyConfigura
     private final double dps = 12;
     private final double intakeUpdateSeconds = 0.6;
     private final double error = 0.166665;
-    private final double errorUntil = 0.6;
+    private final double errorUntil = 0.365;
 
     @Override
     public double getSpeed() {

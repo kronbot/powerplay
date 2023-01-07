@@ -18,7 +18,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 @Autonomous
-public class LeftTimeAutonomous extends LinearOpMode {
+public class RightTimeAutonomous extends LinearOpMode {
     private OpenCvCamera camera;
     private AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -117,20 +117,20 @@ public class LeftTimeAutonomous extends LinearOpMode {
         autonomousBuilder.setSlideState(SlideControl.State.THIRD);
         autonomousBuilder.forward(0.63);
         autonomousBuilder.delay(1.0);
-        autonomousBuilder.translateRight(1.6);
+        autonomousBuilder.translateLeft(1.6);
         autonomousBuilder.delayUntilSlideIsResting();
         autonomousBuilder.toggleIntake();
-        autonomousBuilder.rotateClockwise(0.05);
+        autonomousBuilder.rotateCounterClockwise(0.05);
 
         if (tagOfInterest != null) {
             if (tagOfInterest.id == 1)
-                autonomousBuilder.translateLeft(0.5);
+                autonomousBuilder.translateRight(0.5);
             else if (tagOfInterest.id == 2)
-                autonomousBuilder.translateLeft(1.4);
+                autonomousBuilder.translateRight(1.4);
             else
-                autonomousBuilder.translateLeft(2.5);
+                autonomousBuilder.translateRight(2.5);
         } else
-            autonomousBuilder.translateLeft(2.5);
+            autonomousBuilder.translateRight(2.5);
 
         autonomousBuilder.uninitialize();
     }

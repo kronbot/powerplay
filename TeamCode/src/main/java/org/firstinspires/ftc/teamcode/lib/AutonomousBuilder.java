@@ -18,10 +18,12 @@ public class AutonomousBuilder {
         public void run() {
             while (!opMode.opModeIsActive()) {}
             while (opMode.opModeIsActive()) {
-                slideControl.showDebugTelemetry();
-                opMode.telemetry.update();
+                synchronized (slideControl) {
+                    slideControl.showDebugTelemetry();
+                    opMode.telemetry.update();
 
-                slideControl.loop();
+                    slideControl.loop();
+                }
             }
         }
     }
@@ -84,31 +86,31 @@ public class AutonomousBuilder {
         robot.stopMotors();
     }
 
-    public void translateRight(double seconds) {
-        if (seconds < configuration.getErrorUntil()) {
-            robot.drive(1.0 - configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), -1.0, configuration.getSpeed());
-            delay(seconds, "Translate right:");
-            robot.stopMotors();
-            return;
-        }
-        robot.drive(1.0 - configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), -1.0, configuration.getSpeed());
-        delay(configuration.getErrorUntil(), "Translate right:");
-        robot.drive(1.0, -1.0, 1.0, -1.0, configuration.getSpeed());
-        delay(seconds - configuration.getErrorUntil(), "Translate right:");
-        robot.stopMotors();
-    }
-
     public void translateLeft(double seconds) {
         if (seconds < configuration.getErrorUntil()) {
-            robot.drive(1.0 - configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), -1.0, -configuration.getSpeed());
+            robot.drive(-1.0 + configuration.getErrorUntil(), 1.0, 1.0 - configuration.getErrorUntil(), -1.0, configuration.getSpeed());
             delay(seconds, "Translate left:");
             robot.stopMotors();
             return;
         }
-        robot.drive(1.0 - configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), -1.0, -configuration.getSpeed());
+        robot.drive(-1.0 + configuration.getErrorUntil(), 1.0, 1.0 - configuration.getErrorUntil(), -1.0, configuration.getSpeed());
         delay(configuration.getErrorUntil(), "Translate left:");
-        robot.drive(1.0, -1.0, 1.0, -1.0, -configuration.getSpeed());
+        robot.drive(-1.0, 1.0, 1.0, -1.0, configuration.getSpeed());
         delay(seconds - configuration.getErrorUntil(), "Translate left:");
+        robot.stopMotors();
+    }
+
+    public void translateRight(double seconds) {
+        if (seconds < configuration.getErrorUntil()) {
+            robot.drive(1.0, -1.0 + configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), configuration.getSpeed());
+            delay(seconds, "Translate right:");
+            robot.stopMotors();
+            return;
+        }
+        robot.drive(1.0, -1.0 + configuration.getErrorUntil(), -1.0, 1.0 - configuration.getErrorUntil(), configuration.getSpeed());
+        delay(configuration.getErrorUntil(), "Translate right:");
+        robot.drive(1.0, -1.0, -1.0, 1.0, configuration.getSpeed());
+        delay(seconds - configuration.getErrorUntil(), "Translate right:");
         robot.stopMotors();
     }
 
@@ -125,7 +127,9 @@ public class AutonomousBuilder {
     }
 
     public void setSlideState(SlideControl.State state) {
-        slideControl.setState(state);
+        synchronized (slideControl) {
+            slideControl.setState(state);
+        }
     }
 
     public void toggleIntake() {

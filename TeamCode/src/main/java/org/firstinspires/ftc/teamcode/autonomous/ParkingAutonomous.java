@@ -1,14 +1,13 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.lib.AutonomousBuilder;
 import org.firstinspires.ftc.teamcode.lib.PowerplayTimeAutonomyConfiguration;
-import org.firstinspires.ftc.teamcode.lib.SlideControl;
 import org.firstinspires.ftc.teamcode.lib.TimeAutonomyConfiguration;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -17,37 +16,39 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 
 import java.util.ArrayList;
 
-@Autonomous
-public class RightTimeAutonomous extends LinearOpMode {
-    private OpenCvCamera camera;
-    private AprilTagDetectionPipeline aprilTagDetectionPipeline;
+@TeleOp
+public class ParkingAutonomous extends LinearOpMode
+{
+    KronBot robot = new KronBot();
+    TimeAutonomyConfiguration configuration = new PowerplayTimeAutonomyConfiguration();
+    AutonomousBuilder autonomousBuilder = new AutonomousBuilder(this, configuration, robot);
 
-    private static final double FEET_PER_METER = 3.28084;
+    OpenCvCamera camera;
+    AprilTagDetectionPipeline aprilTagDetectionPipeline;
+
+    static final double FEET_PER_METER = 3.28084;
 
     // Lens intrinsics
     // UNITS ARE PIXELS
     // NOTE: this calibration is for the C920 webcam at 800x448.
     // You will need to do your own calibration for other configurations!
-    private final double fx = 578.272;
-    private final double fy = 578.272;
-    private final double cx = 402.145;
-    private final double cy = 221.506;
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
 
     // UNITS ARE METERS
-    private final double tagsize = 0.166;
+    double tagsize = 0.166;
 
-    private final int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
+    int ID_TAG_OF_INTEREST = 18; // Tag ID 18 from the 36h11 family
 
-    private AprilTagDetection tagOfInterest = null;
-
-    private final KronBot robot = new KronBot();
-    private final TimeAutonomyConfiguration configuration = new PowerplayTimeAutonomyConfiguration();
-    private final AutonomousBuilder autonomousBuilder = new AutonomousBuilder(this, configuration, robot);
+    AprilTagDetection tagOfInterest = null;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode()
+    {
+        robot.initHardwareMap(hardwareMap);
 
-        autonomousBuilder.initialize(hardwareMap);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -95,7 +96,7 @@ public class RightTimeAutonomous extends LinearOpMode {
                 if(tagFound)
                 {
                     telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
-                    tagToTelemetry(tagOfInterest);
+
                 }
                 else
                 {
@@ -113,29 +114,36 @@ public class RightTimeAutonomous extends LinearOpMode {
             sleep(20);
         }
 
-        autonomousBuilder.toggleIntake();
-        autonomousBuilder.setSlideState(SlideControl.State.THIRD);
-        autonomousBuilder.forward(0.63);
-        autonomousBuilder.delay(1.0);
-        autonomousBuilder.translateLeft(1.6);
-        autonomousBuilder.delayUntilSlideIsResting();
-        autonomousBuilder.toggleIntake();
-        autonomousBuilder.rotateCounterClockwise(0.05);
+        /*
+         * The START command just came in: now work off the latest snapshot acquired
+         * during the init loop.
+         */
 
-        if (tagOfInterest != null) {
-            if (tagOfInterest.id == 1)
-                autonomousBuilder.translateRight(0.5);
-            else if (tagOfInterest.id == 2)
-                autonomousBuilder.translateRight(1.4);
-            else
-                autonomousBuilder.translateRight(2.5);
-        } else
-            autonomousBuilder.translateRight(2.5);
+        /* Update the telemetry */
+        if(tagOfInterest != null)
+            if (tagOfInterest.id == 1) {
+                autonomousBuilder.forward(0.7);
+                autonomousBuilder.translateLeft(0.9);
+            } else if (tagOfInterest.id == 2) {
+                autonomousBuilder.forward(0.7);
+            } else {
+                autonomousBuilder.forward(0.7);
+                autonomousBuilder.translateRight(0.9);
 
+            }
+        else {
+            autonomousBuilder.forward(0.7);
+            autonomousBuilder.translateRight(0.9);
+        }
+
+
+
+        /* You wouldn't have this in your autonomous, this is just to prevent the sample from ending */
+        while (opModeIsActive()) {sleep(20);}
         autonomousBuilder.uninitialize();
     }
 
-    private void tagToTelemetry(AprilTagDetection detection)
+    void tagToTelemetry(AprilTagDetection detection)
     {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
         telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));

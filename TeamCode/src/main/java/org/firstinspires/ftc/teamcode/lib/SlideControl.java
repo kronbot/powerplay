@@ -18,6 +18,7 @@ public class SlideControl {
 
     private class StateManager {
         private State currentState = State.REST;
+        private Integer groundState = 400;
         private Integer firstCoordinate = 1400;
         private Integer secondCoordinate = 2150;
         private Integer thirdCoordinate = 2900;
@@ -27,7 +28,7 @@ public class SlideControl {
                 throw new IllegalArgumentException("State is null :(");
             switch (state) {
                 case GROUND:
-                    return 0;
+                    return groundState;
                 case FIRST:
                     return firstCoordinate;
                 case SECOND:

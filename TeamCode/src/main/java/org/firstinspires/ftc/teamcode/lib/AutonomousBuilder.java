@@ -43,7 +43,6 @@ public class AutonomousBuilder {
         robot.initHardwareMap(hardwareMap);
         Thread slideThread = new Thread(new SlideControlRunnable());
         slideThread.start();
-        opMode.waitForStart();
 
         slideControl.intake(false);
         delay(configuration.getIntakeUpdateSeconds(), "Initialization");

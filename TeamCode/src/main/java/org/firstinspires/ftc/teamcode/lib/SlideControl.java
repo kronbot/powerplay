@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.lib;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.KronBot;
 
 public class SlideControl {
     // stores the states with the coordinates
-    private enum State {
+    public enum State {
         FIRST,
         SECOND,
         THIRD,
@@ -18,8 +18,9 @@ public class SlideControl {
 
     private class StateManager {
         private State currentState = State.REST;
+        private Integer groundState = 400;
         private Integer firstCoordinate = 1400;
-        private Integer secondCoordinate = 2100;
+        private Integer secondCoordinate = 2150;
         private Integer thirdCoordinate = 2900;
 
         public Integer getStateCoordinate(State state) {
@@ -27,7 +28,7 @@ public class SlideControl {
                 throw new IllegalArgumentException("State is null :(");
             switch (state) {
                 case GROUND:
-                    return 0;
+                    return groundState;
                 case FIRST:
                     return firstCoordinate;
                 case SECOND:
@@ -63,6 +64,7 @@ public class SlideControl {
 
     private static final double power = 1;
     private static final double restPower = Utils.SLIDE_REST;
+    private static final double restPowerSliding = Utils.SLIDE_REST_SLIDING;
 
     private boolean intakePressed = true;
 
@@ -72,7 +74,7 @@ public class SlideControl {
         this.stateManager = new StateManager();
     }
 
-    private void showDebugTelemetry() {
+    public void showDebugTelemetry() {
         telemetry.addData("Slide busy", robot.slideDc.isBusy());
         telemetry.addData("Slide coordinate", robot.slideDc.getCurrentPosition());
         if (stateManager.getCurrentState() != State.REST)
@@ -111,10 +113,31 @@ public class SlideControl {
         loop(gamepad);
     }
 
+    public State getState() {
+        return stateManager.getCurrentState();
+    }
+
+    public void setState(State state) {
+        if (state.equals(State.GROUND))
+            robot.controlIntake(1);
+        stateManager.setCurrentState(state);
+    }
+
+    // for autonomous
+    public void loop() {
+        // checking if the current state is finished
+        if (!robot.slideDc.isBusy() && stateManager.getCurrentState() != State.REST)
+            stateManager.setCurrentState(State.REST);
+    }
+
     public void loop(Gamepad gamepad) {
         // updating the state
-        if (gamepad.b)
+        if (gamepad.b) {
+//            if (robot.intakePosition() == 1)
+//                robot.controlIntake(0);
             stateManager.setCurrentState(State.FIRST);
+
+        }
         if (gamepad.x)
             stateManager.setCurrentState(State.SECOND);
         if (gamepad.y)
@@ -136,19 +159,12 @@ public class SlideControl {
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
             robot.slideDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             stateManager.setCurrentState(State.REST);
-            robot.slideDc.setPower(restPower);
+            robot.slideDc.setPower(restPowerSliding);
         }
 
         // checking if the current state is finished
         if (!robot.slideDc.isBusy() && stateManager.getCurrentState() != State.REST)
             stateManager.setCurrentState(State.REST);
-    }
-
-    public void slide(boolean up, boolean down) {
-        if (up)
-            robot.controlSlide(0.5);
-        else if (down)
-            robot.controlSlide(-0.5);
     }
 
     public void intake(boolean action) {
@@ -158,7 +174,7 @@ public class SlideControl {
             else if (Double.compare(robot.intakePosition(), 0.0) == 0)
                 robot.controlIntake(1);
             intakePressed = false;
-        } else
+        } else if (!action)
             intakePressed = true;
     }
 }

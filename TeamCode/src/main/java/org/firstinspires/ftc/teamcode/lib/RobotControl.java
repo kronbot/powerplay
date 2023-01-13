@@ -1,21 +1,17 @@
-package org.firstinspires.ftc.teamcode.utils;
+package org.firstinspires.ftc.teamcode.lib;
 
 import org.firstinspires.ftc.teamcode.KronBot;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Util;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 // manages the movement of the robot
 public class RobotControl {
-    private final KronBot robot;
-    private final Telemetry telemetry;
+    protected final KronBot robot;
+    protected final Telemetry telemetry;
 
     // the acceleration power of the robot
     // used for a smooth rotation
-    private final double accelerationPower = 0.05;
+    protected final double accelerationPower = 0.05;
 
     // either when rotating or driving, we save the last power
     // if the robot starts rotating, the drive power becomes 0
@@ -126,7 +122,6 @@ public class RobotControl {
      * @param right the right direction value
      * @returns true if the robot translates, false if not
      */
-    @Deprecated
     public boolean translate(double left, double right) {
         double direction = left - right;
         if (-Utils.EPS < direction && direction < Utils.EPS)

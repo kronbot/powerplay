@@ -75,4 +75,11 @@ public class KronBot {
     }
 
     public double intakePosition() {return intakeServo.getPosition();}
+
+    public void resetEncoders() {
+        frontLeftDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontRightDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backLeftDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        backRightDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
 }

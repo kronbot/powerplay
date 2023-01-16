@@ -18,8 +18,11 @@ public class Autonomiecaca extends LinearOpMode{
         waitForStart();
         Trajectory  FirstCone= drivetrain.trajectoryBuilder(new Pose2d(0,0,0))
                 .lineTo(new Vector2d(40,5))
-                .splineToSplineHeading(new Pose2d(62,15,Math.toRadians(-40)),Math.toRadians(-40))
-                .build();
+                        .build();
         drivetrain.followTrajectory(FirstCone);
+        Trajectory  FirstCone2= drivetrain.trajectoryBuilder(new Pose2d(40,5,Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(60, 10, Math.toRadians(50)))
+                .build();
+        drivetrain.followTrajectory(FirstCone2);
     }
 }

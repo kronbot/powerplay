@@ -27,13 +27,14 @@ public class DualManualControl extends OpMode {
 
     @Override
     public void loop() {
-        boolean move = robotControl.rotate(gamepad1.right_stick_x);
+        boolean move = robotControl.rotate(gamepad1.right_stick_x/1.25);
         if (!move)
-            move = robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
+            move = robotControl.translate(gamepad1.right_trigger, gamepad1.left_trigger);
+        if (!move)
+            move = robotControl.drive(0, -gamepad1.left_stick_y);
         if (!move)
             robotControl.stop();
 //        robotControl.debug();
-
         slideControl.intake(gamepad2.dpad_up);
         slideControl.control(gamepad2, false);
     }

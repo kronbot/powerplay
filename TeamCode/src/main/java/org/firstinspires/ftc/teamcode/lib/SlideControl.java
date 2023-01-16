@@ -18,7 +18,7 @@ public class SlideControl {
 
     private class StateManager {
         private State currentState = State.REST;
-        private Integer groundState = 400;
+        private Integer groundState = 100;
         private Integer firstCoordinate = 1400;
         private Integer secondCoordinate = 2150;
         private Integer thirdCoordinate = 2900;

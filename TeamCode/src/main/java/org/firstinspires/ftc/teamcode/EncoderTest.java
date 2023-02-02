@@ -6,15 +6,15 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
-@TeleOp(name = "buci")
-public class buci extends OpMode {
+@TeleOp(name = "EncoderTest") // buci
+public class EncoderTest extends OpMode {
     private final KronBot robot;
 
     private Encoder leftEncoder;
     private Encoder rightEncoder;
     private Encoder frontEncoder;
 
-    public buci() {
+    public EncoderTest() {
         robot = new KronBot();
     }
 

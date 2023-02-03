@@ -85,7 +85,7 @@ public class ParkingAutonomous extends LinearOpMode
 
                 for(AprilTagDetection tag : currentDetections)
                 {
-                    if(tag.id <3)
+                    if(tag.id <=3)
                     {
                         tagOfInterest = tag;
                         tagFound = true;
@@ -126,15 +126,10 @@ public class ParkingAutonomous extends LinearOpMode
                 autonomousBuilder.translateLeft(0.9);
             } else if (tagOfInterest.id == 2) {
                 autonomousBuilder.forward(0.7);
-            } else {
+            } else if(tagOfInterest.id == 3) {
                 autonomousBuilder.forward(0.7);
                 autonomousBuilder.translateRight(0.9);
-
             }
-        else {
-            autonomousBuilder.forward(0.7);
-            autonomousBuilder.translateRight(0.9);
-        }
 
 
 

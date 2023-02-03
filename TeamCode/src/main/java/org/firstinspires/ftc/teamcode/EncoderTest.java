@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
-@TeleOp(name = "EncoderTest") // buci
+@TeleOp(name = "Encoder Test") // buci
 public class EncoderTest extends OpMode {
     private final KronBot robot;
 
@@ -22,15 +22,13 @@ public class EncoderTest extends OpMode {
     public void init() {
         robot.initHardwareMap(hardwareMap);
 
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontLeft"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "backLeft"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontRight"));
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
 
         robot.resetEncoders();
 
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
-
-
     }
 
     @Override
@@ -38,6 +36,5 @@ public class EncoderTest extends OpMode {
         telemetry.addData("leftEncoder", leftEncoder.getCurrentPosition());
         telemetry.addData("rightEncoder", rightEncoder.getCurrentPosition());
         telemetry.addData("frontEncoder", frontEncoder.getCurrentPosition());
-
     }
 }

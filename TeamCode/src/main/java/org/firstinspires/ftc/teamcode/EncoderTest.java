@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
-@TeleOp(name = "Encoder Test") // buci
+@TeleOp(name = "Encoder Test") // BUCI (Bipedal Unit for Control and Interaction)
 public class EncoderTest extends OpMode {
     private final KronBot robot;
 

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.lib.Utils;
 @Autonomous
 public class OdometryCalibration extends LinearOpMode {
     // constants
-    private final double ROTATE_SPEED = 0.69;
+    private final double ROTATE_SPEED = 0.5;
 
     private final KronBot robot = new KronBot();
     private BNO055IMU imu;
@@ -32,18 +32,19 @@ public class OdometryCalibration extends LinearOpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
 
+        double angle = getAngle();
+        telemetry.addData("angle", angle);
+        telemetry.update();
         waitForStart();
 
         // gettin' to 90 degrreeeeeeezzz
         // clockwiseee
-        double angle = getAngle();
-        while (angle < 90 && opModeIsActive()) {
-            if (angle < 60)
+        double target = 90, feedforwardStart = target * 2 / 3;
+        while (angle < target && opModeIsActive()) {
+            if (angle < feedforwardStart)
                 robot.drive(1, -1, 1, -1, ROTATE_SPEED);
             else {
-                // derviate of f(x) = x ^ 2
-                // df / dx = 2x
-                double speed = 1 - 2 * Utils.map(angle, 0, 90, 0, 1);
+                double speed = Utils.map(target - angle, 0, target - feedforwardStart, 0.15, ROTATE_SPEED);
                 robot.drive(1, -1, 1, -1, speed);
             }
 
@@ -51,6 +52,8 @@ public class OdometryCalibration extends LinearOpMode {
             telemetry.update();
             angle = getAngle();
         }
+
+        robot.stopMotors();
     }
 
     private double getAngle() {

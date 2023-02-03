@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.lib.autonomous.Encoder;
+import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class KronBot {
     public DcMotor frontLeftDc;

@@ -1,9 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.lib.autonomous.Encoder;
 
 public class KronBot {
     public DcMotor frontLeftDc;
@@ -14,6 +17,10 @@ public class KronBot {
     public DcMotor slideDc;
 
     public Servo intakeServo;
+
+    public Encoder leftEncoder;
+    public Encoder rightEncoder;
+    public Encoder frontEncoder;
 
     /**
      * Initialization of hardware map
@@ -38,6 +45,11 @@ public class KronBot {
         frontRightDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         backLeftDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
+        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
+        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
+        leftEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
     /**

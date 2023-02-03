@@ -6,7 +6,7 @@ public class Utils {
     public static final double EPS = 0.1;
     public static final double SLIDE_REST = 0.05;
     public static final double SLIDE_REST_SLIDING = 0.001;
-    public static final double COUNTS_PER_CM = 686.2;
+    public static final double COUNTS_PER_CM = 635;
 
     /**
      * Mapping function used to return the value inside an interval applied

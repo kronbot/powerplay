@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.roadrunner.util.NanoClock;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
@@ -56,6 +57,8 @@ public class Encoder {
         this.lastPosition = 0;
         this.velocityEstimates = new double[3];
         this.lastUpdateTime = clock.seconds();
+
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     public Encoder(DcMotorEx motor) {

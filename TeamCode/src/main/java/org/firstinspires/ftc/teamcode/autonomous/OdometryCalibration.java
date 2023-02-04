@@ -21,6 +21,10 @@ public class OdometryCalibration extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot.initHardwareMap(hardwareMap);
 
+        telemetry.addData("left encoder", robot.leftEncoder.getCurrentPosition());
+        telemetry.addData("right encoder", robot.rightEncoder.getCurrentPosition());
+        telemetry.addData("front encoder", robot.frontEncoder.getCurrentPosition());
+
         // giroscop cu butelie
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();

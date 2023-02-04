@@ -22,6 +22,10 @@ public class KronBot {
     public Encoder rightEncoder;
     public Encoder frontEncoder;
 
+    public DcMotor leftEncoderMotor;
+    public DcMotor rightEncoderMotor;
+    public DcMotor frontEncoderMotor;
+
     /**
      * Initialization of hardware map
      */
@@ -50,6 +54,15 @@ public class KronBot {
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
         leftEncoder.setDirection(Encoder.Direction.REVERSE);
+
+        leftEncoderMotor = hardwareMap.dcMotor.get("leftEncoder");
+        rightEncoderMotor = hardwareMap.dcMotor.get("rightEncoder");
+        frontEncoderMotor = hardwareMap.dcMotor.get("frontEncoder");
+
+
+        leftEncoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightEncoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontEncoderMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
     /**

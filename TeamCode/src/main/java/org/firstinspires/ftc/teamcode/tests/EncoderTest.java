@@ -1,9 +1,10 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
+import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 @TeleOp(name = "Encoder Test") // BUCI (Bipedal Unit for Control and Interaction)
@@ -25,8 +26,6 @@ public class EncoderTest extends OpMode {
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
-
-        robot.resetEncoders();
 
         frontEncoder.setDirection(Encoder.Direction.REVERSE);
     }

@@ -18,7 +18,8 @@ public class SlideControl {
 
     private class StateManager {
         private State currentState = State.REST;
-        private Integer groundState = 100;
+
+        private Integer groundCoordinate = 100;
         private Integer firstCoordinate = 1400;
         private Integer secondCoordinate = 2150;
         private Integer thirdCoordinate = 2900;
@@ -28,7 +29,7 @@ public class SlideControl {
                 throw new IllegalArgumentException("State is null :(");
             switch (state) {
                 case GROUND:
-                    return groundState;
+                    return groundCoordinate;
                 case FIRST:
                     return firstCoordinate;
                 case SECOND:
@@ -62,11 +63,15 @@ public class SlideControl {
     private Telemetry telemetry;
     private StateManager stateManager;
 
-    private static final double power = 1;
+    private static final double power = Utils.SLIDE_POWER;
     private static final double restPower = Utils.SLIDE_REST;
     private static final double restPowerSliding = Utils.SLIDE_REST_SLIDING;
 
     private boolean intakePressed = true;
+    private boolean closeIntakeAtPress = false;
+
+    private Integer minCoordinate = 50;
+    private Integer maxCoordinate = 3000;
 
     public SlideControl(KronBot robot, Telemetry telemetry) {
         this.robot = robot;
@@ -132,28 +137,29 @@ public class SlideControl {
 
     public void loop(Gamepad gamepad) {
         // updating the state
-        if (gamepad.b) {
-//            if (robot.intakePosition() == 1)
-//                robot.controlIntake(0);
-            stateManager.setCurrentState(State.FIRST);
-
-        }
-        if (gamepad.x)
-            stateManager.setCurrentState(State.SECOND);
-        if (gamepad.y)
-            stateManager.setCurrentState(State.THIRD);
         if (gamepad.a) {
             if (robot.intakePosition() == 0)
                 robot.controlIntake(1);
+
             stateManager.setCurrentState(State.GROUND);
+        } else if (gamepad.b || gamepad.x || gamepad.y) {
+            if (robot.intakePosition() == 1 && closeIntakeAtPress)
+                robot.controlIntake(0);
+
+            if (gamepad.b)
+                stateManager.setCurrentState(State.FIRST);
+            else if (gamepad.x)
+                stateManager.setCurrentState(State.SECOND);
+            else if (gamepad.y)
+                stateManager.setCurrentState(State.THIRD);
         }
 
-        if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS) {
-            robot.slideDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS &&
+            robot.slideDc.getCurrentPosition() >= minCoordinate) {
             robot.controlSlide(gamepad.right_trigger);
             return;
-        } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS) {
-            robot.slideDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS &&
+            robot.slideDc.getCurrentPosition() <= maxCoordinate) {
             robot.controlSlide(-gamepad.left_trigger);
             return;
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {

@@ -4,8 +4,11 @@ public class Utils {
     // very low constant
     // used for floating point comparations
     public static final double EPS = 0.1;
+
+    public static final double SLIDE_POWER = 0.5;
     public static final double SLIDE_REST = 0.05;
     public static final double SLIDE_REST_SLIDING = 0.001;
+
     public static final double COUNTS_PER_CM = 635;
 
     /**

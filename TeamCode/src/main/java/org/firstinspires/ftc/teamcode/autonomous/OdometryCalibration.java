@@ -21,10 +21,6 @@ public class OdometryCalibration extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot.initHardwareMap(hardwareMap);
 
-        telemetry.addData("left encoder", robot.leftEncoder.getCurrentPosition());
-        telemetry.addData("right encoder", robot.rightEncoder.getCurrentPosition());
-        telemetry.addData("front encoder", robot.frontEncoder.getCurrentPosition());
-
         // giroscop cu butelie
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
@@ -36,9 +32,14 @@ public class OdometryCalibration extends LinearOpMode {
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
         imu.initialize(parameters);
 
+        telemetry.addData("Left encoder", robot.leftEncoder.getCurrentPosition());
+        telemetry.addData("Right encoder", robot.rightEncoder.getCurrentPosition());
+        telemetry.addData("Front encoder", robot.frontEncoder.getCurrentPosition());
+
         double angle = getAngle();
-        telemetry.addData("angle", angle);
+        telemetry.addData("Angle", angle);
         telemetry.update();
+
         waitForStart();
 
         // gettin' to 90 degrreeeeeeezzz
@@ -59,6 +60,7 @@ public class OdometryCalibration extends LinearOpMode {
 
         robot.stopMotors();
 
+        // meth go brrrrrr
         double horizontalEncoderDifference = Math.abs(
                 Math.abs(robot.leftEncoder.getCurrentPosition()) +
                 Math.abs(robot.rightEncoder.getCurrentPosition())
@@ -67,10 +69,11 @@ public class OdometryCalibration extends LinearOpMode {
         double lateralDistance = (verticalEncoderTicksPerDegree * 180) / (Math.PI * Utils.COUNTS_PER_CM);
         double ticksPerDegree = robot.frontEncoder.getCurrentPosition() / Math.toRadians(angle);
 
+        // debug when not working :(
         while (opModeIsActive()) {
-            telemetry.addData("left", robot.leftEncoder.getCurrentPosition());
-            telemetry.addData("right", robot.rightEncoder.getCurrentPosition());
-            telemetry.addData("angle", angle);
+            telemetry.addData("Left", robot.leftEncoder.getCurrentPosition());
+            telemetry.addData("Right", robot.rightEncoder.getCurrentPosition());
+            telemetry.addData("Angle", angle);
             telemetry.addData("Vertical Encoder Ticks per degree", verticalEncoderTicksPerDegree);
             telemetry.addData("Lateral distance", lateralDistance);
             telemetry.addData("Ticks per degree", ticksPerDegree);

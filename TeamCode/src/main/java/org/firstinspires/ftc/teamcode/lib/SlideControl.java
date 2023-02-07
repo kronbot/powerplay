@@ -71,7 +71,7 @@ public class SlideControl {
     private boolean closeIntakeAtPress = false;
 
     private Integer minCoordinate = 50;
-    private Integer maxCoordinate = 3000;
+    private Integer maxCoordinate = 3100;
 
     public SlideControl(KronBot robot, Telemetry telemetry) {
         this.robot = robot;
@@ -115,7 +115,7 @@ public class SlideControl {
     public void control(Gamepad gamepad, boolean debug) {
         if (debug)
             showDebugTelemetry();
-        loop(gamepad);
+        loop(gamepad, false);
     }
 
     public State getState() {
@@ -135,7 +135,7 @@ public class SlideControl {
             stateManager.setCurrentState(State.REST);
     }
 
-    public void loop(Gamepad gamepad) {
+    public void loop(Gamepad gamepad, boolean usingEnds) {
         // updating the state
         if (gamepad.a) {
             if (robot.intakePosition() == 0)
@@ -155,11 +155,11 @@ public class SlideControl {
         }
 
         if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS &&
-            robot.slideDc.getCurrentPosition() >= minCoordinate) {
+                (robot.slideDc.getCurrentPosition() <= maxCoordinate || !usingEnds)) {
             robot.controlSlide(gamepad.right_trigger);
             return;
         } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS &&
-            robot.slideDc.getCurrentPosition() <= maxCoordinate) {
+                (robot.slideDc.getCurrentPosition() >= minCoordinate || !usingEnds)) {
             robot.controlSlide(-gamepad.left_trigger);
             return;
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
@@ -171,6 +171,12 @@ public class SlideControl {
         // checking if the current state is finished
         if (!robot.slideDc.isBusy() && stateManager.getCurrentState() != State.REST)
             stateManager.setCurrentState(State.REST);
+    }
+
+    private double slidePower(double power) {
+        if (power < 0.75)
+            return Utils.map(power, 0, 0.75, 0, 0.5);
+        return Utils.map(power, 0.75, 1, 0.5, 1);
     }
 
     public void intake(boolean action) {

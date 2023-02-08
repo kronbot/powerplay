@@ -69,7 +69,7 @@ public class OdometryCalibration extends LinearOpMode {
         );
         double verticalEncoderTicksPerDegree = horizontalEncoderDifference / angle;
         double lateralDistance = (verticalEncoderTicksPerDegree * 180) / (Math.PI * Utils.COUNTS_PER_CM);
-        double ticksPerDegree = robot.frontEncoder.getCurrentPosition() / Math.toRadians(angle);
+        double ticksPerDegree = Math.abs(robot.frontEncoder.getCurrentPosition() / Math.toRadians(angle));
 
         // debug when not working :(
         while (opModeIsActive()) {

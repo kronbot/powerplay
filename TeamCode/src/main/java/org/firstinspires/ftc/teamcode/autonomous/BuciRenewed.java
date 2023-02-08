@@ -13,7 +13,7 @@ public class BuciRenewed extends LinearOpMode {
     private GlobalCoordinatePosition position;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void runOpMode() {
         position = new GlobalCoordinatePosition(
                 robot.leftEncoder,
                 robot.rightEncoder,
@@ -21,9 +21,10 @@ public class BuciRenewed extends LinearOpMode {
                 new TestConfiguration()
         );
 
-        Thread yeees = new Thread(position);
 
         waitForStart();
+
+        Thread yeees = new Thread(position);
         yeees.start();
 
         while (opModeIsActive()) {
@@ -32,7 +33,5 @@ public class BuciRenewed extends LinearOpMode {
             telemetry.addData("angle", position.getAngle());
             telemetry.update();
         }
-
-        yeees.join();
     }
 }

@@ -14,6 +14,7 @@ public class BuciRenewed extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        robot.initHardwareMap(hardwareMap);
         position = new GlobalCoordinatePosition(
                 robot.leftEncoder,
                 robot.rightEncoder,

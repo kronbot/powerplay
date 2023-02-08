@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
-@TeleOp
+@TeleOp (name = "Dual Manual Control", group = "Dual")
 public class DualManualControl extends OpMode {
     private KronBot robot;
     private RobotControl robotControl;
@@ -36,6 +36,7 @@ public class DualManualControl extends OpMode {
         if (!move)
             robotControl.stop();
 //        robotControl.debug();
+
         slideControl.intake(gamepad2.dpad_up);
         slideControl.control(gamepad2, false);
     }

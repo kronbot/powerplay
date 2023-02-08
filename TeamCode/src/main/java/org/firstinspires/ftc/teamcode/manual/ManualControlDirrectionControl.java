@@ -7,13 +7,13 @@ import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
-@TeleOp
-public class RocketLeagueManualControl extends OpMode {
+@TeleOp (name = "Manual Control with Direction Control", group = "Single")
+public class ManualControlDirrectionControl extends OpMode {
     private final KronBot robot;
     private final RobotControl robotControl;
     private final SlideControl slideControl;
 
-    public RocketLeagueManualControl() {
+    public ManualControlDirrectionControl() {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
         slideControl = new SlideControl(robot, telemetry);

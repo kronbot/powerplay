@@ -7,13 +7,13 @@ import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
-@TeleOp
-public class DualManualControlV2 extends OpMode {
+@TeleOp (name = "Manual Control with no Translation", group = "dual")
+public class DualManualControlNoTranslation extends OpMode {
     private KronBot robot;
     private RobotControl robotControl;
     private SlideControl slideControl;
 
-    public DualManualControlV2() {
+    public DualManualControlNoTranslation() {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
         slideControl = new SlideControl(robot, telemetry);

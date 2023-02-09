@@ -55,12 +55,12 @@ public class RobotControl {
                 double wheelsDirection = Utils.map(angle, 0, Math.PI / 2, -1, 1);
                 if (wheelsDirection < Utils.EPS)
                     wheelsDirection = 0;
-                robot.drive(1, wheelsDirection, wheelsDirection, 1, currentDrivePower);
+                robot.drive(1, wheelsDirection, wheelsDirection, 1, motorPower(currentDrivePower));
             } else { // moving to the left
                 double wheelsDirection = Utils.map(angle, Math.PI / 2, Math.PI, 1, -1);
                 if (wheelsDirection < Utils.EPS)
                     wheelsDirection = 0;
-                robot.drive(wheelsDirection, 1, 1, wheelsDirection, currentDrivePower);
+                robot.drive(wheelsDirection, 1, 1, wheelsDirection, motorPower(currentDrivePower));
             }
             return true;
         } else if (yInput < -Utils.EPS) { // backwards
@@ -68,21 +68,21 @@ public class RobotControl {
                 double wheelsDirection = Utils.map(angle, -Math.PI, -Math.PI / 2, 1, -1);
                 if (wheelsDirection > -Utils.EPS)
                     wheelsDirection = 0;
-                robot.drive(-1, wheelsDirection, wheelsDirection, -1, currentDrivePower);
+                robot.drive(-1, wheelsDirection, wheelsDirection, -1, motorPower(currentDrivePower));
             } else {
                 double wheelsDirection = Utils.map(angle, -Math.PI / 2, 0, -1, 1);
                 if (wheelsDirection > -Utils.EPS)
                     wheelsDirection = 0;
-                robot.drive(wheelsDirection, -1, -1, wheelsDirection, currentDrivePower);
+                robot.drive(wheelsDirection, -1, -1, wheelsDirection, motorPower(currentDrivePower));
             }
             return true;
         }
 
         // translate only on the X axis (only moving on the x axis)
         if (xInput > Utils.EPS) // moving to the right
-            robot.drive(1, -1, -1, 1, currentDrivePower);
+            robot.drive(1, -1, -1, 1, motorPower(currentDrivePower));
         else // moving to the left
-            robot.drive(-1, 1, 1, -1, currentDrivePower);
+            robot.drive(-1, 1, 1, -1, motorPower(currentDrivePower));
         return true;
     }
 
@@ -109,9 +109,9 @@ public class RobotControl {
 
         // switching directions
         if (direction > 0)
-            robot.drive(1, -1, 1, -1, currentRotatePower);
+            robot.drive(1, -1, 1, -1, motorPower(currentRotatePower));
         else
-            robot.drive(-1, 1, -1, 1, currentRotatePower);
+            robot.drive(-1, 1, -1, 1, motorPower(currentRotatePower));
         return currentRotatePower != 0;
     }
 
@@ -135,6 +135,12 @@ public class RobotControl {
             robot.drive(-1, 1, 1, -1, Math.abs(direction));
 
         return true;
+    }
+
+    private double motorPower(double power) {
+        if (power < 0.75)
+            return Utils.map(power, 0, 0.75, 0, 0.5);
+        return Utils.map(power, 0.75, 1, 0.5, 1);
     }
 
     /**

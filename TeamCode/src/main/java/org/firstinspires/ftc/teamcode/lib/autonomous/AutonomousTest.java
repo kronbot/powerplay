@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.lib.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -11,8 +11,8 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 /*
  * This is an example of a more complex path to really test the tuning.
  */
-@Autonomous(group = "drive")
-public class RRAutonomus extends LinearOpMode {
+@Autonomous(name = "Autonomous Test", group = "Autonomous")
+public class AutonomousTest extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);

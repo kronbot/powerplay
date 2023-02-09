@@ -1,14 +1,17 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.lib.autonomous;
+
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.KronBot;
+import org.firstinspires.ftc.teamcode.lib.RobotControl;
+import org.firstinspires.ftc.teamcode.lib.Utils;
 
 // some IoC might be nice...
 public class AutonomousManager {
     private final AutonomousConfiguration configuration;
     private final KronBot robot;
-
     private final GlobalCoordinatePosition position;
-    private final PIDController controller;
+    private final RobotControl robotControl;
 
     private enum State {
         LINEAR,
@@ -18,8 +21,14 @@ public class AutonomousManager {
     }
 
     private State currentState = State.WAIT;
-    private double current = 0;
     private double lastX = 0, lastY = 0, lastAngle = 0;
+    private double targetDirectionX, targetDirectionY, targetAngle;
+    private double targetX, targetY;
+
+    // for PID
+    private final ElapsedTime timer = new ElapsedTime();
+    private double integralSum = 0;
+    private double lastError = 0;
 
     public AutonomousManager(
             AutonomousConfiguration configuration,
@@ -33,7 +42,7 @@ public class AutonomousManager {
                 robot.frontEncoder,
                 configuration
         );
-        this.controller = new PIDControllerImpl(configuration);
+        this.robotControl = new RobotControl(robot, null);
     }
 
     public void initalize() {
@@ -41,33 +50,28 @@ public class AutonomousManager {
         positionThread.start();
     }
 
+    private void driveDirection(double x, double y, double power) {
+        // normalizing the vector and applying to force
+        double mag = Math.sqrt(x * x + y * y);
+        x = x / mag * power;
+        y = y / mag * power;
+        robotControl.drive(x, y);
+    }
+
     public void update() {
         if (currentState == State.WAIT)
             return;
 
-        if (Math.abs(controller.getTarget() - current) <= configuration.getAcceptableError()) {
-            currentState = State.WAIT;
-            return;
-        }
-
         double x = position.getX(), y = position.getY(), angle = position.getAngle();
-        if (currentState == State.ROTATE)
-            current += Math.abs(angle - lastAngle);
-        else
-            current += Math.hypot(x - lastX, y - lastY);
-
-        double speed = (controller.getTarget() > 0 ? 1 : -1) * controller.getSpeed(current);
-        switch (currentState) {
-            case LINEAR:
-                robot.drive(1, 1, -1, -1, speed);
-                break;
-            case TRANSLATE:
-                robot.drive(1, -1, -1, 1, speed);
-                break;
-            case ROTATE:
-                robot.drive(1, -1, 1, -1, speed);
-                break;
+        double error = Utils.distance(x, y, targetX, targetY);
+        if (error < configuration.getAcceptableError()) {
+            setState(State.WAIT);
         }
+
+        double derivative = (error - lastError) / timer.seconds();
+        integralSum += error * timer.seconds();
+        double power = (configuration.getKp() * error) + (configuration.getKi() * integralSum) + (configuration.getKp() * derivative);
+        driveDirection(targetDirectionX, targetDirectionY, power);
 
         lastX = x;
         lastY = y;
@@ -77,27 +81,35 @@ public class AutonomousManager {
     public void linear(double distance) {
         if (currentState != State.WAIT)
             return;
-        controller.setTarget(distance);
+        double x = position.getX(),
+                y = position.getY(),
+                angle = position.getAngle();
+        targetDirectionX = Math.cos(angle);
+        targetDirectionY = Math.sin(angle);
+        targetAngle = Math.atan2(targetDirectionY, targetDirectionX);
+        targetX = x + targetDirectionX * distance;
+        targetY = y + targetDirectionY * distance;
+
+        integralSum = 0;
+        lastError = 0;
         setState(State.LINEAR);
+        timer.reset();
     }
 
     public void translate(double distance) {
         if (currentState != State.WAIT)
             return;
-        controller.setTarget(distance);
         setState(State.TRANSLATE);
     }
 
     public void rotate(double radians) {
         if (currentState != State.WAIT)
             return;
-        controller.setTarget(radians);
         setState(State.ROTATE);
     }
 
     public void setState(State newState) {
         currentState = newState;
-        current = 0;
         lastX = position.getX();
         lastY = position.getY();
         lastAngle = position.getAngle();

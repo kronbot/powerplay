@@ -156,11 +156,11 @@ public class SlideControl {
 
         if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS &&
                 (robot.slideDc.getCurrentPosition() <= maxCoordinate || !usingEnds)) {
-            robot.controlSlide(gamepad.right_trigger);
+            robot.controlSlide(slidePower(gamepad.right_trigger));
             return;
         } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS &&
                 (robot.slideDc.getCurrentPosition() >= minCoordinate || !usingEnds)) {
-            robot.controlSlide(-gamepad.left_trigger);
+            robot.controlSlide(-slidePower(gamepad.left_trigger));
             return;
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
             robot.slideDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

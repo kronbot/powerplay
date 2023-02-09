@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.lib.autonomous;
 
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
@@ -52,11 +52,6 @@ public class GlobalCoordinatePosition implements Runnable {
     public void run() {
         while (isRunning) {
             update();
-            try {
-                Thread.sleep(UPDATE_TIME);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
         }
     }
 

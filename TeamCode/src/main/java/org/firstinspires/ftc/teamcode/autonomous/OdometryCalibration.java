@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.bosch.JustLoggingAccelerationIntegrator;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -8,7 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.Utils;
 
-@Autonomous
+@Config
+@Autonomous (name = "Odometry Calibration", group = "Calibrations")
 public class OdometryCalibration extends LinearOpMode {
     // constants
     private final double ROTATE_SPEED = 0.5;
@@ -67,7 +69,7 @@ public class OdometryCalibration extends LinearOpMode {
         );
         double verticalEncoderTicksPerDegree = horizontalEncoderDifference / angle;
         double lateralDistance = (verticalEncoderTicksPerDegree * 180) / (Math.PI * Utils.COUNTS_PER_CM);
-        double ticksPerDegree = robot.frontEncoder.getCurrentPosition() / Math.toRadians(angle);
+        double ticksPerDegree = Math.abs(robot.frontEncoder.getCurrentPosition() / Math.toRadians(angle));
 
         // debug when not working :(
         while (opModeIsActive()) {

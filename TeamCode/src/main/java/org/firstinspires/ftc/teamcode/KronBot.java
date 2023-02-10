@@ -49,7 +49,7 @@ public class KronBot {
         leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
-        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+//        leftEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
     /**

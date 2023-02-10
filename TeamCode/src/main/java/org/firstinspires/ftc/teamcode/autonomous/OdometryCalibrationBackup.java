@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.Utils;
 
 @Config
-@Autonomous (name = "Odometry Calibration", group = "Tests")
-public class OdometryCalibration extends LinearOpMode {
+@Autonomous (name = "Odometry Calibration Backup", group = "Tests")
+public class OdometryCalibrationBackup extends LinearOpMode {
     // constants
     private final double ROTATE_SPEED = 0.5;
 
@@ -69,9 +69,7 @@ public class OdometryCalibration extends LinearOpMode {
         );
         double verticalEncoderTicksPerDegree = horizontalEncoderDifference / angle;
         double lateralDistance = (verticalEncoderTicksPerDegree * 180) / (Math.PI * Utils.TICKS_PER_CM);
-        double verticalOffsetPerRadian = Math.abs(robot.frontEncoder.getCurrentPosition() / Math.toRadians(angle));
-        double ticksAngleChange = (robot.leftEncoder.getCurrentPosition() - robot.rightEncoder.getCurrentPosition()) / lateralDistance;
-        double radiansPerTicks = Math.toRadians(angle) * ticksAngleChange;
+        double ticksPerDegree = Math.abs(robot.frontEncoder.getCurrentPosition() / Math.toRadians(angle));
 
         // debug when not working :(
         while (opModeIsActive()) {
@@ -81,8 +79,8 @@ public class OdometryCalibration extends LinearOpMode {
             telemetry.addData("Angle", angle);
             telemetry.addData("Vertical Encoder Ticks per degree", verticalEncoderTicksPerDegree);
             telemetry.addData("Lateral distance", lateralDistance);
-            telemetry.addData("Vertical offset per radian", verticalOffsetPerRadian);
-            telemetry.addData("Radians per ticks", radiansPerTicks);
+            telemetry.addData("Ticks per degree", ticksPerDegree);
+            telemetry.addData("Calculated Angle", (robot.leftEncoder.getCurrentPosition() - robot.rightEncoder.getCurrentPosition()) / lateralDistance);
             telemetry.update();
         }
     }

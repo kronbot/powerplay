@@ -73,7 +73,7 @@ public class AutonomousManager {
 
         double derivative = (error - lastError) / timer.seconds();
         integralSum += error * timer.seconds();
-        double power = (configuration.getKp() * error) + (configuration.getKi() * integralSum) + (configuration.getKd() * derivative);
+        double power = (configuration.getKp() * error) + (configuration.getKi() * integralSum) + (configuration.getKp() * derivative);
         driveDirection(targetDirectionX, targetDirectionY, power);
 
         lastX = x;

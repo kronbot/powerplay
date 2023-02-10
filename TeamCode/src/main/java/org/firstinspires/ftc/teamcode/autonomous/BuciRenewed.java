@@ -9,17 +9,18 @@ import org.firstinspires.ftc.teamcode.lib.autonomous.GlobalCoordinatePosition;
 
 @Autonomous
 public class BuciRenewed extends LinearOpMode {
-    private KronBot robot;
+    private KronBot robot = new KronBot();
     private GlobalCoordinatePosition position;
 
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException {
         robot.initHardwareMap(hardwareMap);
         position = new GlobalCoordinatePosition(
                 robot.leftEncoder,
                 robot.rightEncoder,
                 robot.frontEncoder,
-                new TestConfiguration()
+                new TestConfiguration(),
+                telemetry
         );
 
 
@@ -29,10 +30,8 @@ public class BuciRenewed extends LinearOpMode {
         yeees.start();
 
         while (opModeIsActive()) {
-            telemetry.addData("x", position.getX());
-            telemetry.addData("y", position.getY());
-            telemetry.addData("angle", position.getAngle());
-            telemetry.update();
         }
+
+        position.stop();
     }
 }

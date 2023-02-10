@@ -3,9 +3,11 @@ package org.firstinspires.ftc.teamcode.autonomous.configurations;
 import org.firstinspires.ftc.teamcode.lib.autonomous.AutonomousConfiguration;
 
 public class TestConfiguration implements AutonomousConfiguration {
+    // all you have to do is sa pui valori aici din teste
+
     @Override
     public double getLateralDistance() {
-        return 0;
+        return 19.26;
     }
 
     @Override
@@ -15,7 +17,7 @@ public class TestConfiguration implements AutonomousConfiguration {
 
     @Override
     public double getVerticalOffsetPerRadian() {
-        return 0;
+        return 8737.4;
     }
 
     @Override

@@ -69,7 +69,9 @@ public class OdometryCalibration extends LinearOpMode {
         );
         double verticalEncoderTicksPerDegree = horizontalEncoderDifference / angle;
         double lateralDistance = (verticalEncoderTicksPerDegree * 180) / (Math.PI * Utils.COUNTS_PER_CM);
-        double ticksPerDegree = Math.abs(robot.frontEncoder.getCurrentPosition() / Math.toRadians(angle));
+        double verticalOffsetPerRadian = Math.abs(robot.frontEncoder.getCurrentPosition() / Math.toRadians(angle));
+        double ticksAngleChange = (robot.leftEncoder.getCurrentPosition() - robot.rightEncoder.getCurrentPosition()) / lateralDistance;
+        double radiansPerTicks = Math.toRadians(angle) * ticksAngleChange;
 
         // debug when not working :(
         while (opModeIsActive()) {
@@ -78,7 +80,8 @@ public class OdometryCalibration extends LinearOpMode {
             telemetry.addData("Angle", angle);
             telemetry.addData("Vertical Encoder Ticks per degree", verticalEncoderTicksPerDegree);
             telemetry.addData("Lateral distance", lateralDistance);
-            telemetry.addData("Ticks per degree", ticksPerDegree);
+            telemetry.addData("Vertical offset per radian", verticalOffsetPerRadian);
+            telemetry.addData("Radians per ticks", radiansPerTicks);
             telemetry.update();
         }
     }

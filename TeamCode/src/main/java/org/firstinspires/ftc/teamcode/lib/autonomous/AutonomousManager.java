@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.lib.autonomous;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.Utils;
@@ -32,7 +33,8 @@ public class AutonomousManager {
 
     public AutonomousManager(
             AutonomousConfiguration configuration,
-            KronBot robot
+            KronBot robot,
+            Telemetry telemetry
     ) {
         this.configuration = configuration;
         this.robot = robot;
@@ -40,7 +42,8 @@ public class AutonomousManager {
                 robot.leftEncoder,
                 robot.rightEncoder,
                 robot.frontEncoder,
-                configuration
+                configuration,
+                telemetry
         );
         this.robotControl = new RobotControl(robot, null);
     }
@@ -70,7 +73,7 @@ public class AutonomousManager {
 
         double derivative = (error - lastError) / timer.seconds();
         integralSum += error * timer.seconds();
-        double power = (configuration.getKp() * error) + (configuration.getKi() * integralSum) + (configuration.getKp() * derivative);
+        double power = (configuration.getKp() * error) + (configuration.getKi() * integralSum) + (configuration.getKd() * derivative);
         driveDirection(targetDirectionX, targetDirectionY, power);
 
         lastX = x;

@@ -13,7 +13,12 @@ public class SlideControl {
         SECOND,
         THIRD,
         GROUND,
-        REST
+        REST,
+        ONE,
+        TWO,
+        THREE,
+        FOUR,
+        FIVE
     }
 
     private class StateManager {
@@ -23,7 +28,11 @@ public class SlideControl {
         private Integer firstCoordinate = 1400;
         private Integer secondCoordinate = 2150;
         private Integer thirdCoordinate = 2900;
-
+        private Integer FiveCoordinate = 500;
+        private Integer FourCoordinate = 400;
+        private Integer ThreeCoordinate = 300;
+        private Integer TwoCoordinate = 200;
+        private Integer OneCoordinate = 100;
         public Integer getStateCoordinate(State state) {
             if (state == null)
                 throw new IllegalArgumentException("State is null :(");
@@ -36,6 +45,16 @@ public class SlideControl {
                     return secondCoordinate;
                 case THIRD:
                     return thirdCoordinate;
+                case ONE:
+                    return OneCoordinate;
+                case TWO:
+                    return TwoCoordinate;
+                case THREE:
+                    return ThreeCoordinate;
+                case FOUR:
+                    return FourCoordinate;
+                case FIVE:
+                    return FiveCoordinate;
                 default:
                     throw new IllegalArgumentException("State is invalid :(");
             }

@@ -52,6 +52,7 @@ public class AutonomousTest extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         robot = new KronBot();
         robot.initHardwareMap(hardwareMap);
+        slideControl = new SlideControl(robot, telemetry);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
@@ -110,8 +111,8 @@ public class AutonomousTest extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(55,  -5, Math.toRadians(-45)),Math.toRadians(-45))
                 .build();
         drive.followTrajectorySequence(FirstCone);
-//        slideControl.setState(SlideControl.State.GROUND);
-//             robot.controlIntake(0.0);
+        slideControl.setState(SlideControl.State.GROUND);
+             robot.controlIntake(1.0);
         sleep(2000);
 
         Pose2d poseEstimate = drive.getPoseEstimate();

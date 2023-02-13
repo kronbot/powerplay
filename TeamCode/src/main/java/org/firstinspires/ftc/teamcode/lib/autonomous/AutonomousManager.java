@@ -12,24 +12,7 @@ public class AutonomousManager {
     private final AutonomousConfiguration configuration;
     private final KronBot robot;
     private final GlobalCoordinatePosition position;
-    private final RobotControl robotControl;
-
-    private enum State {
-        LINEAR,
-        TRANSLATE,
-        ROTATE,
-        WAIT
-    }
-
-    private State currentState = State.WAIT;
-    private double lastX = 0, lastY = 0, lastAngle = 0;
-    private double targetDirectionX, targetDirectionY, targetAngle;
-    private double targetX, targetY;
-
-    // for PID
     private final ElapsedTime timer = new ElapsedTime();
-    private double integralSum = 0;
-    private double lastError = 0;
 
     public AutonomousManager(
             AutonomousConfiguration configuration,
@@ -45,76 +28,79 @@ public class AutonomousManager {
                 configuration,
                 telemetry
         );
-        this.robotControl = new RobotControl(robot, null);
-    }
 
-    public void initalize() {
         Thread positionThread = new Thread(position);
         positionThread.start();
     }
 
-    private void driveDirection(double x, double y, double power) {
-        // normalizing the vector and applying to force
-        double mag = Math.sqrt(x * x + y * y);
-        x = x / mag * power;
-        y = y / mag * power;
-        robotControl.drive(x, y);
-    }
-
-    public void update() {
-        if (currentState == State.WAIT)
-            return;
-
-        double x = position.getX(), y = position.getY(), angle = position.getAngle();
-        double error = Utils.distance(x, y, targetX, targetY);
-        if (error < configuration.getAcceptableError()) {
-            setState(State.WAIT);
-        }
-
-        double derivative = (error - lastError) / timer.seconds();
-        integralSum += error * timer.seconds();
-        double power = (configuration.getKp() * error) + (configuration.getKi() * integralSum) + (configuration.getKp() * derivative);
-        driveDirection(targetDirectionX, targetDirectionY, power);
-
-        lastX = x;
-        lastY = y;
-        lastAngle = angle;
-    }
-
     public void linear(double distance) {
-        if (currentState != State.WAIT)
-            return;
-        double x = position.getX(),
-                y = position.getY(),
-                angle = position.getAngle();
-        targetDirectionX = Math.cos(angle);
-        targetDirectionY = Math.sin(angle);
-        targetAngle = Math.atan2(targetDirectionY, targetDirectionX);
-        targetX = x + targetDirectionX * distance;
-        targetY = y + targetDirectionY * distance;
+        double targetX = position.getX() + Math.cos(position.getAngle()) * distance;
+        double targetY = position.getY() + Math.sin(position.getAngle()) * distance;
 
-        integralSum = 0;
-        lastError = 0;
-        setState(State.LINEAR);
-        timer.reset();
+        double lastAngleError = 0, lastError = 0;
+        double angleError, error = Utils.distance(position.getX(), position.getY(), targetX, targetY);
+        double angleIntegralSum = 0, integralSum = 0;
+
+        ElapsedTime timer = new ElapsedTime();
+
+        while (Math.abs(error) < configuration.getAcceptableError()) {
+            double x = position.getX();
+            double y = position.getY();
+            error = Utils.distance(x, y, targetX, targetY);
+            angleError = Math.atan2(targetY - y, targetX - x);
+
+            integralSum += error;
+            angleIntegralSum += angleError;
+            double distanceDerivative = (error - lastError) / timer.seconds();
+            double angleDerivative = (angleError - lastAngleError) / timer.seconds();
+
+            double distancePower = (
+                    (configuration.getKp() * error) +
+                    (configuration.getKi() * integralSum) +
+                    (configuration.getKd() * distanceDerivative)
+            );
+
+            double anglePower = (
+                    (configuration.getAngleKp() * angleError) +
+                    (configuration.getAngleKi() * angleIntegralSum) +
+                    (configuration.getAngleKd() * angleDerivative)
+            );
+
+            double leftPower = distancePower - anglePower;
+            double rightPower = distancePower + anglePower;
+
+            robot.drive(leftPower, rightPower, leftPower, rightPower, configuration.getMaxSpeed());
+
+            lastAngleError = angleError;
+            lastError = error;
+            timer.reset();
+        }
     }
 
-    public void translate(double distance) {
-        if (currentState != State.WAIT)
-            return;
-        setState(State.TRANSLATE);
+    public void rotate(double degrees) {
+        double target = position.getAngle() + degrees;
+        double lastError = 0, error = target - position.getAngle();
+        double integralSum = 0;
+        ElapsedTime timer = new ElapsedTime();
+        while (Math.abs(error) < configuration.getAcceptableError()) {
+            error = target - position.getAngle();
+
+            integralSum += error;
+            double derivative = (error - lastError) / timer.seconds();
+            double power = (
+                    (configuration.getAngleKp() * error) +
+                    (configuration.getAngleKi() * integralSum) +
+                    (configuration.getAngleKd() * derivative)
+            );
+
+            robot.drive(power, -power, power, -power, configuration.getMaxSpeed());
+
+            lastError = error;
+            timer.reset();
+        }
     }
 
-    public void rotate(double radians) {
-        if (currentState != State.WAIT)
-            return;
-        setState(State.ROTATE);
-    }
-
-    public void setState(State newState) {
-        currentState = newState;
-        lastX = position.getX();
-        lastY = position.getY();
-        lastAngle = position.getAngle();
+    public void stop() {
+        position.stop();
     }
 }

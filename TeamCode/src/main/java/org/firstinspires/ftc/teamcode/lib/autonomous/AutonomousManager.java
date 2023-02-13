@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.lib.autonomous;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
@@ -13,6 +14,7 @@ public class AutonomousManager {
     private final KronBot robot;
     private final GlobalCoordinatePosition position;
     private final ElapsedTime timer = new ElapsedTime();
+    private final Telemetry telemetry;
 
     public AutonomousManager(
             AutonomousConfiguration configuration,
@@ -28,6 +30,7 @@ public class AutonomousManager {
                 configuration,
                 telemetry
         );
+        this.telemetry = telemetry;
 
         Thread positionThread = new Thread(position);
         positionThread.start();
@@ -68,6 +71,18 @@ public class AutonomousManager {
 
             double leftPower = distancePower - anglePower;
             double rightPower = distancePower + anglePower;
+
+            telemetry.addData("error", error);
+            telemetry.addData("angle error", angleError);
+            telemetry.addData("integral sum", integralSum);
+            telemetry.addData("angle integral sum", angleIntegralSum);
+            telemetry.addData("distance derivative", distanceDerivative);
+            telemetry.addData("angle derivative", angleDerivative);
+            telemetry.addData("distance power", distancePower);
+            telemetry.addData("angle power", anglePower);
+            telemetry.addData("left", leftPower);
+            telemetry.addData("right", rightPower);
+            telemetry.update();
 
             robot.drive(leftPower, rightPower, leftPower, rightPower, configuration.getMaxSpeed());
 

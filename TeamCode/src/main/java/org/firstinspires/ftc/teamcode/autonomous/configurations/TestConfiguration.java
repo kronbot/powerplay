@@ -10,6 +10,7 @@ public class TestConfiguration implements AutonomousConfiguration {
     public static double verticalOffsetPerRadian = 8737.4;
     public static double acceptableError = 0.2;
     public static double maxSpeed = 0.8;
+    public static long coordinateDelay = 200;
     public static double kP = 0.1;
     public static double kI = 0.0;
     public static double kD = 0.0;
@@ -36,6 +37,11 @@ public class TestConfiguration implements AutonomousConfiguration {
     @Override
     public double getMaxSpeed() {
         return maxSpeed;
+    }
+
+    @Override
+    public long getCoordinateDelay() {
+        return coordinateDelay;
     }
 
     @Override

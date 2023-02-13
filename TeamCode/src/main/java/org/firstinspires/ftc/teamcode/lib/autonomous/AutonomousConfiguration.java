@@ -5,6 +5,7 @@ public interface AutonomousConfiguration {
     double getLateralDistance(); // i guess
     double getVerticalOffsetPerRadian();
     double getAcceptableError();
+    long getCoordinateDelay();
     double getMaxSpeed();
     double getKp();
     double getKi();

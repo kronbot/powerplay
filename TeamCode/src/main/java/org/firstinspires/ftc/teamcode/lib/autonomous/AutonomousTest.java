@@ -102,6 +102,7 @@ public class AutonomousTest extends LinearOpMode {
             TagID=tagOfInterest.id;
         }
         waitForStart();
+        sleep(2000);
         if (isStopRequested()) return;
         robot.controlIntake(0.0);
         TrajectorySequence FirstCone= drive.trajectorySequenceBuilder(new Pose2d(0,0,Math.toRadians(0)))
@@ -109,7 +110,7 @@ public class AutonomousTest extends LinearOpMode {
                     slideControl.setState(SlideControl.State.THIRD);
                 })
                 .lineTo(new Vector2d(40,0))
-                .splineToSplineHeading(new Pose2d(59,  -3, Math.toRadians(-39)),Math.toRadians(-39))
+                .splineToSplineHeading(new Pose2d(64,  -2, Math.toRadians(-39)),Math.toRadians(-39))
                 .build();
         drive.followTrajectorySequence(FirstCone);
         sleep(1000);
@@ -125,7 +126,7 @@ public class AutonomousTest extends LinearOpMode {
         TrajectorySequence GetCone=drive.trajectorySequenceBuilder(new Pose2d(59 ,-3, Math.toRadians(-39)))
                 .setReversed(true)
                 .splineToLinearHeading(new Pose2d(55,16 ,Math.toRadians(95)),Math.toRadians(95))
-                .addDisplacementMarker(()-> {
+                .addTemporalMarker(0.5,()-> {
                     robot.controlIntake(0.0);
                 })
                 .build();
@@ -153,6 +154,9 @@ public class AutonomousTest extends LinearOpMode {
         telemetry.addData("finalY", poseEstimate.getY());
         telemetry.addData("finalHeading", poseEstimate.getHeading());
         telemetry.update();
-        while (!isStopRequested() && opModeIsActive()) ;
+        while (!isStopRequested() && opModeIsActive())
+        {
+            drive.update();
+        }
     }
 }

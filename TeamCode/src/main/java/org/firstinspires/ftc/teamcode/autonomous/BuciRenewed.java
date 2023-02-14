@@ -30,6 +30,10 @@ public class BuciRenewed extends LinearOpMode {
         yeees.start();
 
         while (opModeIsActive()) {
+            telemetry.addData("x", position.getX());
+            telemetry.addData("y", position.getY());
+            telemetry.addData("angle", position.getAngle());
+            telemetry.update();
         }
 
         position.stop();

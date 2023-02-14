@@ -44,25 +44,25 @@ public class GlobalCoordinatePosition implements Runnable {
         double rawHorizontalChange = frontPosition - prevFrontPosition;
         double horizontalChange = rawHorizontalChange + (angleChange * configuration.getVerticalOffsetPerRadian());
 
-        if (Math.abs(verticalChange) < 2000) verticalChange = 0;
-        if (Math.abs(horizontalChange) < 2000) horizontalChange = 0;
+        if (Math.abs(verticalChange) < 500) verticalChange = 0;
+        if (Math.abs(horizontalChange) < 500) horizontalChange = 0;
         x += (horizontalChange * Math.cos(angle) - verticalChange * Math.sin(angle)) / Utils.TICKS_PER_CM;
         y += (horizontalChange * Math.sin(angle) + verticalChange * Math.cos(angle)) / Utils.TICKS_PER_CM;
         angle += angleChange;
 
-        telemetry.addData("left", leftPosition);
-        telemetry.addData("right", rightPosition);
-        telemetry.addData("left change", leftChange);
-        telemetry.addData("right change", rightChange);
-        telemetry.addData("angle change", angleChange);
-        telemetry.addData("vertical change", verticalChange);
-        telemetry.addData("raw horizontal change", rawHorizontalChange);
-        telemetry.addData("horizontal change", horizontalChange);
-        telemetry.addData("x", x);
-        telemetry.addData("y", y);
-        telemetry.addData("angle", angle);
-        telemetry.addData("angle in degerees", angle * 180 / Math.PI);
-        telemetry.update();
+//        telemetry.addData("left", leftPosition);
+//        telemetry.addData("right", rightPosition);
+//        telemetry.addData("left change", leftChange);
+//        telemetry.addData("right change", rightChange);
+//        telemetry.addData("angle change", angleChange);
+//        telemetry.addData("vertical change", verticalChange);
+//        telemetry.addData("raw horizontal change", rawHorizontalChange);
+//        telemetry.addData("horizontal change", horizontalChange);
+//        telemetry.addData("x", x);
+//        telemetry.addData("y", y);
+//        telemetry.addData("angle", angle);
+//        telemetry.addData("angle in degerees", angle * 180 / Math.PI);
+//        telemetry.update();
 
         prevLeftPosition = leftPosition;
         prevRightPosition = rightPosition;
@@ -81,19 +81,19 @@ public class GlobalCoordinatePosition implements Runnable {
         }
     }
 
-    public void stop() {
+    public synchronized void stop() {
         isRunning = false;
     }
 
-    public double getX() {
+    public synchronized double getX() {
         return x;
     }
 
-    public double getY() {
+    public synchronized double getY() {
         return y;
     }
 
-    public double getAngle() {
+    public synchronized double getAngle() {
         return angle;
     }
 }

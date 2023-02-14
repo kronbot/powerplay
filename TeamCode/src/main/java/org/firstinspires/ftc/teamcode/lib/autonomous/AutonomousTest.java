@@ -49,8 +49,7 @@ public class AutonomousTest extends LinearOpMode {
     AprilTagDetection tagOfInterest = null;
 
     @Override
-    public void runOpMode()
-    {
+    public void runOpMode() {
         robot = new KronBot();
         robot.initHardwareMap(hardwareMap);
         slideControl = new SlideControl(robot, telemetry);
@@ -61,17 +60,14 @@ public class AutonomousTest extends LinearOpMode {
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
 
             }
         });
@@ -96,21 +92,20 @@ public class AutonomousTest extends LinearOpMode {
                 }
             }
         }
-        int TagID=0;
-        if(tagOfInterest!=null)
-        {
-            TagID=tagOfInterest.id;
+        int TagID = 0;
+        if (tagOfInterest != null) {
+            TagID = tagOfInterest.id;
         }
         waitForStart();
         sleep(2000);
         if (isStopRequested()) return;
         robot.controlIntake(0.0);
-        TrajectorySequence FirstCone= drive.trajectorySequenceBuilder(new Pose2d(0,0,Math.toRadians(0)))
-                .addTemporalMarker(0.3,() -> {
+        TrajectorySequence FirstCone = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .addTemporalMarker(0.3, () -> {
                     slideControl.setState(SlideControl.State.THIRD);
                 })
-                .lineTo(new Vector2d(40,0))
-                .splineToSplineHeading(new Pose2d(64,  -2, Math.toRadians(-39)),Math.toRadians(-39))
+                .lineTo(new Vector2d(40, 0))
+                .splineToSplineHeading(new Pose2d(64, -2, Math.toRadians(-39)), Math.toRadians(-39))
                 .build();
         drive.followTrajectorySequence(FirstCone);
         sleep(1000);
@@ -123,27 +118,27 @@ public class AutonomousTest extends LinearOpMode {
         sleep(2000);
         robot.controlIntake(1.0);
         slideControl.setState(SlideControl.State.FIVE);
-        TrajectorySequence GetCone=drive.trajectorySequenceBuilder(new Pose2d(59 ,-3, Math.toRadians(-39)))
+        TrajectorySequence GetCone = drive.trajectorySequenceBuilder(new Pose2d(59, -3, Math.toRadians(-39)))
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(55,16 ,Math.toRadians(95)),Math.toRadians(95))
-                .addTemporalMarker(0.5,()-> {
+                .splineToLinearHeading(new Pose2d(55, 16, Math.toRadians(95)), Math.toRadians(95))
+                .addTemporalMarker(0.5, () -> {
                     robot.controlIntake(0.0);
                 })
-                .build();
+    /*        .build();
         drive.followTrajectorySequence(GetCone);
         poseEstimate = drive.getPoseEstimate();
         telemetry.addData("finalX", poseEstimate.getX());
         telemetry.addData("finalY", poseEstimate.getY());
         telemetry.addData("finalHeading", poseEstimate.getHeading());
-        telemetry.addData("AprilTagID",TagID);
+        telemetry.addData("AprilTagID", TagID);
         telemetry.update();
         sleep(10000);
-        TrajectorySequence ToJunk=drive.trajectorySequenceBuilder(new Pose2d(55, 16,Math.toRadians(180)))
+        TrajectorySequence ToJunk = drive.trajectorySequenceBuilder(new Pose2d(55, 16, Math.toRadians(180))) */
                 .setReversed(true)
-                .addTemporalMarker(0.2,() -> {
+                .addTemporalMarker(0.2, () -> {
                     slideControl.setState(SlideControl.State.THIRD);
                 })
-                .splineToSplineHeading(new Pose2d(56,-3,Math.toRadians(-39)),Math.toRadians(-39))
+                .splineToSplineHeading(new Pose2d(56, -3, Math.toRadians(-39)), Math.toRadians(-39))
                 .build();
         sleep(2000);
         drive.followTrajectorySequence(ToJunk);
@@ -154,8 +149,7 @@ public class AutonomousTest extends LinearOpMode {
         telemetry.addData("finalY", poseEstimate.getY());
         telemetry.addData("finalHeading", poseEstimate.getHeading());
         telemetry.update();
-        while (!isStopRequested() && opModeIsActive())
-        {
+        while (!isStopRequested() && opModeIsActive()) {
             drive.update();
         }
     }

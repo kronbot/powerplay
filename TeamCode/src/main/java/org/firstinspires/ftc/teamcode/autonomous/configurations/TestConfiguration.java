@@ -9,14 +9,14 @@ public class TestConfiguration implements AutonomousConfiguration {
     public static double lateralDistance = 19.26;
     public static double verticalOffsetPerRadian = 8737.4;
     public static double acceptableError = 0.2;
-    public static double maxSpeed = 0.8;
+    public static double maxSpeed = 0.2;
     public static long coordinateDelay = 200;
     public static double kP = 0.1;
     public static double kI = 0.0;
     public static double kD = 0.0;
-    public static double angleKp = 0.1;
-    public static double angleKi = 0.1;
-    public static double angleKd = 0.1;
+    public static double angleKp = 0.01;
+    public static double angleKi = 0.0;
+    public static double angleKd = 0.0;
 
 
     @Override

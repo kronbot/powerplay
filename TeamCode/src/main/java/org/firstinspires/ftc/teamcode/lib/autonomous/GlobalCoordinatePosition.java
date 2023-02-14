@@ -46,23 +46,23 @@ public class GlobalCoordinatePosition implements Runnable {
 
         if (Math.abs(verticalChange) < 2000) verticalChange = 0;
         if (Math.abs(horizontalChange) < 2000) horizontalChange = 0;
-        x += (horizontalChange * Math.cos(angle) -    verticalChange * Math.sin(angle)) / Utils.TICKS_PER_CM;
+        x += (horizontalChange * Math.cos(angle) - verticalChange * Math.sin(angle)) / Utils.TICKS_PER_CM;
         y += (horizontalChange * Math.sin(angle) + verticalChange * Math.cos(angle)) / Utils.TICKS_PER_CM;
         angle += angleChange;
 
-//        telemetry.addData("left", leftPosition);
-//        telemetry.addData("right", rightPosition);
-//        telemetry.addData("left change", leftChange);
-//        telemetry.addData("right change", rightChange);
-//        telemetry.addData("angle change", angleChange);
-//        telemetry.addData("vertical change", verticalChange);
-//        telemetry.addData("raw horizontal change", rawHorizontalChange);
-//        telemetry.addData("horizontal change", horizontalChange);
-//        telemetry.addData("x", x);
-//        telemetry.addData("y", y);
-//        telemetry.addData("angle", angle);
-//        telemetry.addData("angle in degerees", angle * 180 / Math.PI);
-//        telemetry.update();
+        telemetry.addData("left", leftPosition);
+        telemetry.addData("right", rightPosition);
+        telemetry.addData("left change", leftChange);
+        telemetry.addData("right change", rightChange);
+        telemetry.addData("angle change", angleChange);
+        telemetry.addData("vertical change", verticalChange);
+        telemetry.addData("raw horizontal change", rawHorizontalChange);
+        telemetry.addData("horizontal change", horizontalChange);
+        telemetry.addData("x", x);
+        telemetry.addData("y", y);
+        telemetry.addData("angle", angle);
+        telemetry.addData("angle in degerees", angle * 180 / Math.PI);
+        telemetry.update();
 
         prevLeftPosition = leftPosition;
         prevRightPosition = rightPosition;
@@ -74,7 +74,7 @@ public class GlobalCoordinatePosition implements Runnable {
         while (isRunning) {
             update();
             try {
-                Thread.sleep(configuration.getCoordinateDelay());
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

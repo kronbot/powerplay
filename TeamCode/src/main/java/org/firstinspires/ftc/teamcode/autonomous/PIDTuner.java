@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.autonomous.configurations.TestConfiguration;
 import org.firstinspires.ftc.teamcode.lib.autonomous.AutonomousManager;
+import org.firstinspires.ftc.teamcode.lib.autonomous.GlobalCoordinatePosition;
 
 @Config
 @Autonomous
@@ -20,19 +21,18 @@ public class PIDTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        Telemetry telemetry = new MultipleTelemetry(this.telemetry, dashboard.getTelemetry());
         robot.initHardwareMap(hardwareMap);
-        AutonomousManager autonomousManager = new AutonomousManager(new TestConfiguration(), robot, this.telemetry);
-
+        GlobalCoordinatePosition position = new GlobalCoordinatePosition(robot.leftEncoder, robot.rightEncoder, robot.frontEncoder, new TestConfiguration(), telemetry);
+        Thread positionThread = new Thread(position);
         waitForStart();
 
+        positionThread.start();
+
         while (opModeIsActive()) {
-            if (!gamepad1.a) {
-                autonomousManager.linear(20);
-                autonomousManager.linear(-20);
-            }
+            telemetry.addData("x", position.getX());
+            telemetry.addData("y", position.getY());
+            telemetry.addData("angle", position.getAngle());
         }
 
-        autonomousManager.stop();
     }
 }

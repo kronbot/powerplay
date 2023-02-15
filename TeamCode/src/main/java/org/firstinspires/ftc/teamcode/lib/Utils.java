@@ -9,7 +9,8 @@ public class Utils {
     public static double EPS = 0.1;
 
     public static double MOTOR_ACCELERATION_POWER = 0.1;
-    public static double MOTOR_POWER_OFFSET = 0.9;
+    public static double MOTOR_POWER_OFFSET = 1;
+
     public static double SLIDE_POWER = 1;
     public static double SLIDE_REST = 0.05;
     public static double SLIDE_REST_SLIDING = 0.001;

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.lib.autonomous;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -97,60 +96,80 @@ public class AutonomousTest extends LinearOpMode {
             TagID = tagOfInterest.id;
         }
         waitForStart();
-        sleep(2000);
+
         if (isStopRequested()) return;
+        sleep(2000);
         robot.controlIntake(0.0);
         TrajectorySequence FirstCone = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
+                .lineTo(new Vector2d(40,0))
                 .addTemporalMarker(0.3, () -> {
                     slideControl.setState(SlideControl.State.THIRD);
                 })
-                .lineTo(new Vector2d(40, 0))
-                .splineToSplineHeading(new Pose2d(64, -2, Math.toRadians(-39)), Math.toRadians(-39))
+                .lineToSplineHeading(new Pose2d(62,-5,Math.toRadians(-30)))
                 .build();
-        drive.followTrajectorySequence(FirstCone);
-        sleep(1000);
-        slideControl.setState(SlideControl.State.GROUND);
-        Pose2d poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("finalX", poseEstimate.getX());
-        telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
-        telemetry.update();
-        sleep(2000);
-        robot.controlIntake(1.0);
-        slideControl.setState(SlideControl.State.FIVE);
-        TrajectorySequence GetCone = drive.trajectorySequenceBuilder(new Pose2d(59, -3, Math.toRadians(-39)))
+
+        TrajectorySequence GetCone = drive.trajectorySequenceBuilder(new Pose2d(62, -5, Math.toRadians(-30)))
                 .setReversed(true)
-                .splineToLinearHeading(new Pose2d(55, 16, Math.toRadians(95)), Math.toRadians(95))
+                .lineToSplineHeading(new Pose2d(58,16,Math.toRadians(95)))
                 .addTemporalMarker(0.5, () -> {
-                    robot.controlIntake(0.0);
+                    slideControl.setState(SlideControl.State.GROUND);
                 })
-    /*        .build();
-        drive.followTrajectorySequence(GetCone);
-        poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("finalX", poseEstimate.getX());
-        telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
-        telemetry.addData("AprilTagID", TagID);
-        telemetry.update();
-        sleep(10000);
-        TrajectorySequence ToJunk = drive.trajectorySequenceBuilder(new Pose2d(55, 16, Math.toRadians(180))) */
+           .build();
+
+        TrajectorySequence ToJunk = drive.trajectorySequenceBuilder(new Pose2d(58, 16, Math.toRadians(95)))
                 .setReversed(true)
-                .addTemporalMarker(0.2, () -> {
-                    slideControl.setState(SlideControl.State.THIRD);
+                .lineToSplineHeading(new Pose2d(61,-6,Math.toRadians(-30)))
+                .addTemporalMarker(0.1,() -> {
+                slideControl.setState(SlideControl.State.THIRD);
                 })
-                .splineToSplineHeading(new Pose2d(56, -3, Math.toRadians(-39)), Math.toRadians(-39))
                 .build();
-        sleep(2000);
-//        drive.followTrajectorySequence(ToJunk);
+
+        TrajectorySequence GetCone1 = drive.trajectorySequenceBuilder(new Pose2d(61, -6, Math.toRadians(-30)))
+                .setReversed(true)
+                .lineToSplineHeading(new Pose2d(58,16,Math.toRadians(95)))
+                .addTemporalMarker(0.5, () -> {
+                    slideControl.setState(SlideControl.State.GROUND);
+                })
+                .build();
+        TrajectorySequence TagID2 = drive.trajectorySequenceBuilder(new Pose2d(61, -6, Math.toRadians(-30)))
+                .lineTo(new Vector2d(0,56))
+                .build();
+        TrajectorySequence TagID1 = drive.trajectorySequenceBuilder(new Pose2d(61, -6, Math.toRadians(-30)))
+                .lineTo(new Vector2d(-15,56))
+                .build();
+        TrajectorySequence TagID3 = drive.trajectorySequenceBuilder(new Pose2d(61, -6, Math.toRadians(-30)))
+                .lineTo(new Vector2d(15,56))
+                .build();
+      drive.followTrajectorySequence(FirstCone);
+      sleep(500);
+      robot.controlIntake(1.0);
+      drive.followTrajectorySequence(GetCone);
+      sleep(200);
+      robot.controlIntake(0.0);
         slideControl.setState(SlideControl.State.GROUND);
         robot.controlIntake(1.0);
-        poseEstimate = drive.getPoseEstimate();
-        telemetry.addData("finalX", poseEstimate.getX());
-        telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
-        telemetry.update();
+        drive.followTrajectorySequence(ToJunk);
+        sleep(500);
+        robot.controlIntake(1.0);
+        drive.followTrajectorySequence(GetCone1);
+        sleep(200);
+        robot.controlIntake(1.0);
+        if(TagID==2)
+        {
+            drive.followTrajectorySequence(TagID2);
+        }
+        else
+        {
+            drive.followTrajectorySequence(TagID2);
+            if(TagID==1)
+                drive.followTrajectorySequence(TagID1);
+            else
+                drive.followTrajectorySequence(TagID3);
+        }
         while (!isStopRequested() && opModeIsActive()) {
             drive.update();
+            telemetry.addData("AprilTagID", TagID);
+            telemetry.update();
         }
     }
 }

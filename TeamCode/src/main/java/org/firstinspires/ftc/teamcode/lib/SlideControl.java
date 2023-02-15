@@ -15,11 +15,6 @@ public class SlideControl {
         THIRD,
         GROUND,
         REST,
-        ONE,
-        TWO,
-        THREE,
-        FOUR,
-        FIVE
     }
 
     private class StateManager {

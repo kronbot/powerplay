@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Util;
 
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.autonomous.configurations.TestConfiguration;
@@ -13,7 +14,8 @@ import org.firstinspires.ftc.teamcode.lib.autonomous.GlobalCoordinatePosition;
 @Config
 @Autonomous
 public class TestAutonomous extends LinearOpMode {
-    public static double DISTANCE = 70;
+    public static double DISTANCE = 72
+            ;
     private final KronBot robot = new KronBot();
     private final TestConfiguration configuration = new TestConfiguration();
     private GlobalCoordinatePosition position;
@@ -33,6 +35,11 @@ public class TestAutonomous extends LinearOpMode {
         Thread positionThread = new Thread(position);
         positionThread.start();
 
+//        linear(DISTANCE);
+//        Thread.sleep(200);
+//        linear(-DISTANCE);
+//        Thread.sleep(200);
+
         while (opModeIsActive()) {
             linear(DISTANCE);
             Thread.sleep(200);
@@ -51,10 +58,15 @@ public class TestAutonomous extends LinearOpMode {
         double angleError = 0, error = Utils.distance(position.getX(), position.getY(), targetX, targetY);
         double angleIntegralSum = 0, integralSum = 0;
 
+        double startX = position.getX();
+        double startY = position.getY();
+
         boolean backwards = distance < 0;
 
         ElapsedTime timer = new ElapsedTime();
-        while (opModeIsActive() && Math.abs(error) > configuration.getAcceptableError()) {
+        while (opModeIsActive() && Math.abs(error) > configuration.getAcceptableError() &&
+                Utils.distance(startX, startY, targetX, targetY) + configuration.getAcceptableError() >
+                        Utils.distance(startX, startY, position.getX(), position.getY())) {
             integralSum += error;
             angleIntegralSum += angleError;
             double distanceDerivative = (error - lastError) / timer.seconds();
@@ -92,9 +104,10 @@ public class TestAutonomous extends LinearOpMode {
             telemetry.addData("angle power", anglePower);
             telemetry.addData("left", leftPower);
             telemetry.addData("right", rightPower);
+
             telemetry.update();
 
-            robot.drive(leftPower, rightPower, leftPower, rightPower, backwards ? -1 : 1);
+            robot.drive(leftPower, rightPower, leftPower, rightPower, backwards ? -configuration.getMaxSpeed() : configuration.getMaxSpeed());
 
             lastAngleError = angleError;
             lastError = error;
@@ -102,5 +115,7 @@ public class TestAutonomous extends LinearOpMode {
             angleError = Math.atan2(targetY - position.getY(), targetX - position.getX());
             timer.reset();
         }
+
+        robot.stopMotors();
     }
 }

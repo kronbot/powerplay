@@ -141,7 +141,7 @@ public class AutonomousTest extends LinearOpMode {
                 .splineToSplineHeading(new Pose2d(56, -3, Math.toRadians(-39)), Math.toRadians(-39))
                 .build();
         sleep(2000);
-        drive.followTrajectorySequence(ToJunk);
+//        drive.followTrajectorySequence(ToJunk);
         slideControl.setState(SlideControl.State.GROUND);
         robot.controlIntake(1.0);
         poseEstimate = drive.getPoseEstimate();

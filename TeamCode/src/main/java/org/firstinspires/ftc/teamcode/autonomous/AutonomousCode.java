@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.autonomous.configurations.TestConfiguration;
+import org.firstinspires.ftc.teamcode.lib.SlideControl;
 import org.firstinspires.ftc.teamcode.lib.TagDetection;
 import org.firstinspires.ftc.teamcode.lib.Utils;
 import org.firstinspires.ftc.teamcode.lib.autonomous.GlobalCoordinatePosition;
@@ -15,11 +16,12 @@ import org.openftc.apriltag.AprilTagDetection;
 public class AutonomousCode extends LinearOpMode {
     private final KronBot robot = new KronBot();
     private final TestConfiguration configuration = new TestConfiguration();
+    private final SlideControl slideControl = new SlideControl(robot, telemetry);
+
     private TagDetection tagDetection;
+    private AprilTagDetection tagOfInterest;
 
     private GlobalCoordinatePosition position;
-
-    private AprilTagDetection tagOfInterest;
 
     @Override
     public void runOpMode() throws InterruptedException {

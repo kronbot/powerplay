@@ -23,6 +23,10 @@ public class KronBot {
     public Encoder rightEncoder;
     public Encoder frontEncoder;
 
+    public KronBot() {
+        resetSlideEncoder();
+    }
+
     /**
      * Initialization of hardware map
      */
@@ -51,6 +55,9 @@ public class KronBot {
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
 //        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+
+        resetSlideEncoder();
+        controlIntake(1);
     }
 
     /**

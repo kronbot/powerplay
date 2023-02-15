@@ -22,9 +22,6 @@ public class ManualControlDirrectionControl extends OpMode {
     @Override
     public void init() {
         robot.initHardwareMap(hardwareMap);
-        robot.resetSlideEncoder();
-
-        robot.controlIntake(1);
     }
 
     @Override

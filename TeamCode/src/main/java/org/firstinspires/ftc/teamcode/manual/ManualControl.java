@@ -22,10 +22,6 @@ public class ManualControl extends OpMode {
     @Override
     public void init() {
         robot.initHardwareMap(hardwareMap);
-        robot.resetSlideEncoder();
-        slideControl.setState(SlideControl.State.GROUND);
-
-        robot.controlIntake(1);
     }
 
     @Override

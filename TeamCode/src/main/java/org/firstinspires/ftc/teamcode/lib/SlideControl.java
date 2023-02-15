@@ -15,6 +15,7 @@ public class SlideControl {
         THIRD,
         GROUND,
         REST,
+        CUSTOM,
     }
 
     private class StateManager {
@@ -53,7 +54,20 @@ public class SlideControl {
             this.currentState = currentState;
             if (currentState == State.REST)
                 return;
+
             robot.slideDc.setTargetPosition(getStateCoordinate(currentState));
+            robot.slideDc.setPower(power);
+            if (robot.slideDc.getCurrentPosition() > getStateCoordinate(currentState))
+                robot.slideDc.setPower(-power);
+            robot.slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        public void setCurrentStateToCustom(Integer coordinate) {
+            if (this.currentState != State.REST)
+                robot.slideDc.setPower(restPower);
+            this.currentState = State.CUSTOM;
+
+            robot.slideDc.setTargetPosition(coordinate);
             robot.slideDc.setPower(power);
             if (robot.slideDc.getCurrentPosition() > getStateCoordinate(currentState))
                 robot.slideDc.setPower(-power);
@@ -79,6 +93,8 @@ public class SlideControl {
         this.robot = robot;
         this.telemetry = telemetry;
         this.stateManager = new StateManager();
+
+        setState(SlideControl.State.GROUND);
     }
 
     public void showDebugTelemetry() {
@@ -106,6 +122,9 @@ public class SlideControl {
                 break;
             case REST:
                 stateName = "REST";
+                break;
+            case CUSTOM:
+                stateName = "CUSOM";
                 break;
             default:
                 stateName = "INVALID";

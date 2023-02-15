@@ -9,10 +9,6 @@ public class RobotControl {
     protected final KronBot robot;
     protected final Telemetry telemetry;
 
-    // the acceleration power of the robot
-    // used for a smooth rotation
-    protected final double accelerationPower = 0.05;
-
     // either when rotating or driving, we save the last power
     // if the robot starts rotating, the drive power becomes 0
     // if the robot starts moving, the rotate power becomes 0
@@ -45,7 +41,7 @@ public class RobotControl {
         if (power < Utils.EPS) // no power
             currentDrivePower = 0;
         else if (currentDrivePower < power) // smoother acceleration
-            currentDrivePower = Math.min(currentDrivePower + accelerationPower, power);
+            currentDrivePower = Math.min(currentDrivePower + Utils.MOTOR_ACCELERATION_POWER, power);
         else // slowing down
             currentDrivePower = power;
 
@@ -102,8 +98,8 @@ public class RobotControl {
         // smooth start
         if (currentRotatePower < Utils.EPS)
             currentRotatePower = Utils.EPS;
-        else if (power > currentRotatePower)
-            currentRotatePower = Math.min(currentRotatePower + accelerationPower, power);
+//        else if (power > currentRotatePower)
+//            currentRotatePower = Math.min(currentRotatePower + Utils.ACCELERATION_POWER, power);
         else // slowing down
             currentRotatePower = power;
 

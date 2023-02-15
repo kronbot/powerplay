@@ -104,6 +104,7 @@ public class TestAutonomous extends LinearOpMode {
             telemetry.addData("angle power", anglePower);
             telemetry.addData("left", leftPower);
             telemetry.addData("right", rightPower);
+            telemetry.addData("power", configuration.getMaxSpeed());
 
             telemetry.update();
 
@@ -113,6 +114,31 @@ public class TestAutonomous extends LinearOpMode {
             lastError = error;
             error = Utils.distance(position.getX(), position.getY(), targetX, targetY);
             angleError = Math.atan2(targetY - position.getY(), targetX - position.getX());
+            timer.reset();
+        }
+
+        robot.stopMotors();
+    }
+
+    public void rotate(double degrees) {
+        double target = position.getAngle() + degrees;
+        double lastError = 0, error = target - position.getAngle();
+        double integralSum = 0;
+        ElapsedTime timer = new ElapsedTime();
+        while (Math.abs(error) < configuration.getAcceptableError()) {
+            error = target - position.getAngle();
+
+            integralSum += error;
+            double derivative = (error - lastError) / timer.seconds();
+            double power = (
+                    (configuration.getAngleKp() * error) +
+                            (configuration.getAngleKi() * integralSum) +
+                            (configuration.getAngleKd() * derivative)
+            );
+
+            robot.drive(power, -power, power, -power, configuration.getMaxSpeed());
+
+            lastError = error;
             timer.reset();
         }
 

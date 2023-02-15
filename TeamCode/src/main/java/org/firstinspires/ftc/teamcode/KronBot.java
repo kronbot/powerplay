@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.lib.Utils;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class KronBot {
@@ -63,9 +64,9 @@ public class KronBot {
      */
     public void drive(double frontLeft, double frontRight, double backLeft, double backRight, double power) {
         frontLeftDc.setPower(frontLeft * power);
-        frontRightDc.setPower(frontRight * power);
-        backLeftDc.setPower(backLeft * power);
-        backRightDc.setPower(backRight * power);
+        frontRightDc.setPower(frontRight * power * Utils.MOTOR_POWER_OFFSET);
+        backLeftDc.setPower(backLeft * power * Utils.MOTOR_POWER_OFFSET);
+        backRightDc.setPower(backRight * power * Utils.MOTOR_POWER_OFFSET);
     }
 
     /**

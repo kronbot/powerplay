@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode.lib;
 
+import com.acmerobotics.dashboard.config.Config;
+
+@Config
 public class Utils {
     // very low constant
     // used for floating point comparations
-    public static final double EPS = 0.1;
+    public static double EPS = 0.1;
 
-    public static final double SLIDE_POWER = 1;
-    public static final double SLIDE_REST = 0.05;
-    public static final double SLIDE_REST_SLIDING = 0.001;
+    public static double MOTOR_ACCELERATION_POWER = 0.1;
+    public static double MOTOR_POWER_OFFSET = 0.9;
+    public static double SLIDE_POWER = 1;
+    public static double SLIDE_REST = 0.05;
+    public static double SLIDE_REST_SLIDING = 0.001;
 
-    public static final double TICKS_PER_CM = 635;
+    public static double TICKS_PER_CM = 635;
 
     /**
      * Mapping function used to return the value inside an interval applied

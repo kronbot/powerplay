@@ -17,6 +17,8 @@ public class TestConfiguration implements AutonomousConfiguration {
     public static double angleKp = 0.8;
     public static double angleKi = 0.009;
     public static double angleKd = 0.0001;
+    public static double forwardAngleOffset = 0.025;
+    public static double backwardAngleOffset = 0.01;
 
 
     @Override
@@ -73,4 +75,10 @@ public class TestConfiguration implements AutonomousConfiguration {
     public double getAngleKd() {
         return angleKd;
     }
+
+    @Override
+    public double getForwardAngleOffset() {return forwardAngleOffset;}
+
+    @Override
+    public double getBackwardAngleOffset() {return backwardAngleOffset;}
 }

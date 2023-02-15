@@ -13,4 +13,6 @@ public interface AutonomousConfiguration {
     double getAngleKp();
     double getAngleKi();
     double getAngleKd();
+    double getForwardAngleOffset();
+    double getBackwardAngleOffset();
 }

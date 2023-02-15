@@ -1,28 +1,32 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.autonomous.configurations.TestConfiguration;
+import org.firstinspires.ftc.teamcode.lib.TagDetection;
 import org.firstinspires.ftc.teamcode.lib.Utils;
 import org.firstinspires.ftc.teamcode.lib.autonomous.GlobalCoordinatePosition;
+import org.openftc.apriltag.AprilTagDetection;
 
-@Config
 @Autonomous
-public class TestAutonomous extends LinearOpMode {
-    public static double DISTANCE = 100;
-
+public class AutonomousCode extends LinearOpMode {
     private final KronBot robot = new KronBot();
     private final TestConfiguration configuration = new TestConfiguration();
+    private TagDetection tagDetection;
 
     private GlobalCoordinatePosition position;
+
+    private AprilTagDetection tagOfInterest;
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot.initHardwareMap(hardwareMap);
+
+        tagDetection = new TagDetection(hardwareMap, telemetry);
+
         position = new GlobalCoordinatePosition(
             robot.leftEncoder,
             robot.rightEncoder,
@@ -31,30 +35,17 @@ public class TestAutonomous extends LinearOpMode {
             telemetry
         );
 
-        waitForStart();
+        while (!isStarted() && !isStopRequested()) {
+            tagOfInterest = tagDetection.detectTag();
+            tagDetection.tagToTelemetry(tagOfInterest);
+        }
+
         Thread positionThread = new Thread(position);
         positionThread.start();
 
         while (opModeIsActive()) {
-            if (gamepad1.x) {
-                rotate(Math.PI);
-                Thread.sleep(500);
-            } else if (gamepad1.a) {
-                rotate(Math.PI / 2);
-                Thread.sleep(500);
-            } else if (gamepad1.b) {
-                Thread.sleep(1000);
-                linear(DISTANCE);
-                Thread.sleep(1000);
-                rotate(Math.PI);
-                Thread.sleep(1000);
-                linear(DISTANCE);
-                Thread.sleep(1000);
-                rotate(Math.PI);
-            } else if (gamepad1.y) {
-                linear(DISTANCE);
-                Thread.sleep(500);
-            }
+            rotate(Math.PI / 2);
+            Thread.sleep(500);
         }
 
         position.stop();
@@ -76,17 +67,17 @@ public class TestAutonomous extends LinearOpMode {
 
         ElapsedTime timer = new ElapsedTime();
         while (opModeIsActive() && Math.abs(error) > configuration.getAcceptableError() &&
-                Utils.distance(startX, startY, targetX, targetY) + configuration.getAcceptableError() >
-                        Utils.distance(startX, startY, position.getX(), position.getY())) {
+            Utils.distance(startX, startY, targetX, targetY) + configuration.getAcceptableError() >
+                Utils.distance(startX, startY, position.getX(), position.getY())) {
             integralSum += error;
             angleIntegralSum += angleError;
             double distanceDerivative = (error - lastError) / timer.seconds();
             double angleDerivative = (angleError - lastAngleError) / timer.seconds();
 
             double distancePower = (
-                    (configuration.getKp() * error) +
-                            (configuration.getKi() * integralSum) +
-                            (configuration.getKd() * distanceDerivative)
+                (configuration.getKp() * error) +
+                    (configuration.getKi() * integralSum) +
+                    (configuration.getKd() * distanceDerivative)
             );
 
             double anglePower = angleError * (backwards ?
@@ -137,18 +128,18 @@ public class TestAutonomous extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         boolean negative = radians < 0;
         while (
-                Math.abs(error) > configuration.getAcceptableError() &&
+            Math.abs(error) > configuration.getAcceptableError() &&
                 (negative && position.getAngle() > target ||
-                position.getAngle() < target)
+                    position.getAngle() < target)
         ) {
             error = target - position.getAngle();
 
             integralSum += error;
             double derivative = (error - lastError) / timer.seconds();
             double power = (
-                    (configuration.getAngleKp() * error) +
-                            (configuration.getAngleKi() * integralSum) +
-                            (configuration.getAngleKd() * derivative)
+                (configuration.getAngleKp() * error) +
+                    (configuration.getAngleKi() * integralSum) +
+                    (configuration.getAngleKd() * derivative)
             );
 
             power = Utils.map(power, 0, 1, 0, configuration.getMaxSpeed());

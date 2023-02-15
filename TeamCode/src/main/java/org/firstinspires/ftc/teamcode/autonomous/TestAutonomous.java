@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Util;
 
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.autonomous.configurations.TestConfiguration;
@@ -14,8 +13,9 @@ import org.firstinspires.ftc.teamcode.lib.autonomous.GlobalCoordinatePosition;
 @Config
 @Autonomous
 public class TestAutonomous extends LinearOpMode {
-    public static double DISTANCE = 72
-            ;
+    public static double DISTANCE = 100;
+    public static double FORWARD_ANGLE_OFFSET = 0.025;
+    public static double BACKWARDS_ANGLE_OFFSET = 0.01;
     private final KronBot robot = new KronBot();
     private final TestConfiguration configuration = new TestConfiguration();
     private GlobalCoordinatePosition position;
@@ -37,14 +37,28 @@ public class TestAutonomous extends LinearOpMode {
         positionThread.start();
 
         while (opModeIsActive()) {
-            linear(DISTANCE);
-            Thread.sleep(200);
-            linear(-DISTANCE);
-            Thread.sleep(200);
+            if (gamepad1.x) {
+                rotate(Math.PI);
+                Thread.sleep(500);
+            } else if (gamepad1.a) {
+                rotate(Math.PI / 2);
+                Thread.sleep(500);
+            } else if (gamepad1.b) {
+                Thread.sleep(1000);
+                linear(DISTANCE);
+                Thread.sleep(1000);
+                rotate(Math.PI);
+                Thread.sleep(1000);
+                linear(DISTANCE);
+                Thread.sleep(1000);
+                rotate(Math.PI);
+            } else if (gamepad1.y) {
+                linear(DISTANCE);
+                Thread.sleep(500);
+            }
         }
 
-//        rotate(Math.PI / 2);
-
+        while (opModeIsActive()) {}
         position.stop();
     }
 
@@ -77,14 +91,10 @@ public class TestAutonomous extends LinearOpMode {
                             (configuration.getKd() * distanceDerivative)
             );
 
-            double anglePower = (
-                    (configuration.getAngleKp() * angleError) +
-                            (configuration.getAngleKi() * angleIntegralSum) +
-                            (configuration.getAngleKd() * angleDerivative)
-            );
+            double anglePower = angleError * (backwards ? BACKWARDS_ANGLE_OFFSET : FORWARD_ANGLE_OFFSET) * (distance > 0 ? 1 : -1);
 
-            double leftPower = Utils.map(distancePower - anglePower, 0, 1, 0, configuration.getMaxSpeed());
-            double rightPower = Utils.map(distancePower + anglePower, 0, 1, 0, configuration.getMaxSpeed());
+            double leftPower = Utils.map(distancePower + anglePower, 0, 1, 0, configuration.getMaxSpeed());
+            double rightPower = Utils.map(distancePower - anglePower, 0, 1, 0, configuration.getMaxSpeed());
 
             telemetry.addData("backwards", backwards);
             telemetry.addData("error", error);
@@ -107,7 +117,7 @@ public class TestAutonomous extends LinearOpMode {
 
             telemetry.update();
 
-            robot.drive(leftPower, rightPower, leftPower, rightPower, backwards ? -configuration.getMaxSpeed() : configuration.getMaxSpeed());
+            robot.drive(leftPower, rightPower, leftPower, rightPower, backwards ? -1 : 1);
 
             lastAngleError = angleError;
             lastError = error;
@@ -142,7 +152,7 @@ public class TestAutonomous extends LinearOpMode {
 
             power = Utils.map(power, 0, 1, 0, configuration.getMaxSpeed());
 
-            robot.drive(power, -power, power, -power, configuration.getMaxSpeed());
+            robot.drive(power, -power, power, -power, 1);
 
             lastError = error;
             timer.reset();

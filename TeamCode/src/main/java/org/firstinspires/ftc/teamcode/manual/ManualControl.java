@@ -23,6 +23,7 @@ public class ManualControl extends OpMode {
     public void init() {
         robot.initHardwareMap(hardwareMap);
         robot.resetSlideEncoder();
+        slideControl.setState(SlideControl.State.GROUND);
 
         robot.controlIntake(1);
     }
@@ -37,6 +38,6 @@ public class ManualControl extends OpMode {
 //        robotControl.debug();
 
         slideControl.intake(gamepad1.dpad_up);
-        slideControl.control(gamepad1, false);
+        slideControl.control(gamepad1, true);
     }
 }

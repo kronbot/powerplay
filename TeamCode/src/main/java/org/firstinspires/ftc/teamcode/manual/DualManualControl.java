@@ -24,6 +24,7 @@ public class DualManualControl extends OpMode {
         robot.initHardwareMap(hardwareMap);
         robot.resetSlideEncoder();
         robot.controlIntake(1);
+        slideControl.setState(SlideControl.State.GROUND);
     }
 
     @Override

@@ -73,11 +73,6 @@ public class GlobalCoordinatePosition implements Runnable {
     public void run() {
         while (isRunning) {
             update();
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
         }
     }
 

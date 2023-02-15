@@ -14,8 +14,8 @@ public class TestConfiguration implements AutonomousConfiguration {
     public static double kP = 0.1;
     public static double kI = 0.0;
     public static double kD = 0.0;
-    public static double angleKp = 0.01;
-    public static double angleKi = 0.0;
+    public static double angleKp = 0.8;
+    public static double angleKi = 0.009;
     public static double angleKd = 0.0;
 
 

@@ -31,14 +31,10 @@ public class TestAutonomous extends LinearOpMode {
             configuration,
             telemetry
         );
+
         waitForStart();
         Thread positionThread = new Thread(position);
         positionThread.start();
-
-//        linear(DISTANCE);
-//        Thread.sleep(200);
-//        linear(-DISTANCE);
-//        Thread.sleep(200);
 
         while (opModeIsActive()) {
             linear(DISTANCE);
@@ -47,12 +43,15 @@ public class TestAutonomous extends LinearOpMode {
             Thread.sleep(200);
         }
 
+//        rotate(Math.PI / 2);
+
         position.stop();
     }
 
     public void linear(double distance) {
         final double targetX = position.getX() + Math.sin(position.getAngle()) * distance;
         final double targetY = position.getY() + Math.cos(position.getAngle()) * distance;
+        final double targetAngle = position.getAngle();
 
         double lastAngleError = 0, lastError = 0;
         double angleError = 0, error = Utils.distance(position.getX(), position.getY(), targetX, targetY);
@@ -113,19 +112,24 @@ public class TestAutonomous extends LinearOpMode {
             lastAngleError = angleError;
             lastError = error;
             error = Utils.distance(position.getX(), position.getY(), targetX, targetY);
-            angleError = Math.atan2(targetY - position.getY(), targetX - position.getX());
+            angleError = targetAngle - Math.atan2(position.getY(), position.getX());
             timer.reset();
         }
 
         robot.stopMotors();
     }
 
-    public void rotate(double degrees) {
-        double target = position.getAngle() + degrees;
+    public void rotate(double radians) {
+        double target = position.getAngle() + radians;
         double lastError = 0, error = target - position.getAngle();
         double integralSum = 0;
         ElapsedTime timer = new ElapsedTime();
-        while (Math.abs(error) < configuration.getAcceptableError()) {
+        boolean negative = radians < 0;
+        while (
+                Math.abs(error) > configuration.getAcceptableError() &&
+                (negative && position.getAngle() > target ||
+                position.getAngle() < target)
+        ) {
             error = target - position.getAngle();
 
             integralSum += error;
@@ -135,6 +139,8 @@ public class TestAutonomous extends LinearOpMode {
                             (configuration.getAngleKi() * integralSum) +
                             (configuration.getAngleKd() * derivative)
             );
+
+            power = Utils.map(power, 0, 1, 0, configuration.getMaxSpeed());
 
             robot.drive(power, -power, power, -power, configuration.getMaxSpeed());
 

@@ -14,6 +14,12 @@ public class Utils {
     public static double SLIDE_REST = 0.05;
     public static double SLIDE_REST_SLIDING = 0.001;
 
+    public static Integer SLIDE_GROUND_COORDINATE = 100;
+    public static Integer SLIDE_FIRST_COORDINATE = 1400;
+    public static Integer SLIDE_SECOND_COORDINATE = 2150;
+    public static Integer SLIDE_THIRD_COORDINATE = 2900;
+
+
     public static double TICKS_PER_CM = 635;
 
     /**

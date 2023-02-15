@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.lib;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.util.Util;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
@@ -24,15 +25,12 @@ public class SlideControl {
     private class StateManager {
         private State currentState = State.REST;
 
-        private Integer groundCoordinate = 100;
-        private Integer firstCoordinate = 1400;
-        private Integer secondCoordinate = 2150;
-        private Integer thirdCoordinate = 2900;
-        private Integer FiveCoordinate = 500;
-        private Integer FourCoordinate = 400;
-        private Integer ThreeCoordinate = 300;
-        private Integer TwoCoordinate = 200;
-        private Integer OneCoordinate = 100;
+        private Integer groundCoordinate = Utils.SLIDE_GROUND_COORDINATE;
+        private Integer firstCoordinate = Utils.SLIDE_FIRST_COORDINATE;
+        private Integer secondCoordinate = Utils.SLIDE_SECOND_COORDINATE;
+        private Integer thirdCoordinate = Utils.SLIDE_THIRD_COORDINATE;
+
+
         public Integer getStateCoordinate(State state) {
             if (state == null)
                 throw new IllegalArgumentException("State is null :(");
@@ -45,16 +43,6 @@ public class SlideControl {
                     return secondCoordinate;
                 case THIRD:
                     return thirdCoordinate;
-                case ONE:
-                    return OneCoordinate;
-                case TWO:
-                    return TwoCoordinate;
-                case THREE:
-                    return ThreeCoordinate;
-                case FOUR:
-                    return FourCoordinate;
-                case FIVE:
-                    return FiveCoordinate;
                 default:
                     throw new IllegalArgumentException("State is invalid :(");
             }

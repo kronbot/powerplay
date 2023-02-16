@@ -16,12 +16,12 @@ public class DualManualControl extends OpMode {
     public DualManualControl() {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
-        slideControl = new SlideControl(robot, telemetry);
     }
 
     @Override
     public void init() {
         robot.initHardwareMap(hardwareMap);
+        slideControl = new SlideControl(robot, telemetry);
     }
 
     @Override

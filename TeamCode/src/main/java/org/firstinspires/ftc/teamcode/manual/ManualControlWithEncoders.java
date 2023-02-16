@@ -26,7 +26,6 @@ public class ManualControlWithEncoders extends OpMode {
                 robot.frontEncoder,
                 new TestConfiguration(),
                 telemetry
-
         );
         thread = new Thread(position);
         thread.start();

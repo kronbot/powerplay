@@ -93,8 +93,6 @@ public class SlideControl {
         this.robot = robot;
         this.telemetry = telemetry;
         this.stateManager = new StateManager();
-
-        setState(SlideControl.State.GROUND);
     }
 
     public void showDebugTelemetry() {

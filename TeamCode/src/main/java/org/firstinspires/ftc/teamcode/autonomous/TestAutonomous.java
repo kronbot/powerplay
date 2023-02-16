@@ -43,13 +43,13 @@ public class TestAutonomous extends LinearOpMode {
                 rotate(Math.PI / 2);
                 Thread.sleep(500);
             } else if (gamepad1.b) {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 linear(DISTANCE);
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 rotate(Math.PI);
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 linear(DISTANCE);
-                Thread.sleep(1000);
+                Thread.sleep(2000);
                 rotate(Math.PI);
             } else if (gamepad1.y) {
                 linear(DISTANCE);
@@ -94,8 +94,15 @@ public class TestAutonomous extends LinearOpMode {
                 configuration.getForwardAngleOffset()) *
                 (distance > 0 ? 1 : -1);
 
-            double leftPower = Utils.map(distancePower + anglePower, 0, 1, 0, configuration.getMaxSpeed());
-            double rightPower = Utils.map(distancePower - anglePower, 0, 1, 0, configuration.getMaxSpeed());
+            double leftPower = distancePower + anglePower;
+            double rightPower = distancePower - anglePower;
+            if (leftPower > 1.0)
+                leftPower = 1.0;
+            if (rightPower > 1.0)
+                rightPower = 1.0;
+
+            leftPower = Utils.map(leftPower, 0, 1, 0, configuration.getMaxSpeed());
+            rightPower = Utils.map(rightPower, 0, 1, 0, configuration.getMaxSpeed());
 
             telemetry.addData("backwards", backwards);
             telemetry.addData("error", error);
@@ -150,7 +157,8 @@ public class TestAutonomous extends LinearOpMode {
                             (configuration.getAngleKi() * integralSum) +
                             (configuration.getAngleKd() * derivative)
             );
-
+            if (power > 1.0)
+                power = 1.0;
             power = Utils.map(power, 0, 1, 0, configuration.getMaxSpeed());
 
             robot.drive(power, -power, power, -power, 1);

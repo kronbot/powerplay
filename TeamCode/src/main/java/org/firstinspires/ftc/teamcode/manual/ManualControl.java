@@ -11,17 +11,17 @@ import org.firstinspires.ftc.teamcode.lib.SlideControl;
 public class ManualControl extends OpMode {
     private final KronBot robot;
     private final RobotControl robotControl;
-    private final SlideControl slideControl;
+    private SlideControl slideControl;
 
     public ManualControl() {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
-        slideControl = new SlideControl(robot, telemetry);
     }
 
     @Override
     public void init() {
         robot.initHardwareMap(hardwareMap);
+        slideControl = new SlideControl(robot, telemetry);
     }
 
     @Override

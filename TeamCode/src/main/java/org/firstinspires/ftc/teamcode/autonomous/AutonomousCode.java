@@ -74,26 +74,33 @@ public class AutonomousCode extends LinearOpMode {
 
         ElapsedTime timer = new ElapsedTime();
         while (opModeIsActive() && Math.abs(error) > configuration.getAcceptableError() &&
-            Utils.distance(startX, startY, targetX, targetY) + configuration.getAcceptableError() >
-                Utils.distance(startX, startY, position.getX(), position.getY())) {
+                Utils.distance(startX, startY, targetX, targetY) + configuration.getAcceptableError() >
+                        Utils.distance(startX, startY, position.getX(), position.getY())) {
             integralSum += error;
             angleIntegralSum += angleError;
             double distanceDerivative = (error - lastError) / timer.seconds();
             double angleDerivative = (angleError - lastAngleError) / timer.seconds();
 
             double distancePower = (
-                (configuration.getKp() * error) +
-                    (configuration.getKi() * integralSum) +
-                    (configuration.getKd() * distanceDerivative)
+                    (configuration.getKp() * error) +
+                            (configuration.getKi() * integralSum) +
+                            (configuration.getKd() * distanceDerivative)
             );
 
             double anglePower = angleError * (backwards ?
-                configuration.getBackwardAngleOffset() :
-                configuration.getForwardAngleOffset()) *
-                (distance > 0 ? 1 : -1);
+                    configuration.getBackwardAngleOffset() :
+                    configuration.getForwardAngleOffset()) *
+                    (distance > 0 ? 1 : -1);
 
-            double leftPower = Utils.map(distancePower + anglePower, 0, 1, 0, configuration.getMaxSpeed());
-            double rightPower = Utils.map(distancePower - anglePower, 0, 1, 0, configuration.getMaxSpeed());
+            double leftPower = distancePower + anglePower;
+            double rightPower = distancePower - anglePower;
+            if (leftPower > 1.0)
+                leftPower = 1.0;
+            if (rightPower > 1.0)
+                rightPower = 1.0;
+
+            leftPower = Utils.map(leftPower, 0, 1, 0, configuration.getMaxSpeed());
+            rightPower = Utils.map(rightPower, 0, 1, 0, configuration.getMaxSpeed());
 
             telemetry.addData("backwards", backwards);
             telemetry.addData("error", error);
@@ -135,20 +142,21 @@ public class AutonomousCode extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         boolean negative = radians < 0;
         while (
-            Math.abs(error) > configuration.getAcceptableError() &&
-                (negative && position.getAngle() > target ||
-                    position.getAngle() < target)
+                Math.abs(error) > configuration.getAcceptableError() &&
+                        (negative && position.getAngle() > target ||
+                                position.getAngle() < target)
         ) {
             error = target - position.getAngle();
 
             integralSum += error;
             double derivative = (error - lastError) / timer.seconds();
             double power = (
-                (configuration.getAngleKp() * error) +
-                    (configuration.getAngleKi() * integralSum) +
-                    (configuration.getAngleKd() * derivative)
+                    (configuration.getAngleKp() * error) +
+                            (configuration.getAngleKi() * integralSum) +
+                            (configuration.getAngleKd() * derivative)
             );
-
+            if (power > 1.0)
+                power = 1.0;
             power = Utils.map(power, 0, 1, 0, configuration.getMaxSpeed());
 
             robot.drive(power, -power, power, -power, 1);

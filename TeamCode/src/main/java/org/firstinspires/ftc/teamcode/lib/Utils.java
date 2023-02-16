@@ -8,7 +8,7 @@ public class Utils {
     // used for floating point comparations
     public static double EPS = 0.1;
 
-    public static double MOTOR_ACCELERATION_POWER = 0.1;
+    public static double MOTOR_ACCELERATION_POWER = 0.3;
     public static double MOTOR_POWER_OFFSET = 1;
 
     public static double SLIDE_POWER = 1;
@@ -16,9 +16,9 @@ public class Utils {
     public static double SLIDE_REST_SLIDING = 0.001;
 
     public static Integer SLIDE_GROUND_COORDINATE = 100;
-    public static Integer SLIDE_FIRST_COORDINATE = 1400;
-    public static Integer SLIDE_SECOND_COORDINATE = 2150;
-    public static Integer SLIDE_THIRD_COORDINATE = 2900;
+    public static Integer SLIDE_FIRST_COORDINATE = 1500;
+    public static Integer SLIDE_SECOND_COORDINATE = 2250;
+    public static Integer SLIDE_THIRD_COORDINATE = 3475;
 
 
     public static double TICKS_PER_CM = 635;

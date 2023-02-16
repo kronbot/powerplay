@@ -23,6 +23,8 @@ public class AutonomousCode extends LinearOpMode {
 
     private GlobalCoordinatePosition position;
 
+    private double error;
+
     @Override
     public void runOpMode() throws InterruptedException {
         robot.initHardwareMap(hardwareMap);
@@ -48,7 +50,37 @@ public class AutonomousCode extends LinearOpMode {
         Thread positionThread = new Thread(position);
         positionThread.start();
 
-        slideControl.setCoordinate(1000);
+//        Thread slideThread = new Thread((RunslideControl);
+
+//        slideControl.setCoordinate(1000);
+
+        linear(180);
+
+
+        Thread.sleep(500);
+        rotate(Math.PI / 4);
+        Thread.sleep(500);
+
+        //ridica glisiera
+
+        linear(10);
+        Thread.sleep(500);
+
+        // pune con
+
+        linear(-10);
+        Thread.sleep(500);
+
+        // coboara glisiera
+
+        rotate(Math.PI / 4 * 3);
+        Thread.sleep(500);
+        linear(150);
+        Thread.sleep(500);
+
+        // ia con
+
+
 
         while (opModeIsActive()) {
 //            rotate(Math.PI / 2);
@@ -64,8 +96,9 @@ public class AutonomousCode extends LinearOpMode {
         final double targetAngle = position.getAngle();
 
         double lastAngleError = 0, lastError = 0;
-        double angleError = 0, error = Utils.distance(position.getX(), position.getY(), targetX, targetY);
         double angleIntegralSum = 0, integralSum = 0;
+        double angleError = 0;
+        error = Utils.distance(position.getX(), position.getY(), targetX, targetY);
 
         double startX = position.getX();
         double startY = position.getY();

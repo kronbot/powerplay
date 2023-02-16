@@ -69,7 +69,7 @@ public class SlideControl {
 
             robot.slideDc.setTargetPosition(coordinate);
             robot.slideDc.setPower(power);
-            if (robot.slideDc.getCurrentPosition() > getStateCoordinate(currentState))
+            if (robot.slideDc.getCurrentPosition() > coordinate)
                 robot.slideDc.setPower(-power);
             robot.slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
@@ -147,6 +147,10 @@ public class SlideControl {
         if (state.equals(State.GROUND))
             robot.controlIntake(1);
         stateManager.setCurrentState(state);
+    }
+
+    public void setCoordinate(Integer coordinate) {
+        stateManager.setCurrentStateToCustom(coordinate);
     }
 
     // for autonomous

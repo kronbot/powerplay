@@ -1,58 +1,60 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.autonomous.configurations.TestConfiguration;
-import org.firstinspires.ftc.teamcode.lib.SlideControl;
-import org.firstinspires.ftc.teamcode.lib.TagDetection;
 import org.firstinspires.ftc.teamcode.lib.Utils;
 import org.firstinspires.ftc.teamcode.lib.autonomous.GlobalCoordinatePosition;
-import org.openftc.apriltag.AprilTagDetection;
 
+@Config
 @Autonomous
-public class AutonomousCode extends LinearOpMode {
+public class PathAutonomous extends LinearOpMode {
+    public static double DISTANCE = 100;
+
     private final KronBot robot = new KronBot();
     private final TestConfiguration configuration = new TestConfiguration();
-    private SlideControl slideControl;
-
-    private TagDetection tagDetection;
-    private AprilTagDetection tagOfInterest = null;
 
     private GlobalCoordinatePosition position;
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot.initHardwareMap(hardwareMap);
-
-        slideControl = new SlideControl(robot, telemetry);
-
-        tagDetection = new TagDetection(hardwareMap, telemetry);
-
         position = new GlobalCoordinatePosition(
-            robot.leftEncoder,
-            robot.rightEncoder,
-            robot.frontEncoder,
-            configuration,
-            telemetry
+                robot.leftEncoder,
+                robot.rightEncoder,
+                robot.frontEncoder,
+                configuration,
+                telemetry
         );
 
-        while (!isStarted() && !isStopRequested()) {
-            tagOfInterest = tagDetection.detectTag();
-//            if (tagOfInterest != null)
-//                tagDetection.tagToTelemetry(tagOfInterest);
-        }
-
+        waitForStart();
         Thread positionThread = new Thread(position);
         positionThread.start();
-
-        slideControl.setCoordinate(1000);
-
+        linear(60);
         while (opModeIsActive()) {
-//            rotate(Math.PI / 2);
-//            Thread.sleep(500);
+            if (gamepad1.x) {
+                rotate(Math.PI);
+                Thread.sleep(500);
+            } else if (gamepad1.a) {
+                rotate(Math.PI / 2);
+                Thread.sleep(500);
+            } else if (gamepad1.b) {
+                Thread.sleep(1000);
+                linear(DISTANCE);
+                Thread.sleep(1000);
+                rotate(Math.PI);
+                Thread.sleep(1000);
+                linear(DISTANCE);
+                Thread.sleep(1000);
+                rotate(Math.PI);
+            } else if (gamepad1.y) {
+                linear(DISTANCE);
+                Thread.sleep(500);
+            }
         }
 
         position.stop();
@@ -74,23 +76,23 @@ public class AutonomousCode extends LinearOpMode {
 
         ElapsedTime timer = new ElapsedTime();
         while (opModeIsActive() && Math.abs(error) > configuration.getAcceptableError() &&
-            Utils.distance(startX, startY, targetX, targetY) + configuration.getAcceptableError() >
-                Utils.distance(startX, startY, position.getX(), position.getY())) {
+                Utils.distance(startX, startY, targetX, targetY) + configuration.getAcceptableError() >
+                        Utils.distance(startX, startY, position.getX(), position.getY())) {
             integralSum += error;
             angleIntegralSum += angleError;
             double distanceDerivative = (error - lastError) / timer.seconds();
             double angleDerivative = (angleError - lastAngleError) / timer.seconds();
 
             double distancePower = (
-                (configuration.getKp() * error) +
-                    (configuration.getKi() * integralSum) +
-                    (configuration.getKd() * distanceDerivative)
+                    (configuration.getKp() * error) +
+                            (configuration.getKi() * integralSum) +
+                            (configuration.getKd() * distanceDerivative)
             );
 
             double anglePower = angleError * (backwards ?
-                configuration.getBackwardAngleOffset() :
-                configuration.getForwardAngleOffset()) *
-                (distance > 0 ? 1 : -1);
+                    configuration.getBackwardAngleOffset() :
+                    configuration.getForwardAngleOffset()) *
+                    (distance > 0 ? 1 : -1);
 
             double leftPower = Utils.map(distancePower + anglePower, 0, 1, 0, configuration.getMaxSpeed());
             double rightPower = Utils.map(distancePower - anglePower, 0, 1, 0, configuration.getMaxSpeed());
@@ -135,18 +137,18 @@ public class AutonomousCode extends LinearOpMode {
         ElapsedTime timer = new ElapsedTime();
         boolean negative = radians < 0;
         while (
-            Math.abs(error) > configuration.getAcceptableError() &&
-                (negative && position.getAngle() > target ||
-                    position.getAngle() < target)
+                Math.abs(error) > configuration.getAcceptableError() &&
+                        (negative && position.getAngle() > target ||
+                                position.getAngle() < target)
         ) {
             error = target - position.getAngle();
 
             integralSum += error;
             double derivative = (error - lastError) / timer.seconds();
             double power = (
-                (configuration.getAngleKp() * error) +
-                    (configuration.getAngleKi() * integralSum) +
-                    (configuration.getAngleKd() * derivative)
+                    (configuration.getAngleKp() * error) +
+                            (configuration.getAngleKi() * integralSum) +
+                            (configuration.getAngleKd() * derivative)
             );
 
             power = Utils.map(power, 0, 1, 0, configuration.getMaxSpeed());

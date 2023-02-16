@@ -61,8 +61,7 @@ public class TagDetection {
             boolean tagFound = false;
 
             for(AprilTagDetection tag : currentDetections)
-                if(tag.id <=3)
-                {
+                if(tag.id <=3) {
                     tagOfInterest = tag;
                     tagFound = true;
                     break;

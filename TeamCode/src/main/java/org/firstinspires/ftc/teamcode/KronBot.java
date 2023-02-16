@@ -23,10 +23,6 @@ public class KronBot {
     public Encoder rightEncoder;
     public Encoder frontEncoder;
 
-    public KronBot() {
-        resetSlideEncoder();
-    }
-
     /**
      * Initialization of hardware map
      */

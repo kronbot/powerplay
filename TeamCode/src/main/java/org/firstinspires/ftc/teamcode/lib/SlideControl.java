@@ -48,7 +48,7 @@ public class SlideControl {
             return currentState;
         }
 
-        public void setCurrentState(State currentState) {
+        public synchronized void setCurrentState(State currentState) {
             if (this.currentState != State.REST)
                 robot.slideDc.setPower(restPower);
             this.currentState = currentState;
@@ -62,7 +62,7 @@ public class SlideControl {
             robot.slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         }
 
-        public void setCurrentStateToCustom(Integer coordinate) {
+        public synchronized void setCurrentStateToCustom(Integer coordinate) {
             if (this.currentState != State.REST)
                 robot.slideDc.setPower(restPower);
             this.currentState = State.CUSTOM;
@@ -141,13 +141,13 @@ public class SlideControl {
         return stateManager.getCurrentState();
     }
 
-    public void setState(State state) {
+    public synchronized void setState(State state) {
         if (state.equals(State.GROUND))
             robot.controlIntake(1);
         stateManager.setCurrentState(state);
     }
 
-    public void setCoordinate(Integer coordinate) {
+    public synchronized void setCoordinate(Integer coordinate) {
         stateManager.setCurrentStateToCustom(coordinate);
     }
 

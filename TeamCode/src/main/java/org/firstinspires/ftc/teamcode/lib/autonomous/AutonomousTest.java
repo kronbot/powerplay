@@ -105,28 +105,30 @@ public class AutonomousTest extends LinearOpMode {
                 .addTemporalMarker(0.3, () -> {
                     slideControl.setState(SlideControl.State.THIRD);
                 })
-                .lineToSplineHeading(new Pose2d(60,-5,Math.toRadians(-30)))
+                .lineToSplineHeading(new Pose2d(57,-5,Math.toRadians(-30)))
                 .build();
 
-        TrajectorySequence GetCone = drive.trajectorySequenceBuilder(new Pose2d(60, -5, Math.toRadians(-30)))
+        TrajectorySequence GetCone = drive.trajectorySequenceBuilder(new Pose2d(57, -5, Math.toRadians(-30)))
                 .setReversed(true)
-                .lineToSplineHeading(new Pose2d(56,16,Math.toRadians(95)))
+                .lineTo(new Vector2d(56,0))
+                .lineToSplineHeading(new Pose2d(56.3,18,Math.toRadians(95)))
                 .addTemporalMarker(0.5, () -> {
                     slideControl.setState(SlideControl.State.GROUND);
                 })
            .build();
 
-        TrajectorySequence ToJunk = drive.trajectorySequenceBuilder(new Pose2d(56, 16, Math.toRadians(95)))
+        TrajectorySequence ToJunk = drive.trajectorySequenceBuilder(new Pose2d(56, 18, Math.toRadians(95)))
                 .setReversed(true)
-                .lineToSplineHeading(new Pose2d(60,-6,Math.toRadians(-30)))
+                .lineToSplineHeading(new Pose2d(57,-5,Math.toRadians(-30)))
                 .addTemporalMarker(0.1,() -> {
                 slideControl.setState(SlideControl.State.THIRD);
                 })
                 .build();
 
-        TrajectorySequence GetCone1 = drive.trajectorySequenceBuilder(new Pose2d(60, -6, Math.toRadians(-30)))
+        TrajectorySequence GetCone1 = drive.trajectorySequenceBuilder(new Pose2d(57, -5, Math.toRadians(-30)))
                 .setReversed(true)
-                .lineToSplineHeading(new Pose2d(56,16,Math.toRadians(95)))
+                .lineTo(new Vector2d(56,0))
+                .lineToSplineHeading(new Pose2d(56.3,18,Math.toRadians(95)))
                 .addTemporalMarker(0.5, () -> {
                     slideControl.setState(SlideControl.State.GROUND);
                 })

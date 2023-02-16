@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.autonomous;
 
+import android.database.sqlite.SQLiteDatabaseLockedException;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,8 +15,37 @@ import org.firstinspires.ftc.teamcode.lib.Utils;
 import org.firstinspires.ftc.teamcode.lib.autonomous.GlobalCoordinatePosition;
 import org.openftc.apriltag.AprilTagDetection;
 
+@Config
 @Autonomous
 public class AutonomousCode extends LinearOpMode {
+    public static double FIRST_DISTANCE = 120;
+    public static double SECOND_DISTANCE=10;
+
+    private class SlideControlRunnable implements Runnable {
+        private SlideControl slideControl;
+        private boolean isRunning = true;
+
+        public SlideControlRunnable(SlideControl slideControl) {
+            this.slideControl = slideControl;
+        }
+
+        @Override
+        public void run() {
+            while (isRunning) {
+                slideControl.loop();
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        public void stop() {
+            isRunning = false;
+        }
+    }
+
     private final KronBot robot = new KronBot();
     private final TestConfiguration configuration = new TestConfiguration();
     private SlideControl slideControl;
@@ -30,8 +62,8 @@ public class AutonomousCode extends LinearOpMode {
         robot.initHardwareMap(hardwareMap);
 
         slideControl = new SlideControl(robot, telemetry);
-
-        tagDetection = new TagDetection(hardwareMap, telemetry);
+        SlideControlRunnable slideControlRunnable = new SlideControlRunnable(slideControl);
+        Thread slideControlThread = new Thread(slideControlRunnable);
 
         position = new GlobalCoordinatePosition(
             robot.leftEncoder,
@@ -41,51 +73,26 @@ public class AutonomousCode extends LinearOpMode {
             telemetry
         );
 
-        while (!isStarted() && !isStopRequested()) {
-            tagOfInterest = tagDetection.detectTag();
-//            if (tagOfInterest != null)
-//                tagDetection.tagToTelemetry(tagOfInterest);
-        }
-
         Thread positionThread = new Thread(position);
         positionThread.start();
+        slideControlThread.start();
 
-//        Thread slideThread = new Thread((RunslideControl);
+        waitForStart();
 
-//        slideControl.setCoordinate(1000);
-
-        linear(180);
-
-
+        robot.controlIntake(0.0);
+        Thread.sleep(200);
+        slideControl.setState(SlideControl.State.THIRD);
+        Thread.sleep(1000);
+        linear(FIRST_DISTANCE);
         Thread.sleep(500);
-        rotate(Math.PI / 4);
+        rotate(Math.PI / 4 + 0.2);
         Thread.sleep(500);
-
+        while (opModeIsActive() && slideControl.getState() != SlideControl.State.REST) {}
         //ridica glisiera
 
-        linear(10);
+        linear(SECOND_DISTANCE);
+        robot.controlIntake(1.0);
         Thread.sleep(500);
-
-        // pune con
-
-        linear(-10);
-        Thread.sleep(500);
-
-        // coboara glisiera
-
-        rotate(Math.PI / 4 * 3);
-        Thread.sleep(500);
-        linear(150);
-        Thread.sleep(500);
-
-        // ia con
-
-
-
-        while (opModeIsActive()) {
-//            rotate(Math.PI / 2);
-//            Thread.sleep(500);
-        }
 
         position.stop();
     }

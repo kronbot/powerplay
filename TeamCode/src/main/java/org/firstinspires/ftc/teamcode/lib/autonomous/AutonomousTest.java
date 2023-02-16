@@ -169,7 +169,6 @@ public class AutonomousTest extends LinearOpMode {
         while (!isStopRequested() && opModeIsActive()) {
             drive.update();
             telemetry.addData("AprilTagID", TagID);
-            telemetry.update();
         }
     }
 }

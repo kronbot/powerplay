@@ -105,28 +105,28 @@ public class AutonomousTest extends LinearOpMode {
                 .addTemporalMarker(0.3, () -> {
                     slideControl.setState(SlideControl.State.THIRD);
                 })
-                .lineToSplineHeading(new Pose2d(62,-5,Math.toRadians(-30)))
+                .lineToSplineHeading(new Pose2d(60,-5,Math.toRadians(-30)))
                 .build();
 
-        TrajectorySequence GetCone = drive.trajectorySequenceBuilder(new Pose2d(62, -5, Math.toRadians(-30)))
+        TrajectorySequence GetCone = drive.trajectorySequenceBuilder(new Pose2d(60, -5, Math.toRadians(-30)))
                 .setReversed(true)
-                .lineToSplineHeading(new Pose2d(58,16,Math.toRadians(95)))
+                .lineToSplineHeading(new Pose2d(56,16,Math.toRadians(95)))
                 .addTemporalMarker(0.5, () -> {
                     slideControl.setState(SlideControl.State.GROUND);
                 })
            .build();
 
-        TrajectorySequence ToJunk = drive.trajectorySequenceBuilder(new Pose2d(58, 16, Math.toRadians(95)))
+        TrajectorySequence ToJunk = drive.trajectorySequenceBuilder(new Pose2d(56, 16, Math.toRadians(95)))
                 .setReversed(true)
-                .lineToSplineHeading(new Pose2d(61,-6,Math.toRadians(-30)))
+                .lineToSplineHeading(new Pose2d(60,-6,Math.toRadians(-30)))
                 .addTemporalMarker(0.1,() -> {
                 slideControl.setState(SlideControl.State.THIRD);
                 })
                 .build();
 
-        TrajectorySequence GetCone1 = drive.trajectorySequenceBuilder(new Pose2d(61, -6, Math.toRadians(-30)))
+        TrajectorySequence GetCone1 = drive.trajectorySequenceBuilder(new Pose2d(60, -6, Math.toRadians(-30)))
                 .setReversed(true)
-                .lineToSplineHeading(new Pose2d(58,16,Math.toRadians(95)))
+                .lineToSplineHeading(new Pose2d(56,16,Math.toRadians(95)))
                 .addTemporalMarker(0.5, () -> {
                     slideControl.setState(SlideControl.State.GROUND);
                 })
@@ -154,18 +154,18 @@ public class AutonomousTest extends LinearOpMode {
         drive.followTrajectorySequence(GetCone1);
         sleep(200);
         robot.controlIntake(1.0);
-        if(TagID==2)
-        {
-            drive.followTrajectorySequence(TagID2);
-        }
-        else
-        {
-            drive.followTrajectorySequence(TagID2);
-            if(TagID==1)
-                drive.followTrajectorySequence(TagID1);
-            else
-                drive.followTrajectorySequence(TagID3);
-        }
+//        if(TagID==2)
+//        {
+//            drive.followTrajectorySequence(TagID2);
+//        }
+//        else
+//        {
+//            drive.followTrajectorySequence(TagID2);
+//            if(TagID==1)
+//                drive.followTrajectorySequence(TagID1);
+//            else
+//                drive.followTrajectorySequence(TagID3);
+//        }
         while (!isStopRequested() && opModeIsActive()) {
             drive.update();
             telemetry.addData("AprilTagID", TagID);

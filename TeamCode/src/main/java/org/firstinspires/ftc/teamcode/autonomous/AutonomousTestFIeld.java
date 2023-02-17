@@ -4,11 +4,12 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.KronBot;
+import org.firstinspires.ftc.teamcode.lib.AprilTagDetectionPipeline;
+import org.openftc.easyopencv.OpenCvCamera;
 
 @Autonomous
 public class AutonomousTestFIeld extends LinearOpMode {
     private final KronBot robot = new KronBot();
-
     @Override
     public void runOpMode() throws InterruptedException {
         robot.initHardwareMap(hardwareMap);

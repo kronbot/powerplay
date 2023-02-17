@@ -6,19 +6,12 @@ import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.lib.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 import org.firstinspires.ftc.teamcode.lib.TagDetection;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-
-import java.util.ArrayList;
 
 /*
  * This is an example of a more complex path to really test the tuning.
@@ -34,18 +27,24 @@ public class AutonomousTest extends LinearOpMode {
     private TagDetection tagDetection;
     private AprilTagDetection tagOfInterest = null;
 
-    public static Integer FIRST_CONE_COORDINATE = 700;
+    public static Integer FIRST_CONE_COORDINATE = 600;
 
-    public static double firstConeX = 55;
-    public static double firstConeY = -5;
-    public static double firstConeAngle = -35;
+    public static double firstConeX = 56.5;
+    public static double firstConeY = -2.5;
+    public static double firstConeAngle = -33;
 
-    public static double backwardCoordinateX = 53;
+    public static double backwardCoordinateX = 45;
     public static double backwardCoordinateY = 0;
 
-    public static double ConeX = 55.3;
-    public static double ConeY = 17;
-    public static double ConeAngle = 95;
+    public static double coneX = 57.5;
+    public static double coneY = 20.5;
+    public static double coneAngle = 95;
+
+    public static double junctionX = 45;
+    public static double junctionY = -18;
+    public static double junctionAngle = -15;
+
+    public static double junctionForwardX = 52.8;
 
 
     @Override
@@ -67,21 +66,22 @@ public class AutonomousTest extends LinearOpMode {
                 .lineToSplineHeading(new Pose2d(firstConeX,firstConeY,Math.toRadians(firstConeAngle)))
                 .build();
 
-        TrajectorySequence GetCone = drive.trajectorySequenceBuilder(new Pose2d(firstConeX, firstConeY, Math.toRadians(firstConeAngle)))
+        TrajectorySequence GetNewCone = drive.trajectorySequenceBuilder(new Pose2d(firstConeX, firstConeY, Math.toRadians(firstConeAngle)))
                 .setReversed(true)
                 .lineTo(new Vector2d(backwardCoordinateX,backwardCoordinateY))
                 .addTemporalMarker(0.5, () -> {
                     slideControl.setCoordinate(FIRST_CONE_COORDINATE);
                 })
-                .lineToSplineHeading(new Pose2d(ConeX,ConeY,Math.toRadians(ConeAngle)))
+                .lineToSplineHeading(new Pose2d(coneX, coneY, Math.toRadians(coneAngle)))
                 .build();
 
-        TrajectorySequence ToJunk = drive.trajectorySequenceBuilder(new Pose2d(56, 18, Math.toRadians(95)))
+        TrajectorySequence MoveToJunction = drive.trajectorySequenceBuilder(new Pose2d(coneX, coneY, Math.toRadians(coneAngle)))
                 .setReversed(true)
-                .lineToSplineHeading(new Pose2d(57,-5,Math.toRadians(-30)))
-                .addTemporalMarker(0.1,() -> {
-                slideControl.setState(SlideControl.State.THIRD);
+                .lineToSplineHeading(new Pose2d(junctionX, junctionY, Math.toRadians(junctionAngle)))
+                .addTemporalMarker(0.3, () -> {
+                    slideControl.setState(SlideControl.State.THIRD);
                 })
+                .lineTo(new Vector2d(junctionForwardX, junctionY))
                 .build();
 
         TrajectorySequence GetCone1 = drive.trajectorySequenceBuilder(new Pose2d(56.5, -5, Math.toRadians(-30)))
@@ -108,19 +108,22 @@ public class AutonomousTest extends LinearOpMode {
 //                tagDetection.tagToTelemetry(tagOfInterest);
         }
 
-        robot.controlIntake(0.0);
+        robot.controlIntake(0);
         drive.followTrajectorySequence(InitialCone);
-        sleep(500);
-        robot.controlIntake(1.0);
-        drive.followTrajectorySequence(GetCone);
         sleep(200);
-        robot.controlIntake(1.0);
-//        drive.followTrajectorySequence(ToJunk);
+        robot.controlIntake(1);
+        drive.followTrajectorySequence(GetNewCone);
+        robot.controlIntake(0);
+        sleep(500);
+        slideControl.setCoordinate(FIRST_CONE_COORDINATE + 750);
+        sleep(500);
+        drive.followTrajectorySequence(MoveToJunction);
+        robot.controlIntake(1);
 //        sleep(500);
 //        robot.controlIntake(1.0);
 //        drive.followTrajectorySequence(GetCone1);
 //        sleep(200);
-        robot.controlIntake(1.0);
+//        robot.controlIntake(1.0);
 
         while (!isStopRequested() && opModeIsActive()) {
             drive.update();

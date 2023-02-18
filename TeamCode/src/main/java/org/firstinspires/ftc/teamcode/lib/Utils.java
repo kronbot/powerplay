@@ -45,4 +45,10 @@ public class Utils {
     public static double distance(double x1, double y1, double x2, double y2) {
         return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
+
+    public static double clamp(double value, double min, double max) {
+        if (value < min)
+            return min;
+        return Math.min(value, max);
+    }
 }

@@ -7,13 +7,13 @@ import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
-@TeleOp (name = "Dual Manual Control", group = "Dual")
-public class DualManualControl extends OpMode {
+@TeleOp (name = "Dual Manual trigonometry", group = "Dual")
+public class DualManualTrig extends OpMode {
     private KronBot robot;
     private RobotControl robotControl;
     private SlideControl slideControl;
 
-    public DualManualControl() {
+    public DualManualTrig() {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
     }
@@ -26,6 +26,7 @@ public class DualManualControl extends OpMode {
 
     @Override
     public void loop() {
+
         boolean move = robotControl.rotate(gamepad1.right_stick_x/1.25);
         if (!move)
             move = robotControl.translate(gamepad1.right_trigger/2, gamepad1.left_trigger/2);
@@ -39,3 +40,4 @@ public class DualManualControl extends OpMode {
         slideControl.control(gamepad2, false);
     }
 }
+

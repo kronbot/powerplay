@@ -63,18 +63,17 @@ public class AutonomousTest2 extends LinearOpMode {
                 .build();
         TrajectorySequence TagID1 = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .lineTo(new Vector2d( 51, 0))
-                .lineTo(new Vector2d(0,15))
+                .lineTo(new Vector2d(51,35))
                 .build();
         TrajectorySequence TagID3 = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .lineTo(new Vector2d(50,0))
-                .lineTo(new Vector2d(50,-20))
+                .lineTo(new Vector2d(50,-35))
                 .build();
 
         while (!isStarted() && !isStopRequested()) {
             tagOfInterest = tagDetection.detectTag();
         }
-        while (!isStopRequested() && opModeIsActive()) {
-        }
+
         if(tagOfInterest!=null)
         {
             if (tagOfInterest.id == 1) {

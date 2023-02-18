@@ -181,7 +181,7 @@ public class SlideControl {
             robot.controlSlide(slidePower(gamepad.right_trigger));
             return;
         } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS &&
-                robot.slideDc.getCurrentPosition() >= minCoordinate) {
+                robot.slideDc.getCurrentPosition() >= minCoordinate || !usingEnds) {
             robot.controlSlide(-slidePower(gamepad.left_trigger));
             return;
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {

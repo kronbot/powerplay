@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.lib;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-import com.qualcomm.robotcore.util.Util;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
@@ -182,7 +181,7 @@ public class SlideControl {
             robot.controlSlide(slidePower(gamepad.right_trigger));
             return;
         } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS &&
-                robot.slideDc.getCurrentPosition() >= minCoordinate) {
+                robot.slideDc.getCurrentPosition() >= minCoordinate || !usingEnds) {
             robot.controlSlide(-slidePower(gamepad.left_trigger));
             return;
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {

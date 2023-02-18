@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.drive;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -33,16 +34,18 @@ import java.util.List;
  *    \--------------/
  *
  */
+@Config
 public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
-    public static double X_MULTIPLIER = 0.9704705;
-    public static double Y_MULTIPLIER = 0.97798577;
+    public static double X_MULTIPLIER = 1.061169202; // 1.063606546 + 1.056972153 + 1.062928908
+    public static double Y_MULTIPLIER = 1.068878474;
 
     public static double TICKS_PER_REV = 8192;
-    public static double WHEEL_RADIUS = 2; // in
+    public static double WHEEL_RADIUS = 0.7; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
     public static double PARALLEL_X = 2.086; // X is the up and down direction
     public static double PARALLEL_Y = 3.2; // Y is the strafe direction
+
 
     public static double PERPENDICULAR_X = -3.05;
     public static double PERPENDICULAR_Y = -0.07;
@@ -63,11 +66,12 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
         this.drive = drive;
 
         parallelEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
-        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
+        perpendicularEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"))    ;
 
-        parallelEncoder.setDirection(Encoder.Direction.REVERSE);g
 
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
+
+        perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
     public static double encoderTicksToInches(double ticks) {
@@ -101,8 +105,8 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
         //  compensation method
 
         return Arrays.asList(
-                encoderTicksToInches(parallelEncoder.getRawVelocity()) * X_MULTIPLIER,
-                encoderTicksToInches(perpendicularEncoder.getRawVelocity()) * Y_MULTIPLIER
+                encoderTicksToInches(parallelEncoder.getCorrectedVelocity()) * X_MULTIPLIER,
+                encoderTicksToInches(perpendicularEncoder.getCorrectedVelocity()) * Y_MULTIPLIER
         );
     }
 }

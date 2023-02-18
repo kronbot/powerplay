@@ -6,18 +6,14 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
-import org.firstinspires.ftc.teamcode.lib.Utils;
 
-@Config
-@TeleOp (name = "Dual Manual Control", group = "Dual")
-public class DualManualControl extends OpMode {
-    public static double MAX_SPEED = 0.7;
-    public static double MAX_TSPEED = 0.8;
-    private final KronBot robot;
-    private final RobotControl robotControl;
+@TeleOp (name = "Dual Manual trigonometry", group = "Dual")
+public class DualManualTrig extends OpMode {
+    private KronBot robot;
+    private RobotControl robotControl;
     private SlideControl slideControl;
 
-    public DualManualControl() {
+    public DualManualTrig() {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
     }
@@ -30,16 +26,12 @@ public class DualManualControl extends OpMode {
 
     @Override
     public void loop() {
-        double rotateInput = Utils.clamp(gamepad1.right_stick_x / 1.25, -MAX_SPEED, MAX_SPEED);
+
         boolean move = robotControl.rotate(gamepad1.right_stick_x/1.25);
-        if (!move) {
-            double leftInput = Utils.clamp(gamepad1.right_trigger / 2, -MAX_TSPEED, MAX_TSPEED);
-            double rightInput = Utils.clamp(gamepad1.left_trigger / 2, -MAX_TSPEED, MAX_TSPEED);
-            move = robotControl.translate(leftInput, rightInput);
-        }
-        if (!move) {
-            move = robotControl.drive(0, Utils.clamp(-gamepad1.left_stick_y, -MAX_SPEED, MAX_SPEED));
-        }
+        if (!move)
+            move = robotControl.translate(gamepad1.right_trigger/2, gamepad1.left_trigger/2);
+        if (!move)
+            move = robotControl.drive(0, -gamepad1.left_stick_y);
         if (!move)
             robotControl.stop();
 //        robotControl.debug();
@@ -48,3 +40,4 @@ public class DualManualControl extends OpMode {
         slideControl.control(gamepad2, false);
     }
 }
+

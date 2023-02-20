@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 import org.firstinspires.ftc.teamcode.lib.Utils;
 
-@Config
+//@Config
 @TeleOp (name = "Dual Manual Control", group = "Dual")
 public class DualManualControl extends OpMode {
     public static double MAX_SPEED = 0.7;

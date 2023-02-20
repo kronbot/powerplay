@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.lib;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
 
@@ -47,7 +46,7 @@ public class SlideControl {
             return currentState;
         }
 
-        public synchronized void setCurrentState(State currentState) {
+        public void setCurrentState(State currentState) {
             if (this.currentState != State.REST)
                 robot.slideDc.setPower(restPower);
             this.currentState = currentState;
@@ -140,13 +139,13 @@ public class SlideControl {
         return stateManager.getCurrentState();
     }
 
-    public synchronized void setState(State state) {
+    public void setState(State state) {
         if (state.equals(State.GROUND))
             robot.controlIntake(1);
         stateManager.setCurrentState(state);
     }
 
-    public synchronized void setCoordinate(Integer coordinate) {
+    public void setCoordinate(Integer coordinate) {
         stateManager.setCurrentStateToCustom(coordinate);
     }
 
@@ -176,12 +175,10 @@ public class SlideControl {
                 stateManager.setCurrentState(State.THIRD);
         }
 
-        if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS &&
-                (robot.slideDc.getCurrentPosition() <= maxCoordinate || !usingEnds)) {
+        if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS) {
             robot.controlSlide(slidePower(gamepad.right_trigger));
             return;
-        } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS &&
-                robot.slideDc.getCurrentPosition() >= minCoordinate || !usingEnds) {
+        } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS) {
             robot.controlSlide(-slidePower(gamepad.left_trigger));
             return;
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {

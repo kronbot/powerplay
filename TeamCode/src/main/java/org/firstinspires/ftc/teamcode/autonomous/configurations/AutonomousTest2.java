@@ -63,7 +63,7 @@ public class AutonomousTest2 extends LinearOpMode {
                 .build();
         TrajectorySequence TagID1 = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .lineTo(new Vector2d( 51, 0))
-                .lineTo(new Vector2d(51,35))
+                .lineTo(new Vector2d(51,30))
                 .build();
         TrajectorySequence TagID3 = drive.trajectorySequenceBuilder(new Pose2d(0, 0, Math.toRadians(0)))
                 .lineTo(new Vector2d(50,0))

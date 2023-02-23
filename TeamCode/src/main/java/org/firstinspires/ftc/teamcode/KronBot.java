@@ -1,11 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.drawable.GradientDrawable;
+
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.IMU;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class KronBot {
@@ -17,11 +26,12 @@ public class KronBot {
     public DcMotor slideDc;
 
     public Servo intakeServo;
-
+    private IMU imu;
     public Encoder leftEncoder;
     public Encoder rightEncoder;
     public Encoder frontEncoder;
-
+    private Orientation LastAngle=new Orientation();
+    private double CurrAngle=0.0;
     /**
      * Initialization of hardware map
      */
@@ -50,6 +60,10 @@ public class KronBot {
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
 //        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+        imu = hardwareMap.get(IMU.class, "imu");
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
+                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
     }
 
     /**
@@ -99,4 +113,17 @@ public class KronBot {
         backLeftDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
+    public void resetHeading()
+    {
+      imu.resetYaw();
+    }
+    public double GetCurentAngle()
+    {
+        Orientation orientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.RADIANS  );
+        double deltaAngle = orientation.firstAngle - LastAngle.firstAngle;
+        CurrAngle+=deltaAngle;
+        LastAngle=orientation;
+        return CurrAngle;
+    }
+
 }

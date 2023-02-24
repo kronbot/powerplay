@@ -36,18 +36,18 @@ import java.util.List;
  */
 @Config
 public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
-    public static double X_MULTIPLIER = 1.061169202; // 1.063606546 + 1.056972153 + 1.062928908
-    public static double Y_MULTIPLIER = 1.068878474;
+    public static double X_MULTIPLIER = 0.88; // 1.063606546 + 1.056972153 + 1.062928908
+    public static double Y_MULTIPLIER = 0.8913;
 
     public static double TICKS_PER_REV = 8192;
     public static double WHEEL_RADIUS = 0.7; // in
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (encoder) speed
 
-    public static double PARALLEL_X = 4.055; // X is the up and down direction
-    public static double PARALLEL_Y = 0.5188; // Y is the strafe direction
+    public static double PARALLEL_X = 0.755; // X is the up and down direction
+    public static double PARALLEL_Y = 3.48; // Y is the strafe direction
 
-    public static double PERPENDICULAR_X = -0.0787;
-    public static double PERPENDICULAR_Y = -5.787;
+    public static double PERPENDICULAR_X = -3.3787;
+    public static double PERPENDICULAR_Y = -3.072;
 
     // Parallel/Perpendicular to the forward axis
     // Parallel wheel is parallel to the forward axis
@@ -71,6 +71,7 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
         // TODO: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
 
         perpendicularEncoder.setDirection(Encoder.Direction.REVERSE);
+        parallelEncoder.setDirection(Encoder.Direction.REVERSE);
     }
 
     public static double encoderTicksToInches(double ticks) {
@@ -91,8 +92,8 @@ public class TwoWheelTrackingLocalizer extends TwoTrackingWheelLocalizer {
     @Override
     public List<Double> getWheelPositions() {
         return Arrays.asList(
-                encoderTicksToInches(parallelEncoder.getCurrentPosition()),
-                encoderTicksToInches(perpendicularEncoder.getCurrentPosition())
+                encoderTicksToInches(parallelEncoder.getCurrentPosition()) * X_MULTIPLIER,
+                encoderTicksToInches(perpendicularEncoder.getCurrentPosition()) * Y_MULTIPLIER
         );
     }
 

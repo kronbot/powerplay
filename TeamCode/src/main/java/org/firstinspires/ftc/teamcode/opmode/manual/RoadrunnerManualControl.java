@@ -20,7 +20,8 @@ public class RoadrunnerManualControl extends OpMode {
 
     private SampleMecanumDrive drive;
 
-    public static double minPower = 0.3;
+    public static double minMidPower = 0.2;
+    public static double maxMidPower = 0.5;
     public static double maxPower = 0.75;
     public static double deadZoneMultiplier = 1;
 
@@ -64,10 +65,13 @@ public class RoadrunnerManualControl extends OpMode {
     private double motorPower(double power) {
         if (-Utils.EPS * deadZoneMultiplier < power && power < Utils.EPS * deadZoneMultiplier)
             return 0;
-        else if (power < -0.9 || 0.9 < power)
-            return 1;
+        else if (power < -0.9)
+            return -maxPower;
+        else if (power > 0.9)
+            return maxPower;
+
         if (power < 0)
-            return Utils.map(power, -1, 0, -maxPower, -minPower);
-        return Utils.map(power, 0, 1, minPower, maxPower);
+            return Utils.map(power, -1, 0, -maxMidPower, -minMidPower);
+        return Utils.map(power, 0, 1, minMidPower, maxMidPower);
     }
 }

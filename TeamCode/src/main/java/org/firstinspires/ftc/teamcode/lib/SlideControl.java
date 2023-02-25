@@ -133,7 +133,7 @@ public class SlideControl {
     public void control(Gamepad gamepad, boolean debug) {
         if (debug)
             showDebugTelemetry();
-        loop(gamepad, false);
+        loop(gamepad);
     }
 
     public State getState() {
@@ -157,7 +157,7 @@ public class SlideControl {
             stateManager.setCurrentState(State.REST);
     }
 
-    public void loop(Gamepad gamepad, boolean usingEnds) {
+    public void loop(Gamepad gamepad) {
         // updating the state
         if (gamepad.a) {
             if (robot.intakePosition() == 0)
@@ -176,12 +176,10 @@ public class SlideControl {
                 stateManager.setCurrentState(State.THIRD);
         }
 
-        if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS &&
-                (robot.slideDc.getCurrentPosition() <= maxCoordinate || !usingEnds)) {
+        if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS) {
             robot.controlSlide(slidePower(gamepad.right_trigger));
             return;
-        } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS &&
-                robot.slideDc.getCurrentPosition() >= minCoordinate || !usingEnds) {
+        } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS) {
             robot.controlSlide(-slidePower(gamepad.left_trigger));
             return;
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {

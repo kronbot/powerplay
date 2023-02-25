@@ -27,9 +27,9 @@ public class KronBot {
     public Encoder rightEncoder;
     public Encoder frontEncoder;
 
-    private IMU imu;
+    public IMU imu;
 
-    private Orientation lastAngle = new Orientation();
+    public Orientation lastOrientation = new Orientation();
     private double currAngle = 0.0;
 
     /**
@@ -122,10 +122,10 @@ public class KronBot {
 
     public double getCurentAngle() {
         Orientation orientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
-        double deltaAngle = orientation.secondAngle - lastAngle.secondAngle;
+        double deltaAngle = orientation.thirdAngle - lastOrientation.thirdAngle;
 
         currAngle += deltaAngle;
-        lastAngle = orientation;
+        lastOrientation = orientation;
 
         return currAngle;
     }

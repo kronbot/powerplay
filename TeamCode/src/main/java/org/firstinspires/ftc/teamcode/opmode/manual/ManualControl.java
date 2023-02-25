@@ -7,7 +7,7 @@ import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
-@TeleOp(name = "Manual Control", group = "Single")
+@TeleOp(name = "Manual Control", group = "Manual")
 public class ManualControl extends OpMode {
     private final KronBot robot;
     private final RobotControl robotControl;
@@ -23,7 +23,6 @@ public class ManualControl extends OpMode {
     public void init() {
         robot.initHardwareMap(hardwareMap);
         robot.resetSlideEncoder();
-
         robot.controlIntake(1);
     }
 

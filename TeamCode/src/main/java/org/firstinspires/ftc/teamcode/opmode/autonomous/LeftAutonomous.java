@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.lib.SlideControl;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
 @Config
-@Autonomous(name = "Left autonomous")
+@Autonomous(name = "Left autonomous", group = "Autonomous")
 public class LeftAutonomous extends LinearOpMode {
     private KronBot robot;
     private SlideControl slideControl;

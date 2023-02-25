@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import android.graphics.drawable.GradientDrawable;
-
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -14,7 +12,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class KronBot {
@@ -26,12 +23,15 @@ public class KronBot {
     public DcMotor slideDc;
 
     public Servo intakeServo;
-    private IMU imu;
     public Encoder leftEncoder;
     public Encoder rightEncoder;
     public Encoder frontEncoder;
-    private Orientation LastAngle=new Orientation();
-    private double CurrAngle=0.0;
+
+    private IMU imu;
+
+    private Orientation lastAngle = new Orientation();
+    private double currAngle = 0.0;
+
     /**
      * Initialization of hardware map
      */
@@ -116,17 +116,17 @@ public class KronBot {
         backRightDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
 
-    public void resetHeading()
-    {
-      imu.resetYaw();
+    public void resetHeading() {
+        imu.resetYaw();
     }
 
-    public double GetCurentAngle()
-    {
+    public double getCurentAngle() {
         Orientation orientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
-        double deltaAngle = orientation.secondAngle - LastAngle.secondAngle;
-        CurrAngle += deltaAngle;
-        LastAngle = orientation;
-        return CurrAngle;
+        double deltaAngle = orientation.secondAngle - lastAngle.secondAngle;
+
+        currAngle += deltaAngle;
+        lastAngle = orientation;
+
+        return currAngle;
     }
 }

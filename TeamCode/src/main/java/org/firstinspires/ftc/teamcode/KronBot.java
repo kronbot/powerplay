@@ -60,10 +60,12 @@ public class KronBot {
         rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
         frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
 //        leftEncoder.setDirection(Encoder.Direction.REVERSE);
+        frontEncoder.setDirection(Encoder.Direction.REVERSE);
+
         imu = hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
+                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
     }
 
     /**
@@ -113,17 +115,18 @@ public class KronBot {
         backLeftDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         backRightDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
     }
+
     public void resetHeading()
     {
       imu.resetYaw();
     }
+
     public double GetCurentAngle()
     {
-        Orientation orientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX,AngleUnit.RADIANS  );
-        double deltaAngle = orientation.firstAngle - LastAngle.firstAngle;
-        CurrAngle+=deltaAngle;
-        LastAngle=orientation;
+        Orientation orientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
+        double deltaAngle = orientation.secondAngle - LastAngle.secondAngle;
+        CurrAngle += deltaAngle;
+        LastAngle = orientation;
         return CurrAngle;
     }
-
 }

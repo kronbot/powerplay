@@ -7,13 +7,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
-import org.firstinspires.ftc.teamcode.lib.SlideControl;
-@TeleOp(name="Relative Manual Control")
-public class
-RelativeManualControl extends OpMode {
+
+@TeleOp(name = "Roadrunner Manual Control")
+public class RoadrunnerManualControl extends OpMode {
     private final KronBot robot = new KronBot();
     private SampleMecanumDrive drive;
-    private double angle = 0.0;
 
     @Override
     public void init() {
@@ -26,19 +24,20 @@ RelativeManualControl extends OpMode {
 
     @Override
     public void loop() {
-        angle = robot.GetCurentAngle();
-
         drive.setWeightedDrivePower(
                 new Pose2d(
-                        -gamepad1.left_stick_y * Math.cos((angle * Math.PI) / 180),
-                        -gamepad1.left_stick_x * Math.sin((angle * Math.PI) / 180),
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
                         -gamepad1.right_stick_x
                 )
         );
 
         drive.update();
 
-        if(gamepad1.a)
-            robot.resetHeading();
+        Pose2d poseEstimate = drive.getPoseEstimate();
+        telemetry.addData("x", poseEstimate.getX());
+        telemetry.addData("y", poseEstimate.getY());
+        telemetry.addData("heading", poseEstimate.getHeading());
+        telemetry.update();
     }
 }

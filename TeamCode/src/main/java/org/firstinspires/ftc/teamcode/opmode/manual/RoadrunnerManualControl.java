@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.checkerframework.checker.units.qual.K;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
@@ -20,9 +19,9 @@ public class RoadrunnerManualControl extends OpMode {
 
     private SampleMecanumDrive drive;
 
-    public static double minMidPower = 0.2;
-    public static double maxMidPower = 0.5;
-    public static double maxPower = 0.75;
+    public static double minMidPower = 0.25;
+    public static double maxMidPower = 0.75;
+    public static double maxPower = 1;
     public static double deadZoneMultiplier = 1;
 
     public RoadrunnerManualControl() {

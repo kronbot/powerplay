@@ -18,7 +18,7 @@ public class Utils {
     public static Integer SLIDE_GROUND_COORDINATE = 100;
     public static Integer SLIDE_FIRST_COORDINATE = 1500;
     public static Integer SLIDE_SECOND_COORDINATE = 2250;
-    public static Integer SLIDE_THIRD_COORDINATE = 3800; // de coco in carca
+    public static Integer SLIDE_THIRD_COORDINATE = 3700;
 
 
     public static double TICKS_PER_CM = 635;

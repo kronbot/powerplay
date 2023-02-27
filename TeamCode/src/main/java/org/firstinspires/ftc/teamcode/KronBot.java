@@ -121,12 +121,8 @@ public class KronBot {
     }
 
     public double getCurentAngle() {
-        Orientation orientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.RADIANS);
-        double deltaAngle = orientation.thirdAngle - lastOrientation.thirdAngle;
-
-        currAngle += deltaAngle;
-        lastOrientation = orientation;
-
-        return currAngle;
+        Orientation orientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
+        double deltaAngle = orientation.thirdAngle;
+        return deltaAngle;
     }
 }

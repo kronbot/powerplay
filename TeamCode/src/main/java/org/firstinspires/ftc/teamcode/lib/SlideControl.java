@@ -128,6 +128,7 @@ public class SlideControl {
                 break;
         }
         telemetry.addData("Slide state", stateName);
+        telemetry.update();
     }
 
     public void control(Gamepad gamepad, boolean debug) {
@@ -152,6 +153,14 @@ public class SlideControl {
 
     // for autonomous
     public void loop() {
+        // checking if the current state is finished
+        if (!robot.slideDc.isBusy() && stateManager.getCurrentState() != State.REST)
+            stateManager.setCurrentState(State.REST);
+    }
+
+    public void loop(boolean debug) {
+        if (debug)
+            showDebugTelemetry();
         // checking if the current state is finished
         if (!robot.slideDc.isBusy() && stateManager.getCurrentState() != State.REST)
             stateManager.setCurrentState(State.REST);

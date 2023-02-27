@@ -13,7 +13,9 @@ public class
 RelativeManualControl extends OpMode {
     private final KronBot robot = new KronBot();
     private SampleMecanumDrive drive;
-
+    private double angle=0.0;
+    private double A;
+    private double B;
     @Override
     public void init() {
         robot.initHardwareMap(hardwareMap);
@@ -30,24 +32,25 @@ RelativeManualControl extends OpMode {
 
     @Override
     public void loop() {
-        double angle = robot.getCurentAngle();
-
+        angle = robot.getCurentAngle();
         telemetry.addData("angle", Math.toDegrees(angle));
         telemetry.addData("first angle", Math.toDegrees(robot.lastOrientation.firstAngle));
         telemetry.addData("second angle", Math.toDegrees(robot.lastOrientation.secondAngle));
         telemetry.addData("third angle", Math.toDegrees(robot.lastOrientation.thirdAngle));
         telemetry.update();
-
+        double y=gamepad1.left_stick_y;
+        double x=gamepad1.left_stick_x;
+        A=y*Math.sin(-angle)+x*Math.cos(-angle);
+        B=y*Math.cos(-angle)+x*Math.cos(-angle);
         drive.setWeightedDrivePower(
                 new Pose2d(
-                        -gamepad1.left_stick_y * Math.cos(angle),
-                        -gamepad1.left_stick_x * Math.sin(angle),
+                        -B,
+                        -A,
                         -gamepad1.right_stick_x
                 )
         );
 
         drive.update();
-
         if(gamepad1.a)
             robot.resetHeading();
     }

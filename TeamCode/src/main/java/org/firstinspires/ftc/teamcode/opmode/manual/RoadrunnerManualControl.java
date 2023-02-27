@@ -46,7 +46,7 @@ public class RoadrunnerManualControl extends OpMode {
                 new Pose2d(
                         motorPower(-gamepad1.left_stick_y),
                         motorPower(-gamepad1.left_stick_x),
-                        -gamepad1.right_stick_x
+                        motorPower(-gamepad1.right_stick_x)
                 )
         );
 

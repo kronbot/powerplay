@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.lib.Utils;
 public class RoadrunnerManualControlTranslation extends OpMode {
     public static double minMidPower = 0.25;
     public static double maxMidPower = 0.65;
-    public static double maxPower = 0.75;
+    public static double maxPower = 0.72;
     public static double deadZoneMultiplier = 1;
     public static double translationPower;
     private final KronBot robot;

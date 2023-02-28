@@ -43,7 +43,7 @@ public class RoadrunnerManualControl extends OpMode {
                 new Pose2d(
                         motorPower(-gamepad1.left_stick_y),
                         motorPower(-gamepad1.left_stick_x),
-                        motorPower(-gamepad1.right_stick_x)
+                        motorPower(-gamepad1.right_stick_x / 1.5)
                 )
         );
 
@@ -57,6 +57,7 @@ public class RoadrunnerManualControl extends OpMode {
 
         slideControl.intake(gamepad2.dpad_up);
         slideControl.control(gamepad2, false);
+        robot.movePrecision(gamepad2.right_stick_x);
     }
 
     private double motorPower(double power) {

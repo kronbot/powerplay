@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.openftc.apriltag.AprilTagDetection;
 
 @Config
-@Autonomous(name = "Left autonomous", group = "Autonomous")
+@Autonomous(name = "Test autonomie optima", group = "Autonomous")
 public class TestAutonomieOptima extends LinearOpMode {
     private KronBot robot;
     private SlideControl slideControl;

@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.lib.Utils;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class KronBot {
@@ -23,6 +24,8 @@ public class KronBot {
     public DcMotor slideDc;
 
     public Servo intakeServo;
+    public Servo precisionServo;
+
     public Encoder leftEncoder;
     public Encoder rightEncoder;
     public Encoder frontEncoder;
@@ -48,6 +51,8 @@ public class KronBot {
         slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intakeServo = hardwareMap.servo.get("intake");
+        precisionServo = hardwareMap.servo.get("precision");
+        precisionServo.setDirection(Servo.Direction.REVERSE);
 
         slideDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -127,4 +132,14 @@ public class KronBot {
         double deltaAngle = orientation.thirdAngle;
         return deltaAngle;
     }
+
+    public void movePrecision(double power) {
+        if (Math.abs(power) < 0.1)
+            precisionServo.setPosition(0.5);
+        else if (power < 0)
+            precisionServo.setPosition(Utils.map(-power, 0, 1, 0.5, 0.6));
+        else
+            precisionServo.setPosition(Utils.map(-power, -1, 0, 0.4, 0.5));
+    }
 }
+

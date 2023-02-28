@@ -14,15 +14,13 @@ import org.firstinspires.ftc.teamcode.lib.Utils;
 @Config
 @TeleOp(name = "Roadrunner Manual Control", group = "Manual")
 public class RoadrunnerManualControl extends OpMode {
-    private final KronBot robot;
-    private final SlideControl slideControl;
-
-    private SampleMecanumDrive drive;
-
     public static double minMidPower = 0.25;
     public static double maxMidPower = 0.75;
     public static double maxPower = 1;
     public static double deadZoneMultiplier = 1;
+    private final KronBot robot;
+    private final SlideControl slideControl;
+    private SampleMecanumDrive drive;
 
     public RoadrunnerManualControl() {
         robot = new KronBot();

@@ -14,17 +14,14 @@ import org.firstinspires.ftc.teamcode.lib.Utils;
 @Config
 @TeleOp(name = "Roadrunner Manual Control Translation", group = "Manual")
 public class RoadrunnerManualControlTranslation extends OpMode {
-    private final KronBot robot;
-    private final SlideControl slideControl;
-
-    private SampleMecanumDrive drive;
-
     public static double minMidPower = 0.25;
     public static double maxMidPower = 0.65;
     public static double maxPower = 0.75;
     public static double deadZoneMultiplier = 1;
-
     public static double translationPower;
+    private final KronBot robot;
+    private final SlideControl slideControl;
+    private SampleMecanumDrive drive;
 
     public RoadrunnerManualControlTranslation() {
         robot = new KronBot();

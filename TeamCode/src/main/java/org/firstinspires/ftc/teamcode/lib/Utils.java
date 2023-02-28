@@ -27,12 +27,12 @@ public class Utils {
      * Mapping function used to return the value inside an interval applied
      * to another interval
      *
-     * @param x          the value the function will convert
-     * @param inputMin   min or left margin for the first interval
-     * @param inputMax   max or right margin for the first interval
-     * @param outputMin  min or left margin for the second interval
-     * @param outputMax  max or right margin for the second interval
-     * @return           the value converted
+     * @param x         the value the function will convert
+     * @param inputMin  min or left margin for the first interval
+     * @param inputMax  max or right margin for the first interval
+     * @param outputMin min or left margin for the second interval
+     * @param outputMax max or right margin for the second interval
+     * @return the value converted
      */
     public static double map(
             double x,

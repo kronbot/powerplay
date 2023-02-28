@@ -26,6 +26,7 @@ public class RobotControl {
     /**
      * Handles driving based on a given input.
      * The input should be betweeen [-1, 1].
+     *
      * @param xInput the input on the x axis
      * @param yInput the input on the y axis
      * @returns true if the robot moves, false if not
@@ -33,7 +34,7 @@ public class RobotControl {
     public boolean drive(double xInput, double yInput) {
         if (
                 (-Utils.EPS < xInput && xInput < Utils.EPS) &&
-                (-Utils.EPS < yInput && yInput < Utils.EPS)
+                        (-Utils.EPS < yInput && yInput < Utils.EPS)
         )
             return false;
 
@@ -88,6 +89,7 @@ public class RobotControl {
     /**
      * Rotates the robot using the given input.
      * The input should be betweeen [-1, 1].
+     *
      * @param direction if negative, rotating left, if positive, rotating right
      * @returns true if the robot rotates, false if the direction is 0
      */
@@ -117,7 +119,8 @@ public class RobotControl {
     /**
      * Translates the robot on the X-axis using the given input.
      * The input should be between [0, 1].
-     * @param left the left direction value
+     *
+     * @param left  the left direction value
      * @param right the right direction value
      * @returns true if the robot translates, false if not
      */

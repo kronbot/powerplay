@@ -8,14 +8,15 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name="Relative Manual Control", group = "Manual")
+@TeleOp(name = "Relative Manual Control", group = "Manual")
 public class
 RelativeManualControl extends OpMode {
     private final KronBot robot = new KronBot();
     private SampleMecanumDrive drive;
-    private double angle=0.0;
+    private double angle = 0.0;
     private double A;
     private double B;
+
     @Override
     public void init() {
         robot.initHardwareMap(hardwareMap);
@@ -38,10 +39,10 @@ RelativeManualControl extends OpMode {
         telemetry.addData("second angle", Math.toDegrees(robot.lastOrientation.secondAngle));
         telemetry.addData("third angle", Math.toDegrees(robot.lastOrientation.thirdAngle));
         telemetry.update();
-        double y=gamepad1.left_stick_y;
-        double x=gamepad1.left_stick_x;
-        A=y*Math.sin(-angle)+x*Math.cos(-angle);
-        B=y*Math.cos(-angle)+x*Math.cos(-angle);
+        double y = gamepad1.left_stick_y;
+        double x = gamepad1.left_stick_x;
+        A = y * Math.sin(-angle) + x * Math.cos(-angle);
+        B = y * Math.cos(-angle) + x * Math.cos(-angle);
         drive.setWeightedDrivePower(
                 new Pose2d(
                         -B,
@@ -51,7 +52,7 @@ RelativeManualControl extends OpMode {
         );
 
         drive.update();
-        if(gamepad1.a)
+        if (gamepad1.a)
             robot.resetHeading();
     }
 }

@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.lib;
 
 public class SlideControlRunnable implements Runnable {
-    private boolean running = true;
     private final SlideControl slideControl;
+    private boolean running = true;
 
     public SlideControlRunnable(SlideControl slideControl) {
         this.slideControl = slideControl;

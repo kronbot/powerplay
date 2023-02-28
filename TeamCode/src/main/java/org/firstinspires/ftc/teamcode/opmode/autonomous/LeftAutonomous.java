@@ -16,24 +16,19 @@ import org.openftc.apriltag.AprilTagDetection;
 @Config
 @Autonomous(name = "Left autonomous", group = "Autonomous")
 public class LeftAutonomous extends LinearOpMode {
-    private KronBot robot;
-    private SlideControl slideControl;
- //   private SlideControlRunnable slideControlRunnable;
-
-    private TagDetection tagDetection;
-    private AprilTagDetection tagOfInterest = null;
-
     public static double prepareInitialX = 35, prepareInitialY = -8;
     public static double initialJunctionX = 58, initialJunctionY = -13.5, initialJunctionHeading = -30;
+    //   private SlideControlRunnable slideControlRunnable;
     public static Integer firstConeCoordinate = 500;
     public static Integer secondConeCoordinate = 600;
-
     public static double getConeX = 54.5, getConeY = 19.5, getConeHeading = 90;
-
     public static double junctionX = 55, junctionY = -18.5, junctionHeading = -90;
     public static double junctionStraightX = 56.5;
-
     public static double parkingX = 53, parkingYPos1 = 15, parkingYPos2 = -5, parkingYPos3 = -30, parkingHeading = 90;
+    private KronBot robot;
+    private SlideControl slideControl;
+    private TagDetection tagDetection;
+    private AprilTagDetection tagOfInterest = null;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -111,7 +106,7 @@ public class LeftAutonomous extends LinearOpMode {
         robot.controlIntake(1.0);
         slideControl.setCoordinate(secondConeCoordinate);
 
-        if(tagOfInterest != null) {
+        if (tagOfInterest != null) {
             if (tagOfInterest.id == 1)
                 drive.followTrajectorySequence(parkingPos1);
             else if (tagOfInterest.id == 2)
@@ -121,7 +116,7 @@ public class LeftAutonomous extends LinearOpMode {
         } else
             drive.followTrajectorySequence(parkingPos2);
 
-        while (!isStopRequested() && opModeIsActive());
+        while (!isStopRequested() && opModeIsActive()) ;
 //            drive.update();
 
 //        slideControlRunnable.stop();

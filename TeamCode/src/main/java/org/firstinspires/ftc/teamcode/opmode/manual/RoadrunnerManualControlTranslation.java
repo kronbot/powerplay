@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.opmode.manual;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -13,18 +12,21 @@ import org.firstinspires.ftc.teamcode.lib.SlideControl;
 import org.firstinspires.ftc.teamcode.lib.Utils;
 
 @Config
-@Disabled
-@TeleOp(name = "Roadrunner Manual Control", group = "Manual")
-public class RoadrunnerManualControl extends OpMode {
-    public static double minMidPower = 0.25;
-    public static double maxMidPower = 0.75;
-    public static double maxPower = 1;
-    public static double deadZoneMultiplier = 1;
+@TeleOp(name = "New Dual Manual Control", group = "Manual")
+public class RoadrunnerManualControlTranslation extends OpMode {
     private final KronBot robot;
     private final SlideControl slideControl;
+
     private SampleMecanumDrive drive;
 
-    public RoadrunnerManualControl() {
+    public static double minMidPower = 0.25;
+    public static double maxMidPower = 0.65;
+    public static double maxPower = 0.75;
+    public static double deadZoneMultiplier = 0.25;
+
+    public static double translationPower;
+
+    public RoadrunnerManualControlTranslation() {
         robot = new KronBot();
         slideControl = new SlideControl(robot, telemetry);
     }
@@ -41,11 +43,19 @@ public class RoadrunnerManualControl extends OpMode {
 
     @Override
     public void loop() {
+        if (gamepad1.left_trigger != 0.0)
+            translationPower = gamepad1.left_trigger;
+        else if (gamepad1.right_trigger != 0.0)
+            translationPower = -gamepad1.right_trigger;
+        else
+            translationPower = 0.0;
+
         drive.setWeightedDrivePower(
                 new Pose2d(
                         motorPower(-gamepad1.left_stick_y),
-                        motorPower(-gamepad1.left_stick_x),
-                        motorPower(-gamepad1.right_stick_x / 1.5)
+                        motorPower(translationPower),
+//                        motorPower(-gamepad1.left_stick_x),
+                        motorPower(-gamepad1.right_stick_x)
                 )
         );
 
@@ -59,7 +69,6 @@ public class RoadrunnerManualControl extends OpMode {
 
         slideControl.intake(gamepad2.dpad_up);
         slideControl.control(gamepad2, false);
-//        robot.movePrecision(gamepad2.right_stick_x);
     }
 
     private double motorPower(double power) {

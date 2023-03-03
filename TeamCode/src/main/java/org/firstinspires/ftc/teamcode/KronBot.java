@@ -5,13 +5,14 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
+import org.firstinspires.ftc.teamcode.lib.Utils;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class KronBot {
@@ -23,6 +24,8 @@ public class KronBot {
     public DcMotor slideDc;
 
     public Servo intakeServo;
+    public Servo precisionServo;
+
     public Encoder leftEncoder;
     public Encoder rightEncoder;
     public Encoder frontEncoder;
@@ -30,7 +33,7 @@ public class KronBot {
     public IMU imu;
 
     public Orientation lastOrientation = new Orientation();
-    private double currAngle = 0.0;
+    private final double currAngle = 0.0;
 
     /**
      * Initialization of hardware map
@@ -48,6 +51,8 @@ public class KronBot {
         slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         intakeServo = hardwareMap.servo.get("intake");
+        precisionServo = hardwareMap.servo.get("precision");
+        precisionServo.setDirection(Servo.Direction.REVERSE);
 
         slideDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -107,7 +112,9 @@ public class KronBot {
         intakeServo.setPosition(power);
     }
 
-    public double intakePosition() {return intakeServo.getPosition();}
+    public double intakePosition() {
+        return intakeServo.getPosition();
+    }
 
     public void resetEncoders() {
         frontLeftDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -125,4 +132,14 @@ public class KronBot {
         double deltaAngle = orientation.thirdAngle;
         return deltaAngle;
     }
+
+    public void movePrecision(double power) {
+        if (Math.abs(power) < 0.1)
+            precisionServo.setPosition(0.5);
+        else if (power < 0)
+            precisionServo.setPosition(Utils.map(-power, 0, 1, 0.5, 0.6));
+        else
+            precisionServo.setPosition(Utils.map(-power, -1, 0, 0.4, 0.5));
+    }
 }
+

@@ -18,22 +18,24 @@ import org.openftc.apriltag.AprilTagDetection;
 public class LeftAutonomous extends LinearOpMode {
     private KronBot robot;
     private SlideControl slideControl;
- //   private SlideControlRunnable slideControlRunnable;
+    //   private SlideControlRunnable slideControlRunnable;
 
     private TagDetection tagDetection;
     private AprilTagDetection tagOfInterest = null;
 
-    public static double prepareInitialX = 35, prepareInitialY = -8;
-    public static double initialJunctionX = 58, initialJunctionY = -13.5, initialJunctionHeading = -30;
     public static Integer firstConeCoordinate = 500;
     public static Integer secondConeCoordinate = 600;
 
-    public static double getConeX = 54.5, getConeY = 19.5, getConeHeading = 90;
+    public static double throwConeX = 58, throwConeY = -8;
+    public static double prepareInitialX = 45, prepareInitialY = -8;
+    public static double initialJunctionX = 56, initialJunctionY = -12, initialJunctionHeading = -30;
 
-    public static double junctionX = 55, junctionY = -18.5, junctionHeading = -90;
-    public static double junctionStraightX = 56.5;
+    public static double getConeX = 53.5, getConeY = 18, getConeHeading = 90;
 
-    public static double parkingX = 53, parkingYPos1 = 15, parkingYPos2 = -5, parkingYPos3 = -30, parkingHeading = 90;
+    public static double junctionX = 52, junctionY = -18.5, junctionHeading = -90;
+    public static double junctionStraightX = 56.5, junctionStraightY = -17.25;
+
+    public static double parkingX = 53, parkingYPos1 = 15, parkingYPos2 = -8, parkingYPos3 = -30, parkingHeading = 90;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -49,6 +51,9 @@ public class LeftAutonomous extends LinearOpMode {
         TrajectorySequence prepareInitialCone = drive
                 .trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                 .addTemporalMarker(1, () -> slideControl.setState(SlideControl.State.THIRD))
+                .lineTo(new Vector2d(0, throwConeY))
+                .lineTo(new Vector2d(throwConeX, throwConeY + 3 ))
+                .setReversed(true)
                 .lineTo(new Vector2d(prepareInitialX, prepareInitialY))
                 .build();
         TrajectorySequence putFirstCone = drive
@@ -68,7 +73,7 @@ public class LeftAutonomous extends LinearOpMode {
                 .turn(Math.toRadians(junctionHeading))
 //                .lineToSplineHeading(new Pose2d(junctionX, junctionY, Math.toRadians(junctionHeading)))
                 .addTemporalMarker(0.5, () -> slideControl.setState(SlideControl.State.THIRD))
-                .lineTo(new Vector2d(junctionStraightX, junctionY))
+                .lineTo(new Vector2d(junctionStraightX, junctionStraightY))
                 .build();
 
         TrajectorySequence parkingPos1 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
@@ -93,6 +98,7 @@ public class LeftAutonomous extends LinearOpMode {
             }
         }
 
+        sleep(200);
         robot.controlIntake(0.0);
 
         drive.followTrajectorySequence(prepareInitialCone);

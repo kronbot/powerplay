@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.opmode.manual;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
 @TeleOp(name = "Manual Control", group = "Manual")
+@Disabled
 public class ManualControl extends OpMode {
     private final KronBot robot;
     private final RobotControl robotControl;

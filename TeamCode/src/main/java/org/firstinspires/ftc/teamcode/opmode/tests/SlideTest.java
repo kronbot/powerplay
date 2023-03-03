@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
-@Autonomous
+@Autonomous(name = "Slide Test", group = "Tests")
 @Config
 public class SlideTest extends LinearOpMode {
     private final KronBot robot = new KronBot();

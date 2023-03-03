@@ -13,13 +13,10 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 
 public class TagDetection {
+    static final double FEET_PER_METER = 3.28084;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
-
     Telemetry telemetry;
-
-    static final double FEET_PER_METER = 3.28084;
-
     double fx = 578.272;
     double fy = 578.272;
     double cx = 402.145;
@@ -39,17 +36,14 @@ public class TagDetection {
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
 
         camera.setPipeline(aprilTagDetectionPipeline);
-        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
-            public void onOpened()
-            {
-                camera.startStreaming(800,448, OpenCvCameraRotation.UPRIGHT);
+            public void onOpened() {
+                camera.startStreaming(800, 448, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
-            public void onError(int errorCode)
-            {
+            public void onError(int errorCode) {
 
             }
         });
@@ -58,23 +52,22 @@ public class TagDetection {
     public AprilTagDetection detectTag() {
         ArrayList<AprilTagDetection> currentDetections = aprilTagDetectionPipeline.getLatestDetections();
 
-        if(currentDetections.size() != 0) {
+        if (currentDetections.size() != 0) {
             boolean tagFound = false;
 
-            for(AprilTagDetection tag : currentDetections)
-                if(tag.id <=3) {
+            for (AprilTagDetection tag : currentDetections)
+                if (tag.id <= 3) {
                     tagOfInterest = tag;
                     tagFound = true;
                     break;
                 }
 
-            if(tagFound)
+            if (tagFound)
                 telemetry.addLine("Tag of interest is in sight!\n\nLocation data:");
             else
                 telemetry.addLine("Don't see tag of interest :(");
 
-        }
-        else
+        } else
             telemetry.addLine("Don't see tag of interest :(");
 
         telemetry.update();
@@ -82,12 +75,11 @@ public class TagDetection {
         return tagOfInterest;
     }
 
-    public void tagToTelemetry(AprilTagDetection detection)
-    {
+    public void tagToTelemetry(AprilTagDetection detection) {
         telemetry.addLine(String.format("\nDetected tag ID=%d", detection.id));
-        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y*FEET_PER_METER));
-        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z*FEET_PER_METER));
+        telemetry.addLine(String.format("Translation X: %.2f feet", detection.pose.x * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Y: %.2f feet", detection.pose.y * FEET_PER_METER));
+        telemetry.addLine(String.format("Translation Z: %.2f feet", detection.pose.z * FEET_PER_METER));
         telemetry.addLine(String.format("Rotation Yaw: %.2f degrees", Math.toDegrees(detection.pose.yaw)));
         telemetry.addLine(String.format("Rotation Pitch: %.2f degrees", Math.toDegrees(detection.pose.pitch)));
         telemetry.addLine(String.format("Rotation Roll: %.2f degrees", Math.toDegrees(detection.pose.roll)));

@@ -1,12 +1,10 @@
 package org.firstinspires.ftc.teamcode.opmode.tests;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.KronBot;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
 @Autonomous(name = "Slide Test", group = "Tests")
@@ -14,20 +12,6 @@ import org.firstinspires.ftc.teamcode.lib.SlideControl;
 public class SlideTest extends LinearOpMode {
     private final KronBot robot = new KronBot();
     private SlideControl slideControl;
-
-    private class SlideControlRunnable implements Runnable {
-        private boolean running = true;
-
-        @Override
-        public void run() {
-            while (running)
-                slideControl.loop(true);
-        }
-
-        public synchronized void stop() {
-            running = false;
-        }
-    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -43,7 +27,7 @@ public class SlideTest extends LinearOpMode {
         while (opModeIsActive()) {
             slideControl.setState(SlideControl.State.SECOND);
             robot.drive(1, 1, 1, 1, 0.3);
-            while (opModeIsActive() && slideControl.getState() != SlideControl.State.REST);
+            while (opModeIsActive() && slideControl.getState() != SlideControl.State.REST) ;
             robot.stopMotors();
             slideControl.setState(SlideControl.State.GROUND);
             robot.drive(1, 1, 1, 1, -0.3);
@@ -52,6 +36,20 @@ public class SlideTest extends LinearOpMode {
         }
 
         slideControlRunnable.stop();
+    }
+
+    private class SlideControlRunnable implements Runnable {
+        private boolean running = true;
+
+        @Override
+        public void run() {
+            while (running)
+                slideControl.loop(true);
+        }
+
+        public synchronized void stop() {
+            running = false;
+        }
     }
 
 }

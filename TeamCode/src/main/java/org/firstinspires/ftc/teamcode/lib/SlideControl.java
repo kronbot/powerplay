@@ -7,86 +7,16 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.KronBot;
 
 public class SlideControl {
-    // stores the states with the coordinates
-    public enum State {
-        FIRST,
-        SECOND,
-        THIRD,
-        GROUND,
-        REST,
-        CUSTOM,
-    }
-
-    private class StateManager {
-        private State currentState = State.REST;
-
-        private Integer groundCoordinate = Utils.SLIDE_GROUND_COORDINATE;
-        private Integer firstCoordinate = Utils.SLIDE_FIRST_COORDINATE;
-        private Integer secondCoordinate = Utils.SLIDE_SECOND_COORDINATE;
-        private Integer thirdCoordinate = Utils.SLIDE_THIRD_COORDINATE;
-
-
-        public Integer getStateCoordinate(State state) {
-            if (state == null)
-                throw new IllegalArgumentException("State is null :(");
-            switch (state) {
-                case GROUND:
-                    return groundCoordinate;
-                case FIRST:
-                    return firstCoordinate;
-                case SECOND:
-                    return secondCoordinate;
-                case THIRD:
-                    return thirdCoordinate;
-                default:
-                    throw new IllegalArgumentException("State is invalid :(");
-            }
-        }
-
-        public State getCurrentState() {
-            return currentState;
-        }
-
-        public synchronized void setCurrentState(State currentState) {
-            if (this.currentState != State.REST)
-                robot.slideDc.setPower(restPower);
-            this.currentState = currentState;
-            if (currentState == State.REST)
-                return;
-
-            robot.slideDc.setTargetPosition(getStateCoordinate(currentState));
-            robot.slideDc.setPower(power);
-            if (robot.slideDc.getCurrentPosition() > getStateCoordinate(currentState))
-                robot.slideDc.setPower(-power);
-            robot.slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-
-        public synchronized void setCurrentStateToCustom(Integer coordinate) {
-            if (this.currentState != State.REST)
-                robot.slideDc.setPower(restPower);
-            this.currentState = State.CUSTOM;
-
-            robot.slideDc.setTargetPosition(coordinate);
-            robot.slideDc.setPower(power);
-            if (robot.slideDc.getCurrentPosition() > coordinate)
-                robot.slideDc.setPower(-power);
-            robot.slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        }
-    }
-
-    private KronBot robot;
-    private Telemetry telemetry;
-    private StateManager stateManager;
-
     private static final double power = Utils.SLIDE_POWER;
     private static final double restPower = Utils.SLIDE_REST;
     private static final double restPowerSliding = Utils.SLIDE_REST_SLIDING;
-
+    private final KronBot robot;
+    private final Telemetry telemetry;
+    private final StateManager stateManager;
     private boolean intakePressed = true;
-    private boolean closeIntakeAtPress = false;
-
-    private Integer minCoordinate = 50;
-    private Integer maxCoordinate = 4100;
+    private final boolean closeIntakeAtPress = false;
+    private final Integer minCoordinate = 50;
+    private final Integer maxCoordinate = 4100;
 
     public SlideControl(KronBot robot, Telemetry telemetry) {
         this.robot = robot;
@@ -217,5 +147,72 @@ public class SlideControl {
             intakePressed = false;
         } else if (!action)
             intakePressed = true;
+    }
+
+    // stores the states with the coordinates
+    public enum State {
+        FIRST,
+        SECOND,
+        THIRD,
+        GROUND,
+        REST,
+        CUSTOM,
+    }
+
+    private class StateManager {
+        private State currentState = State.REST;
+
+        private final Integer groundCoordinate = Utils.SLIDE_GROUND_COORDINATE;
+        private final Integer firstCoordinate = Utils.SLIDE_FIRST_COORDINATE;
+        private final Integer secondCoordinate = Utils.SLIDE_SECOND_COORDINATE;
+        private final Integer thirdCoordinate = Utils.SLIDE_THIRD_COORDINATE;
+
+
+        public Integer getStateCoordinate(State state) {
+            if (state == null)
+                throw new IllegalArgumentException("State is null :(");
+            switch (state) {
+                case GROUND:
+                    return groundCoordinate;
+                case FIRST:
+                    return firstCoordinate;
+                case SECOND:
+                    return secondCoordinate;
+                case THIRD:
+                    return thirdCoordinate;
+                default:
+                    throw new IllegalArgumentException("State is invalid :(");
+            }
+        }
+
+        public State getCurrentState() {
+            return currentState;
+        }
+
+        public synchronized void setCurrentState(State currentState) {
+            if (this.currentState != State.REST)
+                robot.slideDc.setPower(restPower);
+            this.currentState = currentState;
+            if (currentState == State.REST)
+                return;
+
+            robot.slideDc.setTargetPosition(getStateCoordinate(currentState));
+            robot.slideDc.setPower(power);
+            if (robot.slideDc.getCurrentPosition() > getStateCoordinate(currentState))
+                robot.slideDc.setPower(-power);
+            robot.slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
+
+        public synchronized void setCurrentStateToCustom(Integer coordinate) {
+            if (this.currentState != State.REST)
+                robot.slideDc.setPower(restPower);
+            this.currentState = State.CUSTOM;
+
+            robot.slideDc.setTargetPosition(coordinate);
+            robot.slideDc.setPower(power);
+            if (robot.slideDc.getCurrentPosition() > coordinate)
+                robot.slideDc.setPower(-power);
+            robot.slideDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
     }
 }

@@ -25,15 +25,16 @@ public class LeftAutonomous extends LinearOpMode {
 
     public static Integer firstConeCoordinate = 500;
     public static Integer secondConeCoordinate = 600;
+    public static Integer coneInteger = 500;
 
-    public static double throwConeX = 58, throwConeY = -8;
-    public static double prepareInitialX = 45, prepareInitialY = -8;
-    public static double initialJunctionX = 58, initialJunctionY = -13, initialJunctionHeading = -30;
+    public static double throwConeX = 58, throwConeY = -5;
+    public static double prepareInitialX = 45, prepareInitialY = -5;
+    public static double initialJunctionX = 57.5, initialJunctionY = -16.5, initialJunctionHeading = -30;
 
-    public static double getConeX = 53.5, getConeY = 20, getConeHeading = 90;
+    public static double getConeX = 53.5, getConeY = 17.5, getConeHeading = 90;
 
     public static double junctionX = 53.5, junctionY = -18.5, junctionHeading = -90;
-    public static double junctionStraightX = 56.5, junctionStraightY = -17.25;
+    public static double junctionStraightX = 57.5, junctionStraightY = -18;
 
     public static double parkingX = 53, parkingYPos1 = 15, parkingYPos2 = -8, parkingYPos3 = -30, parkingHeading = 90;
 
@@ -52,7 +53,7 @@ public class LeftAutonomous extends LinearOpMode {
                 .trajectorySequenceBuilder(new Pose2d(0, 0, 0))
                 .addTemporalMarker(1, () -> slideControl.setState(SlideControl.State.THIRD))
                 .lineTo(new Vector2d(0, throwConeY))
-                .lineTo(new Vector2d(throwConeX, throwConeY + 3 ))
+                .lineTo(new Vector2d(throwConeX, throwConeY - 3 ))
                 .setReversed(true)
                 .lineTo(new Vector2d(prepareInitialX, prepareInitialY))
                 .build();
@@ -63,7 +64,7 @@ public class LeftAutonomous extends LinearOpMode {
         TrajectorySequence goToCones = drive
                 .trajectorySequenceBuilder(new Pose2d(initialJunctionX, initialJunctionY, Math.toRadians(initialJunctionHeading)))
                 .setReversed(true)
-                .lineTo(new Vector2d(initialJunctionX - 2, initialJunctionY + 2))
+                .lineTo(new Vector2d(initialJunctionX - 2, initialJunctionY - 2))
                 .lineToSplineHeading(new Pose2d(getConeX, getConeY, Math.toRadians(getConeHeading)))
                 .build();
         TrajectorySequence goToJunction = drive
@@ -78,15 +79,12 @@ public class LeftAutonomous extends LinearOpMode {
 
         TrajectorySequence parkingPos1 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos1, Math.toRadians(parkingHeading)))
-                .addTemporalMarker(0.2, () -> slideControl.setState(SlideControl.State.GROUND))
                 .build();
         TrajectorySequence parkingPos2 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos2, Math.toRadians(parkingHeading)))
-                .addTemporalMarker(0.2, () -> slideControl.setState(SlideControl.State.GROUND))
                 .build();
         TrajectorySequence parkingPos3 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos3, Math.toRadians(parkingHeading)))
-                .addTemporalMarker(0.2, () -> slideControl.setState(SlideControl.State.GROUND))
                 .build();
 
         if (isStopRequested()) return;
@@ -113,10 +111,13 @@ public class LeftAutonomous extends LinearOpMode {
         drive.followTrajectorySequence(goToCones);
         robot.controlIntake(0.0);
         sleep(500);
-        slideControl.setCoordinate(firstConeCoordinate + 750);
+        slideControl.setCoordinate(firstConeCoordinate + coneInteger);
         sleep(200);
 
         drive.followTrajectorySequence(goToJunction);
+
+        slideControl.setCoordinate(secondConeCoordinate);
+        sleep(100);
         robot.controlIntake(1.0);
 
         if(tagOfInterest != null) {

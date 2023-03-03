@@ -58,7 +58,7 @@ public class SampleMecanumDrive extends MecanumDrive {
     private static final TrajectoryVelocityConstraint VEL_CONSTRAINT = getVelocityConstraint(MAX_VEL, MAX_ANG_VEL, TRACK_WIDTH);
     private static final TrajectoryAccelerationConstraint ACCEL_CONSTRAINT = getAccelerationConstraint(MAX_ACCEL);
     public static PIDCoefficients HEADING_PID = new PIDCoefficients(8, 4, 0.75);
-    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(1.5, 0.5, 0.2);
+    public static PIDCoefficients TRANSLATIONAL_PID = new PIDCoefficients(2.25, 0.75, 0.25);
     public static double LATERAL_MULTIPLIER = 1.363636364;
     public static double VX_WEIGHT = 1;
     public static double VY_WEIGHT = 1;

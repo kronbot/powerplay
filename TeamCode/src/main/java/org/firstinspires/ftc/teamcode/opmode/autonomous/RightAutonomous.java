@@ -25,17 +25,18 @@ public class RightAutonomous extends LinearOpMode {
 
     public static Integer firstConeCoordinate = 500;
     public static Integer secondConeCoordinate = 600;
+    public static Integer coneInteger = 500;
 
-    public static double throwConeX = 58, throwConeY = 8;
-    public static double prepareInitialX = 45, prepareInitialY = 8;
-    public static double initialJunctionX = 58, initialJunctionY = 13, initialJunctionHeading = 30;
+    public static double throwConeX = 58, throwConeY = 5;
+    public static double prepareInitialX = 45, prepareInitialY = 5;
+    public static double initialJunctionX = 57.5, initialJunctionY = 13, initialJunctionHeading = 30;
 
-    public static double getConeX = 53.5, getConeY = -20, getConeHeading = -90;
+    public static double getConeX = 52.5, getConeY = -19, getConeHeading = -90;
 
     public static double junctionX = 53.5, junctionY = 18.5, junctionHeading = 90;
-    public static double junctionStraightX = 56.5, junctionStraightY = 17.25;
+    public static double junctionStraightX = 55.5, junctionStraightY = 17.25;
 
-    public static double parkingX = 53, parkingYPos1 = 15, parkingYPos2 = -8, parkingYPos3 = -30, parkingHeading = 90;
+    public static double parkingX = 51, parkingYPos1 = 28, parkingYPos2 = 4, parkingYPos3 = -18, parkingHeading = -90;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -78,15 +79,12 @@ public class RightAutonomous extends LinearOpMode {
 
         TrajectorySequence parkingPos1 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos1, Math.toRadians(parkingHeading)))
-                .addTemporalMarker(0.2, () -> slideControl.setState(SlideControl.State.GROUND))
                 .build();
         TrajectorySequence parkingPos2 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos2, Math.toRadians(parkingHeading)))
-                .addTemporalMarker(0.2, () -> slideControl.setState(SlideControl.State.GROUND))
                 .build();
         TrajectorySequence parkingPos3 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos3, Math.toRadians(parkingHeading)))
-                .addTemporalMarker(0.2, () -> slideControl.setState(SlideControl.State.GROUND))
                 .build();
 
         if (isStopRequested()) return;
@@ -113,10 +111,13 @@ public class RightAutonomous extends LinearOpMode {
         drive.followTrajectorySequence(goToCones);
         robot.controlIntake(0.0);
         sleep(500);
-        slideControl.setCoordinate(firstConeCoordinate + 750);
+        slideControl.setCoordinate(firstConeCoordinate + coneInteger);
         sleep(200);
 
         drive.followTrajectorySequence(goToJunction);
+
+        slideControl.setCoordinate(secondConeCoordinate);
+        sleep(100);
         robot.controlIntake(1.0);
 
         if(tagOfInterest != null) {

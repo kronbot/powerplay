@@ -9,8 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@TeleOp(name="Relative Manual Control", group = "Manual")
 @Disabled
+@TeleOp(name="Relative Manual Control", group = "Manual")
 public class RelativeManualControl extends OpMode {
     private final KronBot robot = new KronBot();
     private SampleMecanumDrive drive;

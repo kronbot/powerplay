@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
 import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
-@TeleOp(name = "Manual Control", group = "Manual")
 @Disabled
+@TeleOp(name = "Manual Control", group = "Manual")
 public class ManualControl extends OpMode {
     private final KronBot robot;
     private final RobotControl robotControl;

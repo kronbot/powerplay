@@ -28,11 +28,11 @@ public class LeftAutonomous extends LinearOpMode {
 
     public static double throwConeX = 58, throwConeY = -8;
     public static double prepareInitialX = 45, prepareInitialY = -8;
-    public static double initialJunctionX = 56, initialJunctionY = -12, initialJunctionHeading = -30;
+    public static double initialJunctionX = 58, initialJunctionY = -13, initialJunctionHeading = -30;
 
-    public static double getConeX = 53.5, getConeY = 18, getConeHeading = 90;
+    public static double getConeX = 53.5, getConeY = 20, getConeHeading = 90;
 
-    public static double junctionX = 52, junctionY = -18.5, junctionHeading = -90;
+    public static double junctionX = 53.5, junctionY = -18.5, junctionHeading = -90;
     public static double junctionStraightX = 56.5, junctionStraightY = -17.25;
 
     public static double parkingX = 53, parkingYPos1 = 15, parkingYPos2 = -8, parkingYPos3 = -30, parkingHeading = 90;
@@ -78,12 +78,15 @@ public class LeftAutonomous extends LinearOpMode {
 
         TrajectorySequence parkingPos1 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos1, Math.toRadians(parkingHeading)))
+                .addTemporalMarker(0.2, () -> slideControl.setState(SlideControl.State.GROUND))
                 .build();
         TrajectorySequence parkingPos2 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos2, Math.toRadians(parkingHeading)))
+                .addTemporalMarker(0.2, () -> slideControl.setState(SlideControl.State.GROUND))
                 .build();
         TrajectorySequence parkingPos3 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos3, Math.toRadians(parkingHeading)))
+                .addTemporalMarker(0.2, () -> slideControl.setState(SlideControl.State.GROUND))
                 .build();
 
         if (isStopRequested()) return;
@@ -115,7 +118,6 @@ public class LeftAutonomous extends LinearOpMode {
 
         drive.followTrajectorySequence(goToJunction);
         robot.controlIntake(1.0);
-        slideControl.setCoordinate(secondConeCoordinate);
 
         if(tagOfInterest != null) {
             if (tagOfInterest.id == 1)

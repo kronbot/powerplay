@@ -29,14 +29,14 @@ public class RightAutonomous extends LinearOpMode {
 
     public static double throwConeX = 58, throwConeY = 5;
     public static double prepareInitialX = 45, prepareInitialY = 5;
-    public static double initialJunctionX = 57.5, initialJunctionY = 12.5, initialJunctionHeading = 30;
+    public static double initialJunctionX = 56.8, initialJunctionY = 13.25, initialJunctionHeading = 30;
 
-    public static double getConeX = 52.5, getConeY = -19, getConeHeading = -90;
+    public static double getConeX = 52.5, getConeY = -19.25, getConeHeading = -90;
 
-    public static double junctionX = 53.5, junctionY = 18.5, junctionHeading = 90;
-    public static double junctionStraightX = 55.5, junctionStraightY = 17.25;
+    public static double junctionX = 51.5, junctionY = 18.5, junctionHeading = 90;
+    public static double junctionStraightX = 54, junctionStraightY = 17.25;
 
-    public static double parkingX = 51, parkingYPos1 = 27, parkingYPos2 = 8, parkingYPos3 = -18, parkingHeading = -90;
+    public static double parkingX = 49, parkingYPos1 = 31, parkingYPos2 = 5, parkingYPos3 = -21, parkingHeading = -90;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -64,7 +64,7 @@ public class RightAutonomous extends LinearOpMode {
         TrajectorySequence goToCones = drive
                 .trajectorySequenceBuilder(new Pose2d(initialJunctionX, initialJunctionY, Math.toRadians(initialJunctionHeading)))
                 .setReversed(true)
-                .lineTo(new Vector2d(initialJunctionX - 5, initialJunctionY - 5))
+                .lineTo(new Vector2d(initialJunctionX - 10, initialJunctionY - 5))
                 .lineToSplineHeading(new Pose2d(getConeX, getConeY, Math.toRadians(getConeHeading)))
                 .build();
         TrajectorySequence goToJunction = drive
@@ -77,13 +77,16 @@ public class RightAutonomous extends LinearOpMode {
                 .lineTo(new Vector2d(junctionStraightX, junctionStraightY))
                 .build();
 
-        TrajectorySequence parkingPos1 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
+        TrajectorySequence parkingPos1 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionStraightY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos1, Math.toRadians(parkingHeading)))
                 .build();
-        TrajectorySequence parkingPos2 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
+        TrajectorySequence parkingPos2 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionStraightY, Math.toRadians(0)))
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos2, Math.toRadians(parkingHeading)))
                 .build();
-        TrajectorySequence parkingPos3 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionY, Math.toRadians(0)))
+        TrajectorySequence parkingPos3 = drive.trajectorySequenceBuilder(new Pose2d(junctionStraightX, junctionStraightY, Math.toRadians(0)))
+                .setReversed(true)
+                .lineTo(new Vector2d(junctionStraightX - 5, junctionStraightY))
+                .setReversed(false)
                 .lineToSplineHeading(new Pose2d(parkingX, parkingYPos3, Math.toRadians(parkingHeading)))
                 .build();
 

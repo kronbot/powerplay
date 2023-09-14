@@ -1,18 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.lib.Utils;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.util.Encoder;
 
 public class KronBot {
@@ -21,23 +14,14 @@ public class KronBot {
     public DcMotor backLeftDc;
     public DcMotor backRightDc;
 
-    public DcMotor slideDc;
-
+    public DcMotor armDc;
+    public Servo clawServo;
     public Servo intakeServo;
-    public Servo precisionServo;
 
-    public Encoder leftEncoder;
-    public Encoder rightEncoder;
-    public Encoder frontEncoder;
+    public Servo throwServo;
 
-    public IMU imu;
+    public WebcamName webcam;
 
-    public Orientation lastOrientation = new Orientation();
-    private final double currAngle = 0.0;
-
-    /**
-     * Initialization of hardware map
-     */
     public void initHardwareMap(HardwareMap hardwareMap) {
         frontLeftDc = hardwareMap.dcMotor.get("frontLeft");
         frontRightDc = hardwareMap.dcMotor.get("frontRight");
@@ -47,41 +31,25 @@ public class KronBot {
         frontLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
         backLeftDc.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        slideDc = hardwareMap.dcMotor.get("slide");
-        slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        frontLeftDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        frontRightDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backLeftDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        backRightDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        armDc = hardwareMap.dcMotor.get("arm");
+        armDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        armDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        clawServo = hardwareMap.servo.get("claw");
         intakeServo = hardwareMap.servo.get("intake");
-        precisionServo = hardwareMap.servo.get("precision");
-        precisionServo.setDirection(Servo.Direction.REVERSE);
+        throwServo = hardwareMap.servo.get("throw");
 
-        slideDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        webcam = hardwareMap.get(WebcamName.class, "Webcam 1");
 
-//        frontLeftDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        frontRightDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        backLeftDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-//        backLeftDc.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-
-        leftEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "leftEncoder"));
-        rightEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "rightEncoder"));
-        frontEncoder = new Encoder(hardwareMap.get(DcMotorEx.class, "frontEncoder"));
-//        leftEncoder.setDirection(Encoder.Direction.REVERSE);
-        frontEncoder.setDirection(Encoder.Direction.REVERSE);
-
-        imu = hardwareMap.get(IMU.class, "imu");
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD,
-                RevHubOrientationOnRobot.UsbFacingDirection.RIGHT));
+        intakeServo.setPosition(1);
+        throwServo.setPosition(0);
     }
 
-    /**
-     * Set the power of the motors from wheels
-     *
-     * @param frontLeft  direction of the front left wheel -1 or 1
-     * @param frontRight direction of the front right wheel -1 or 1
-     * @param backLeft   direction of the back left wheel -1 or 1
-     * @param backRight  direction of the back right wheel -1 or 1
-     * @param power      the power to give to all four wheels [0,1]
-     */
     public void drive(double frontLeft, double frontRight, double backLeft, double backRight, double power) {
         frontLeftDc.setPower(frontLeft * power);
         frontRightDc.setPower(frontRight * power);
@@ -89,9 +57,6 @@ public class KronBot {
         backRightDc.setPower(backRight * power);
     }
 
-    /**
-     * Stops the motors from wheels
-     */
     public void stopMotors() {
         frontLeftDc.setPower(0);
         frontRightDc.setPower(0);
@@ -99,13 +64,29 @@ public class KronBot {
         backRightDc.setPower(0);
     }
 
-    public void controlSlide(double power) {
-        slideDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        slideDc.setPower(power);
+    public void controlArm(double power) {
+        armDc.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        armDc.setPower(power);
     }
 
-    public void resetSlideEncoder() {
-        slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    public void controlArm(double power, int position) {
+        armDc.setTargetPosition(position);
+        armDc.setPower(power);
+        if (armDc.getCurrentPosition() > position)
+            armDc.setPower(-power);
+        armDc.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    }
+
+    public void resetArmEncoder() {
+        armDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+    }
+
+    public void controlClaw(double power) {
+        clawServo.setPosition(power);
+    }
+
+    public double clawPosition() {
+        return clawServo.getPosition();
     }
 
     public void controlIntake(double power) {
@@ -114,32 +95,6 @@ public class KronBot {
 
     public double intakePosition() {
         return intakeServo.getPosition();
-    }
-
-    public void resetEncoders() {
-        frontLeftDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        frontRightDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backLeftDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        backRightDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    public void resetHeading() {
-        imu.resetYaw();
-    }
-
-    public double getCurentAngle() {
-        Orientation orientation = imu.getRobotOrientation(AxesReference.INTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES);
-        double deltaAngle = orientation.thirdAngle;
-        return deltaAngle;
-    }
-
-    public void movePrecision(double power) {
-        if (Math.abs(power) < 0.1)
-            precisionServo.setPosition(0.5);
-        else if (power < 0)
-            precisionServo.setPosition(Utils.map(-power, 0, 1, 0.5, 0.6));
-        else
-            precisionServo.setPosition(Utils.map(-power, -1, 0, 0.4, 0.5));
     }
 }
 

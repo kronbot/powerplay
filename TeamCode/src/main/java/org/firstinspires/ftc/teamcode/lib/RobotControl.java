@@ -141,8 +141,8 @@ public class RobotControl {
 
     private double motorPower(double power) {
         if (power < 0.75)
-            return Utils.map(power, 0, 0.75, 0, 0.5);
-        return Utils.map(power, 0.75, 1, 0.5, 1);
+            return Utils.map(power, 0, 0.75, 0, 0.75);
+        return Utils.map(power, 0.75, 1, 0.75, 1);
     }
 
     /**

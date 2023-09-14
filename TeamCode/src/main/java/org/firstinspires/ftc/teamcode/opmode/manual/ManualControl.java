@@ -5,27 +5,27 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.KronBot;
+import org.firstinspires.ftc.teamcode.lib.ArmControl;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
-import org.firstinspires.ftc.teamcode.lib.SlideControl;
 
 @Disabled
 @TeleOp(name = "Manual Control", group = "Manual")
 public class ManualControl extends OpMode {
     private final KronBot robot;
     private final RobotControl robotControl;
-    private final SlideControl slideControl;
+    private final ArmControl armControl;
 
     public ManualControl() {
         robot = new KronBot();
         robotControl = new RobotControl(robot, telemetry);
-        slideControl = new SlideControl(robot, telemetry);
+        armControl = new ArmControl(robot, telemetry);
     }
 
     @Override
     public void init() {
         robot.initHardwareMap(hardwareMap);
-        robot.resetSlideEncoder();
-        robot.controlIntake(1);
+        robot.resetArmEncoder();
+        robot.controlClaw(1);
     }
 
     @Override
@@ -35,9 +35,8 @@ public class ManualControl extends OpMode {
             move = robotControl.drive(gamepad1.left_stick_x, -gamepad1.left_stick_y);
         if (!move)
             robotControl.stop();
-//        robotControl.debug();
 
-        slideControl.intake(gamepad1.dpad_up);
-        slideControl.control(gamepad1, false);
+        armControl.claw(gamepad1.dpad_up);
+        armControl.control(gamepad1, false);
     }
 }

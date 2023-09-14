@@ -11,17 +11,26 @@ public class Utils {
     public static double MOTOR_ACCELERATION_POWER = 0.3;
     public static double MOTOR_POWER_OFFSET = 1;
 
-    public static double SLIDE_POWER = 1;
-    public static double SLIDE_REST = 0.125;
-    public static double SLIDE_REST_SLIDING = 0.001;
-
-    public static Integer SLIDE_GROUND_COORDINATE = 100;
-    public static Integer SLIDE_FIRST_COORDINATE = 1500;
-    public static Integer SLIDE_SECOND_COORDINATE = 2250;
-    public static Integer SLIDE_THIRD_COORDINATE = 3700;
-
-
     public static double TICKS_PER_CM = 635;
+
+    public static double INTAKE_MIN_POSITION = 0.0;
+    public static double INTAKE_MAX_POSITION = 1.0;
+
+    public static double ARM_MAX_POWER = 0.75;
+    public static double ARM_MIN_POWER = 0.1;
+    public static double ARM_REST_POWER = 0.3;
+
+    public static double ARM_REVERSE_COORDINATES = 215;
+    public static double ARM_MAX_COORDINATES = 400;
+
+    public static double ARM_MIN_COORDINATES = 0;
+
+    public static double SERVO_COORDINATES = 260;
+    public static double SERVO_START = 0;
+    public static double SERVO_END = 1;
+    public static double SERVO_CONSTANT = 0.7;
+    public static double ARM_CUT_SPEED = 5;
+    public static double ARM_BLIND_SPOT = 2;
 
     /**
      * Mapping function used to return the value inside an interval applied

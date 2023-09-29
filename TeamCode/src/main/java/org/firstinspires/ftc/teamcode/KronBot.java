@@ -24,6 +24,7 @@ public class KronBot {
     public DcMotor slideDc;
 
     public Servo intakeServo;
+    public Servo armServo;
     public Servo precisionServo;
 
     public Encoder leftEncoder;
@@ -49,7 +50,7 @@ public class KronBot {
 
         slideDc = hardwareMap.dcMotor.get("slide");
         slideDc.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
+        armServo = hardwareMap.servo.get("arm");
         intakeServo = hardwareMap.servo.get("intake");
         precisionServo = hardwareMap.servo.get("precision");
         precisionServo.setDirection(Servo.Direction.REVERSE);
@@ -114,6 +115,14 @@ public class KronBot {
 
     public double intakePosition() {
         return intakeServo.getPosition();
+    }
+
+    public void controlArm(double power) {
+        armServo.setPosition(power);
+    }
+
+    public double armPosition() {
+        return armServo.getPosition();
     }
 
     public void resetEncoders() {

@@ -14,6 +14,7 @@ public class SlideControl {
     private final Telemetry telemetry;
     private final StateManager stateManager;
     private boolean intakePressed = true;
+    private boolean armPressed = true;
     private final boolean closeIntakeAtPress = false;
     private final Integer minCoordinate = 50;
     private final Integer maxCoordinate = 4100;
@@ -116,10 +117,10 @@ public class SlideControl {
         }
 
         if (gamepad.right_trigger > 0 && gamepad.left_trigger < Utils.EPS) {
-            robot.controlSlide(slidePower(gamepad.right_trigger));
+            robot.controlSlide(slidePower(gamepad.right_trigger*1.25));
             return;
         } else if (gamepad.left_trigger > 0 && gamepad.right_trigger < Utils.EPS) {
-            robot.controlSlide(-slidePower(gamepad.left_trigger));
+            robot.controlSlide(-slidePower(gamepad.left_trigger*1.25));
             return;
         } else if (robot.slideDc.getMode() == DcMotor.RunMode.RUN_WITHOUT_ENCODER) {
             robot.slideDc.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -147,6 +148,16 @@ public class SlideControl {
             intakePressed = false;
         } else if (!action)
             intakePressed = true;
+    }
+    public void arm(boolean action) {
+        if (action && armPressed) {
+            if (Double.compare(robot.armPosition(), 1.0) == 0)
+                robot.controlArm(0);
+            else if (Double.compare(robot.armPosition(), 0.0) == 0)
+                robot.controlArm(1);
+            armPressed= false;
+        } else if (!action)
+            armPressed = true;
     }
 
     // stores the states with the coordinates

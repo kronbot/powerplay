@@ -18,8 +18,6 @@ import org.openftc.apriltag.AprilTagDetection;
 public class LeftAutonomous extends LinearOpMode {
     private KronBot robot;
     private SlideControl slideControl;
-    //   private SlideControlRunnable slideControlRunnable;
-
     private TagDetection tagDetection;
     private AprilTagDetection tagOfInterest = null;
 
@@ -44,8 +42,6 @@ public class LeftAutonomous extends LinearOpMode {
         robot.initHardwareMap(hardwareMap);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         slideControl = new SlideControl(robot, telemetry);
-//        slideControlRunnable = new SlideControlRunnable(slideControl);
-//        Thread slideControlThread = new Thread(slideControlRunnable);
 
         tagDetection = new TagDetection(hardwareMap, telemetry);
 

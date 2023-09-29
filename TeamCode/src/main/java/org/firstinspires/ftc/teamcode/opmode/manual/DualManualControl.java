@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode.manual;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.KronBot;
 import org.firstinspires.ftc.teamcode.lib.RobotControl;
@@ -35,8 +36,9 @@ public class DualManualControl extends OpMode {
             move = robotControl.drive(0, -gamepad1.left_stick_y);
         if (!move)
             robotControl.stop();
-
+        slideControl.arm(gamepad2.dpad_right);
         slideControl.intake(gamepad2.dpad_up);
         slideControl.control(gamepad2, false);
+
     }
 }
